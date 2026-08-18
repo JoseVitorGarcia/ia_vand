@@ -1,5 +1,5 @@
 {
-  "threshold": 0.13999999999999999,
+  "threshold": 0.28,
   "feature_columns": [
     "precipitacao",
     "temperatura",
