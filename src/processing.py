@@ -360,6 +360,68 @@ def _features_vizinhas(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _herdar_climatologia_de_vizinhas(df, clima, mensal):
+    """Dá climatologia às estações que não existiam antes do cutoff.
+
+    A rede do INMET dobrou de tamanho em 2025: 55 das 100 estações só têm dados
+    de 2025/26 e ficam de fora do recorte pré-cutoff que define a climatologia.
+    Elas chegavam à inferência com `clima_chuva_mes` — a feature mais usada do
+    modelo — em NaN, e o efeito medido não era erro e sim silêncio: as
+    probabilidades saíam baixas demais e o threshold nunca disparava. Recall por
+    estação-dia de 0,008 nessas estações, contra 0,69 nas demais, apesar de o
+    PR-AUC ser o mesmo nos dois grupos — o modelo ordenava o risco bem, só não
+    alcançava o corte.
+
+    Herdar das k vizinhas mais próximas põe essas estações na mesma escala das
+    que o modelo viu no treino. Não vaza futuro: a climatologia das vizinhas vem
+    inteira de dados pré-cutoff.
+
+    Deliberadamente não marca quais estações herdaram: essa coluna seria
+    constante no treino (nenhuma estação nova aparece lá) e o modelo não teria
+    como aprender nada com ela.
+    """
+    coords = (
+        df.groupby('estacao_codigo', observed=True)[['latitude', 'longitude']]
+        .first().dropna()
+    )
+    faltantes = [c for c in coords.index if c not in clima.index]
+    com_clima = [c for c in clima.index if c in coords.index]
+
+    if not faltantes:
+        return clima, mensal
+    if not com_clima:
+        logger.warning("Nenhuma estação com climatologia — herança impossível")
+        return clima, mensal
+
+    origem = coords.loc[com_clima]
+    lats, lons = origem['latitude'].to_numpy(), origem['longitude'].to_numpy()
+
+    linhas_clima, linhas_mensal = [], []
+    distancias = []
+    for cod in faltantes:
+        lat, lon = coords.loc[cod, 'latitude'], coords.loc[cod, 'longitude']
+        d = _distancia_km(lat, lon, lats, lons)
+        vizinhas = np.argsort(d)[:VIZINHOS_K]
+        codigos = [com_clima[i] for i in vizinhas]
+        distancias.append(float(d[vizinhas].mean()))
+        linhas_clima.append(clima.loc[codigos].mean())
+        linhas_mensal.append(mensal.loc[codigos].mean())
+
+    def _anexar(tabela, linhas):
+        novos = pd.DataFrame(linhas, columns=tabela.columns)
+        novos.index = pd.CategoricalIndex(
+            faltantes, categories=tabela.index.categories,
+        ) if isinstance(tabela.index, pd.CategoricalIndex) else pd.Index(faltantes)
+        return pd.concat([tabela, novos])
+
+    logger.info(
+        "Climatologia herdada por %d estações sem histórico pré-cutoff "
+        "(média das %d vizinhas mais próximas, a %.0f km em média)",
+        len(faltantes), VIZINHOS_K, float(np.mean(distancias)),
+    )
+    return _anexar(clima, linhas_clima), _anexar(mensal, linhas_mensal)
+
+
 def _climatologia_estacao(df: pd.DataFrame) -> pd.DataFrame:
     """Descreve cada estação por seu regime de chuva, não por um código arbitrário.
 
@@ -388,6 +450,8 @@ def _climatologia_estacao(df: pd.DataFrame) -> pd.DataFrame:
         treino.groupby(['estacao_codigo', treino['data_hora'].dt.month], observed=True)['precipitacao']
         .mean().unstack()
     )
+
+    clima, mensal = _herdar_climatologia_de_vizinhas(df, clima, mensal)
 
     # Gather posicional em vez de merge, pelo mesmo motivo de _features_vizinhas:
     # as duas tabelas têm ~100 linhas, mas cada merge alocava uma cópia inteira do

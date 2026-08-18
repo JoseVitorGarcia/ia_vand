@@ -70,6 +70,40 @@ def find_best_threshold(y_true, probs):
     return melhor_threshold
 
 
+def _agregar_estacao_dia(df_janela, probs, y_true):
+    """Colapsa linhas horárias em (estação, dia), tomando o máximo de cada.
+
+    Um dia é positivo se qualquer hora dele é positiva, e a probabilidade do dia
+    é a maior do dia — que é como um alerta funciona: basta uma hora de risco.
+    """
+    return (
+        pd.DataFrame({
+            'estacao_codigo': df_janela['estacao_codigo'].to_numpy(),
+            'dia': df_janela['data_hora'].dt.date.to_numpy(),
+            'y': np.asarray(y_true),
+            'p': np.asarray(probs),
+        })
+        .groupby(['estacao_codigo', 'dia'])
+        .agg(y=('y', 'max'), p=('p', 'max'))
+    )
+
+
+def find_best_threshold_estacao_dia(df_janela, probs, y_true):
+    """Threshold que maximiza F1 na unidade em que o alerta é emitido.
+
+    A versão por linha horária escolhia o corte numa unidade e o sistema operava
+    em outra: o alvo é uma janela deslizante, então uma tempestade vira ~19
+    linhas positivas quase idênticas, e o F1 por linha é dominado por essa
+    redundância. Medido no teste de 18/08/2026, o corte por linha (0,140) ficava
+    bem abaixo do que a unidade estação-dia pedia — F1 de 0,247 contra 0,300
+    disponível mais acima.
+
+    Como a versão por linha, só pode ser chamada na validação.
+    """
+    agregado = _agregar_estacao_dia(df_janela, probs, y_true)
+    return find_best_threshold(agregado['y'], agregado['p'])
+
+
 def separar_janelas(df):
     """Divide o DataFrame em treino / validação / teste por data, com embargo.
 
@@ -197,16 +231,7 @@ def avaliar_por_estacao_dia(df_teste, probs, y_true, threshold):
     positivas quase idênticas. Medir por linha trata 83 mil amostras onde há
     ~4 mil eventos independentes, e infla a confiança nas barras de erro.
     """
-    agregado = (
-        pd.DataFrame({
-            'estacao_codigo': df_teste['estacao_codigo'].to_numpy(),
-            'dia': df_teste['data_hora'].dt.date.to_numpy(),
-            'y': y_true.to_numpy(),
-            'p': probs,
-        })
-        .groupby(['estacao_codigo', 'dia'])
-        .agg(y=('y', 'max'), p=('p', 'max'))
-    )
+    agregado = _agregar_estacao_dia(df_teste, probs, y_true)
     preds = (agregado['p'] > threshold).astype(int)
     return {
         'f1':        float(f1_score(agregado['y'], preds, zero_division=0)),
@@ -329,8 +354,10 @@ def train_models(df):
     clf_cal.fit(X_va, y_clf[validacao])
 
     probs_va = clf_cal.predict_proba(X_va)[:, 1]
-    threshold = find_best_threshold(y_clf[validacao], probs_va)
-    logger.info("Threshold escolhido na validação: %.3f", threshold)
+    threshold = find_best_threshold_estacao_dia(df[validacao], probs_va, y_clf[validacao])
+    logger.info(
+        "Threshold escolhido na validação (F1 por estação-dia): %.3f", threshold,
+    )
 
     # ─── AVALIAÇÃO FINAL (teste intocado) ─────────────────────────────────────
     y_te = y_clf[teste]
