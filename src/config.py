@@ -77,6 +77,11 @@ OPENMETEO_FORECAST_TTL_HOURS = 1
 # dispara 429 sem esse intervalo. 1s garante ~60 req/min — bem abaixo do limite.
 OPENMETEO_REQUEST_DELAY = 1.0
 
+# Um pedido de 11 anos devolve ~101 mil horas e 5,3 MB, e leva ~33 s — bem além
+# dos 30 s que bastam para um ano. Com o timeout curto ele falhava as três
+# tentativas e a estação inteira ficava sem dados, silenciosamente.
+OPENMETEO_TIMEOUT_INTERVALO = 180
+
 # Variáveis que complementam o INMET sem duplicar (não inclui precipitação,
 # temperatura, umidade, pressão e vento, que o INMET já fornece).
 # `cape` e `freezing_level_height` saíram em 18/08/2026: o ERA5 não os tem e a
