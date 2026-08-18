@@ -1,5 +1,5 @@
 {
-  "threshold": 0.28,
+  "threshold": 0.26,
   "feature_columns": [
     "precipitacao",
     "temperatura",
@@ -51,11 +51,15 @@
     "viz_chuva_3h",
     "viz_oeste_chuva_3h",
     "viz_queda_pressao_3h",
-    "cape",
-    "cloud_cover",
+    "cloud_cover_low",
+    "cloud_cover_mid",
+    "cloud_cover_high",
     "wind_gusts_10m",
+    "wind_speed_100m",
+    "vento100_norte",
+    "vento100_leste",
     "soil_moisture",
-    "freezing_level"
+    "soil_moisture_profundo"
   ],
   "extreme_rain_threshold": 50,
   "train_end": "2024-12-31 23:00:00+00:00",
