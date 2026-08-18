@@ -50,7 +50,12 @@
     "clima_pressao_media",
     "viz_chuva_3h",
     "viz_oeste_chuva_3h",
-    "viz_queda_pressao_3h"
+    "viz_queda_pressao_3h",
+    "cape",
+    "cloud_cover",
+    "wind_gusts_10m",
+    "soil_moisture",
+    "freezing_level"
   ],
   "extreme_rain_threshold": 50,
   "train_end": "2024-12-31 23:00:00+00:00",
