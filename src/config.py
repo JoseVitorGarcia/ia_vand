@@ -96,10 +96,12 @@ OPENMETEO_FORECAST_VARS = [
     'precipitation_probability',  # disponível apenas em forecast
 ]
 
-# Desligado nas fases 1 e 2: a mudança de identidade de estação (código WMO)
-# alterou as chaves lat/lon do cache e há ~29 estações novas de 2025/26 sem
-# dados baixados. Religar após rebaixar o cache, junto com a fase 3 (MOS).
-ENABLE_OPENMETEO = False
+# Religado em 18/08/2026. Ficou desligado nas fases 1 e 2 porque a mudança de
+# identidade de estação (código WMO) alterou as chaves lat/lon do cache: havia
+# cobertura para 70 das 100 estações e nenhum dado de 2026. O rebaixe acontece
+# na própria execução — fetch_historical baixa e cacheia por (lat, lon, ano), e
+# falha de API degrada para NaN naquela estação em vez de derrubar o pipeline.
+ENABLE_OPENMETEO = True
 
 # ==============================
 # FEATURES
