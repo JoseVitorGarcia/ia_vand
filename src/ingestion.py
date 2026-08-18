@@ -6,7 +6,7 @@ import unicodedata
 
 import pandas as pd
 
-from src.config import CACHE_DIR, RAW_DATA_DIR, STATES_FILTER
+from src.config import CACHE_DIR, OPENMETEO_COLUNAS, RAW_DATA_DIR, STATES_FILTER
 
 logger = logging.getLogger(__name__)
 
@@ -239,8 +239,7 @@ def enrich_openmeteo(df: pd.DataFrame) -> pd.DataFrame:
         df: DataFrame pós clean_data(), com 'data_hora' timezone-aware (UTC).
 
     Returns:
-        DataFrame com colunas adicionais: cape, cloud_cover, wind_gusts_10m,
-        soil_moisture, freezing_level.
+        DataFrame com as colunas de OPENMETEO_COLUNAS acrescentadas.
     """
     from src.openmeteo_client import fetch_historical
 
@@ -294,7 +293,7 @@ def enrich_openmeteo(df: pd.DataFrame) -> pd.DataFrame:
     result = pd.concat(partes, ignore_index=True)
     result = result.sort_values(['estacao_codigo', 'data_hora']).reset_index(drop=True)
 
-    om_cols = [c for c in ['cape', 'cloud_cover', 'wind_gusts_10m', 'soil_moisture', 'freezing_level'] if c in result.columns]
+    om_cols = [c for c in OPENMETEO_COLUNAS if c in result.columns]
     logger.info("Open-Meteo: %d colunas adicionadas — %s", len(om_cols), om_cols)
 
     return result

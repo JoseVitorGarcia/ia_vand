@@ -10,8 +10,9 @@ Uso com enriquecimento automático Open-Meteo:
 
 AVISO — ver F-05 da auditoria de 18/08/2026:
     O enriquecimento com previsão está desativado por padrão porque as features
-    Open-Meteo significam coisas diferentes no treino e aqui. No treino, `cape`
-    é o valor ERA5 na hora t; aqui era a média das próximas 24 h da previsão.
+    Open-Meteo significam coisas diferentes no treino e aqui. No treino,
+    `soil_moisture` é o valor ERA5 na hora t; aqui era a média das próximas 24 h
+    da previsão.
     São distribuições distintas alimentando a mesma coluna. A correção definitiva
     é a fase 3 (MOS): adotar a janela t+1..t+24 nos dois lados. Até lá, o
     enriquecimento só acontece se explicitamente pedido.
@@ -24,7 +25,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from src.config import FEATURE_COLUMNS, MODELS_DIR
+from src.config import FEATURE_COLUMNS, MODELS_DIR, OPENMETEO_COLUNAS
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ def _enrich_with_forecast(data: dict, lat: float, lon: float) -> dict:
             return data
 
         next_24h = forecast.head(24)
-        for col in ['cape', 'cloud_cover', 'wind_gusts_10m', 'soil_moisture', 'freezing_level']:
+        for col in OPENMETEO_COLUNAS:
             if col in next_24h:
                 data[col] = float(next_24h[col].mean())
 

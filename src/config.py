@@ -79,22 +79,42 @@ OPENMETEO_REQUEST_DELAY = 1.0
 
 # Variáveis que complementam o INMET sem duplicar (não inclui precipitação,
 # temperatura, umidade, pressão e vento, que o INMET já fornece).
+# `cape` e `freezing_level_height` saíram em 18/08/2026: o ERA5 não os tem e a
+# Open-Meteo devolve nulo em silêncio (HTTP 200, coluna inteira vazia). Ficaram
+# meses na lista sem que ninguém notasse, e o modelo treinava com duas colunas
+# 100% NaN. Variáveis de nível de pressão (temperature_850hPa e afins), o
+# substituto natural, também voltam vazias deste endpoint — verificado com
+# models=era5 e era5_land. O que sobra de útil é tudo de superfície.
 OPENMETEO_HISTORICAL_VARS = [
-    'cape',                   # Energia convectiva disponível (J/kg)
-    'cloud_cover',            # Cobertura de nuvens total (%)
-    'wind_gusts_10m',         # Rajadas de vento (m/s) — INMET fornece média
-    'soil_moisture_0_to_7cm', # Umidade do solo superficial (m³/m³)
-    'freezing_level_height',  # Altura da isoterma 0°C (m)
+    # Convecção: nuvem alta é bigorna de convecção profunda. É o proxy mais
+    # direto de instabilidade que o arquivo oferece, no lugar do CAPE.
+    'cloud_cover_low',
+    'cloud_cover_mid',
+    'cloud_cover_high',
+    'wind_gusts_10m',          # Rajadas (m/s) — INMET fornece só a média
+    # Transporte de umidade: o jato de baixos níveis sul-americano traz umidade
+    # amazônica para o RS e é o mecanismo dominante de chuva extrema aqui.
+    # A 100 m se está muito mais perto dele do que nos 10 m do INMET.
+    'wind_speed_100m',
+    'wind_direction_100m',
+    'soil_moisture_0_to_7cm',    # Saturação superficial (m³/m³)
+    'soil_moisture_28_to_100cm', # Camada profunda: decide se a chuva vira enxurrada
 ]
 
-OPENMETEO_FORECAST_VARS = [
-    'cape',
-    'cloud_cover',
-    'wind_gusts_10m',
-    'soil_moisture_0_to_7cm',
-    'freezing_level_height',
+OPENMETEO_FORECAST_VARS = OPENMETEO_HISTORICAL_VARS + [
     'precipitation_probability',  # disponível apenas em forecast
 ]
+
+# Nomes longos da API → nomes internos. Fica aqui, e não no cliente, para que
+# ingestion e predict derivem as colunas da mesma fonte em vez de repetirem a
+# lista na mão — foi assim que `cape` sobreviveu em três lugares diferentes.
+OPENMETEO_RENAME = {
+    'soil_moisture_0_to_7cm': 'soil_moisture',
+    'soil_moisture_28_to_100cm': 'soil_moisture_profundo',
+}
+
+# Colunas que enrich_openmeteo acrescenta ao DataFrame, já renomeadas.
+OPENMETEO_COLUNAS = [OPENMETEO_RENAME.get(v, v) for v in OPENMETEO_HISTORICAL_VARS]
 
 # Religado em 18/08/2026. Ficou desligado nas fases 1 e 2 porque a mudança de
 # identidade de estação (código WMO) alterou as chaves lat/lon do cache: havia
@@ -182,12 +202,18 @@ FEATURES_INMET = [
 ]
 
 # Features vindas da Open-Meteo (só entram se ENABLE_OPENMETEO)
+# `wind_direction_100m` entra decomposto em componentes (ver create_features):
+# direção em graus é descontínua em 0°/360° e o modelo não tem como aprender isso.
 FEATURES_OPENMETEO = [
-    'cape',
-    'cloud_cover',
+    'cloud_cover_low',
+    'cloud_cover_mid',
+    'cloud_cover_high',
     'wind_gusts_10m',
+    'wind_speed_100m',
+    'vento100_norte',
+    'vento100_leste',
     'soil_moisture',
-    'freezing_level',
+    'soil_moisture_profundo',
 ]
 
 FEATURE_COLUMNS = FEATURES_INMET + (FEATURES_OPENMETEO if ENABLE_OPENMETEO else [])

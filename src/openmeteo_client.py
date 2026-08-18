@@ -20,6 +20,7 @@ import requests
 
 from src.config import (
     OPENMETEO_CACHE_DIR,
+    OPENMETEO_RENAME,
     OPENMETEO_FORECAST_TTL_HOURS,
     OPENMETEO_HISTORICAL_VARS,
     OPENMETEO_FORECAST_VARS,
@@ -31,11 +32,6 @@ logger = logging.getLogger(__name__)
 _HISTORICAL_URL = "https://archive-api.open-meteo.com/v1/archive"
 _FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
-# Renomeia variáveis de nomes longos para nomes curtos usados como features
-_RENAME = {
-    'soil_moisture_0_to_7cm': 'soil_moisture',
-    'freezing_level_height': 'freezing_level',
-}
 
 
 def _cache_key(lat: float, lon: float) -> str:
@@ -80,7 +76,16 @@ def _parse_response(data: dict, variables: list) -> pd.DataFrame:
     for var in variables:
         if var in hourly:
             df[var] = hourly[var]
-    return df.rename(columns=_RENAME)
+            # A API responde 200 com a coluna inteira nula para variáveis que o
+            # modelo não cobre — foi assim que `cape` e `freezing_level_height`
+            # passaram meses na lista alimentando o treino só com NaN. Avisar
+            # alto é a diferença entre descobrir hoje e descobrir em meses.
+            if df[var].isna().all():
+                logger.warning(
+                    "Open-Meteo devolveu '%s' inteiramente nula — a variável não "
+                    "existe neste endpoint; remova-a de OPENMETEO_*_VARS", var,
+                )
+    return df.rename(columns=OPENMETEO_RENAME)
 
 
 def fetch_historical(lat: float, lon: float, start_date: str, end_date: str) -> pd.DataFrame:
@@ -106,8 +111,20 @@ def fetch_historical(lat: float, lon: float, start_date: str, end_date: str) -> 
         cache = _hist_cache_path(lat, lon, year)
 
         if cache.exists():
-            frames.append(pd.read_parquet(cache))
-            continue
+            cacheado = pd.read_parquet(cache)
+            faltando = [
+                c for c in (OPENMETEO_RENAME.get(v, v) for v in OPENMETEO_HISTORICAL_VARS)
+                if c not in cacheado.columns
+            ]
+            if not faltando:
+                frames.append(cacheado)
+                continue
+            # Cache de uma lista de variáveis anterior: sem esta checagem, mudar
+            # OPENMETEO_HISTORICAL_VARS não teria efeito nenhum enquanto houvesse
+            # arquivo em disco, e as colunas novas chegariam ausentes ao modelo.
+            logger.info(
+                "Cache %s não tem %s — rebaixando", cache.name, faltando,
+            )
 
         y_start = max(start, datetime(year, 1, 1)).strftime("%Y-%m-%d")
         y_end = min(end, datetime(year, 12, 31)).strftime("%Y-%m-%d")

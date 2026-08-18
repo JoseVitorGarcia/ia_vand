@@ -524,6 +524,22 @@ def create_features(df):
         for c in ['vento_dir_sin', 'vento_dir_cos', 'vento_norte', 'vento_leste']:
             df[c] = np.nan
 
+    # =========================
+    # VENTO A 100 m (Open-Meteo) — jato de baixos níveis
+    # =========================
+    # Mesma convenção do vento do INMET: a direção é de onde o vento vem, e por
+    # isso as componentes levam sinal negativo. Em graus, a direção é
+    # descontínua em 0°/360° e inútil como feature crua; decomposta, cada
+    # componente é contínua. A 100 m se está mais perto do jato que transporta
+    # umidade amazônica para o RS do que nos 10 m que o INMET mede.
+    if {'wind_direction_100m', 'wind_speed_100m'} <= set(df.columns):
+        rad100 = np.radians(df['wind_direction_100m'])
+        df['vento100_norte'] = -np.cos(rad100) * df['wind_speed_100m']
+        df['vento100_leste'] = -np.sin(rad100) * df['wind_speed_100m']
+    else:
+        df['vento100_norte'] = np.nan
+        df['vento100_leste'] = np.nan
+
     if 'rajada' not in df.columns:
         df['rajada'] = np.nan
     # Rajada acima da média sustentada indica turbulência convectiva
