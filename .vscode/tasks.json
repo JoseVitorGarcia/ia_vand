@@ -1,0 +1,60 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Pipeline (scope isolado, 8G)",
+            "type": "shell",
+            "command": "./run.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pipeline (scope isolado, teto customizado)",
+            "type": "shell",
+            "command": "MEM_MAX=${input:memMax} ./run.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Testes (scope isolado)",
+            "type": "shell",
+            "command": "./run.sh -m pytest tests -v",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "memMax",
+            "type": "promptString",
+            "description": "Teto de memória do cgroup (ex.: 4G, 6G, 10G)",
+            "default": "8G"
+        }
+    ]
+}

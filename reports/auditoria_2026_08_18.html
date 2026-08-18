@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditoria IA_VAND</title>
+<style>
+  :root{
+    --paper:#eef2f3; --surface:#ffffff; --surface-2:#f6f9f9;
+    --ink:#0f1519; --ink-mid:#3d4c54; --ink-soft:#697a83;
+    --rule:#d3dcdf; --rule-soft:#e4ebed;
+    --accent:#0a6870; --accent-soft:#e0eeef;
+    --crit:#a02226; --crit-bg:#f7e6e6;
+    --high:#8a5407; --high-bg:#f8eddb;
+    --med:#3a5f7d; --med-bg:#e6eef4;
+    --ok:#2c6849; --ok-bg:#e3f0e9;
+    --serif:ui-serif,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0b1114; --surface:#111a1e; --surface-2:#162126;
+      --ink:#e7eef0; --ink-mid:#aebbc1; --ink-soft:#7f8f97;
+      --rule:#26343a; --rule-soft:#1c282d;
+      --accent:#4dbcc4; --accent-soft:#122b2e;
+      --crit:#e8797c; --crit-bg:#2c1618;
+      --high:#dda851; --high-bg:#2b2113;
+      --med:#84b3d4; --med-bg:#14222c;
+      --ok:#6fbf95; --ok-bg:#132520;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0b1114; --surface:#111a1e; --surface-2:#162126;
+    --ink:#e7eef0; --ink-mid:#aebbc1; --ink-soft:#7f8f97;
+    --rule:#26343a; --rule-soft:#1c282d;
+    --accent:#4dbcc4; --accent-soft:#122b2e;
+    --crit:#e8797c; --crit-bg:#2c1618;
+    --high:#dda851; --high-bg:#2b2113;
+    --med:#84b3d4; --med-bg:#14222c;
+    --ok:#6fbf95; --ok-bg:#132520;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:16.5px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 28px 120px}
+  .col{max-width:73ch}
+
+  /* ---------- masthead ---------- */
+  header.mast{
+    border-bottom:2px solid var(--ink);
+    padding:64px 0 26px; margin-bottom:0;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--serif); font-weight:600; font-size:clamp(2.3rem,5.4vw,3.5rem);
+    line-height:1.06; letter-spacing:-.018em; margin:0 0 20px; text-wrap:balance;
+  }
+  .standfirst{
+    font-family:var(--serif); font-size:clamp(1.05rem,2.1vw,1.24rem); line-height:1.55;
+    color:var(--ink-mid); margin:0; max-width:62ch;
+  }
+  .mast-meta{
+    display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:26px;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em; color:var(--ink-soft);
+  }
+
+  /* ---------- key numbers ---------- */
+  .keys{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+    border-bottom:1px solid var(--rule);
+  }
+  .key{padding:24px 22px 24px 0; border-right:1px solid var(--rule-soft)}
+  .key:last-child{border-right:none}
+  .key .n{
+    font-family:var(--serif); font-size:2.15rem; line-height:1; letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums; display:block; margin-bottom:8px;
+  }
+  .key .l{font-size:13px; line-height:1.4; color:var(--ink-soft)}
+  .n.crit{color:var(--crit)} .n.acc{color:var(--accent)}
+
+  /* ---------- sections ---------- */
+  section{padding-top:56px}
+  h2{
+    font-family:var(--serif); font-weight:600; font-size:1.72rem; letter-spacing:-.012em;
+    margin:0 0 6px; text-wrap:balance;
+  }
+  .sec-rule{border-top:1px solid var(--rule); padding-top:14px; margin-top:0}
+  .sec-num{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-soft); display:block; margin-bottom:10px;
+  }
+  .lede{color:var(--ink-mid); margin:12px 0 0; max-width:70ch}
+  h3{
+    font-family:var(--sans); font-weight:650; font-size:1.02rem; letter-spacing:-.005em;
+    margin:38px 0 10px;
+  }
+  p{margin:0 0 15px}
+  a{color:var(--accent)}
+  strong{font-weight:650}
+  code{
+    font-family:var(--mono); font-size:.855em; background:var(--surface-2);
+    border:1px solid var(--rule-soft); border-radius:3px; padding:.1em .34em;
+  }
+
+  /* ---------- findings ledger ---------- */
+  .ledger{border-top:1px solid var(--ink); margin-top:26px}
+  .find{
+    display:grid; grid-template-columns:64px 1fr; gap:0 20px;
+    border-bottom:1px solid var(--rule-soft); padding:22px 0;
+  }
+  .find-id{
+    font-family:var(--mono); font-size:12px; letter-spacing:.04em;
+    color:var(--ink-soft); padding-top:4px;
+  }
+  .find-h{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; margin-bottom:8px}
+  .find-t{font-weight:650; font-size:1.03rem; letter-spacing:-.005em}
+  .chip{
+    font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    padding:3px 7px; border-radius:2px; white-space:nowrap; font-weight:600;
+  }
+  .c-crit{background:var(--crit-bg); color:var(--crit)}
+  .c-high{background:var(--high-bg); color:var(--high)}
+  .c-med{background:var(--med-bg); color:var(--med)}
+  .find p{margin:0 0 10px; color:var(--ink-mid); font-size:15.3px}
+  .find p:last-child{margin-bottom:0}
+  .where{
+    font-family:var(--mono); font-size:12px; color:var(--ink-soft);
+    display:block; margin-bottom:9px;
+  }
+  .evid{
+    border-left:2px solid var(--accent); background:var(--surface-2);
+    padding:11px 14px; margin:11px 0; font-family:var(--mono);
+    font-size:12.2px; line-height:1.6; color:var(--ink-mid);
+    overflow-x:auto; white-space:pre;
+  }
+  .fix{
+    background:var(--accent-soft); padding:11px 14px; margin:11px 0 0;
+    font-size:14.4px; color:var(--ink);
+  }
+  .fix b{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); display:block; margin-bottom:4px; font-weight:600;
+  }
+
+  /* ---------- chart ---------- */
+  figure{margin:30px 0 0; padding:0}
+  .chart{border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:26px 0}
+  .bar-row{display:grid; grid-template-columns:minmax(150px,230px) 1fr 62px; gap:16px; align-items:center; margin-bottom:14px}
+  .bar-row:last-child{margin-bottom:0}
+  .bar-lab{font-size:13.4px; line-height:1.35; color:var(--ink-mid)}
+  .bar-lab b{display:block; color:var(--ink); font-weight:650}
+  .track{background:var(--rule-soft); height:23px; position:relative}
+  .fill{height:100%; background:var(--accent)}
+  .fill.dim{background:var(--ink-soft); opacity:.45}
+  .bar-val{
+    font-family:var(--mono); font-size:14px; font-variant-numeric:tabular-nums;
+    text-align:right; font-weight:600;
+  }
+  figcaption{font-size:13.2px; color:var(--ink-soft); margin-top:16px; max-width:66ch}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto; margin:22px 0 0; border-top:1px solid var(--ink)}
+  table{border-collapse:collapse; width:100%; font-size:14.3px}
+  th{
+    text-align:left; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-soft); font-weight:600;
+    padding:11px 14px 11px 0; border-bottom:1px solid var(--rule); white-space:nowrap;
+  }
+  td{padding:12px 14px 12px 0; border-bottom:1px solid var(--rule-soft); vertical-align:top}
+  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+  tr.hi td{background:var(--accent-soft)}
+  tr.hi td:first-child{font-weight:650}
+
+  ul,ol{margin:0 0 15px; padding-left:22px}
+  li{margin-bottom:7px; color:var(--ink-mid)}
+  li strong{color:var(--ink)}
+
+  .verdict{
+    border:1px solid var(--rule); border-left:3px solid var(--accent);
+    padding:20px 22px; margin:26px 0 0; background:var(--surface);
+  }
+  .verdict h3{margin:0 0 8px}
+  .verdict p:last-child{margin-bottom:0}
+
+  .phase{border-top:1px solid var(--rule); padding:22px 0 4px}
+  .phase-h{display:flex; align-items:baseline; gap:14px; margin-bottom:10px; flex-wrap:wrap}
+  .phase-n{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); font-weight:600;
+  }
+  .phase-t{font-family:var(--serif); font-size:1.28rem; font-weight:600; letter-spacing:-.01em}
+  .phase-cost{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); margin-left:auto}
+
+  @media (max-width:640px){
+    .wrap{padding:0 18px 80px}
+    .find{grid-template-columns:1fr; gap:0}
+    .find-id{padding-top:0; margin-bottom:6px}
+    .bar-row{grid-template-columns:1fr 54px; gap:6px 12px}
+    .bar-lab{grid-column:1/-1}
+    .key{border-right:none; border-bottom:1px solid var(--rule-soft); padding-right:0}
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Auditoria técnica · Revisão de código e metodologia</p>
+  <h1>O modelo é bem melhor do que os números dizem</h1>
+  <p class="standfirst">Uma linha de ordenação ausente faz o IA_VAND ser avaliado por estação em vez de por tempo. Corrigindo só isso, o F1 vai de 0,23 para 0,57 e o PR-AUC quase triplica. Este relatório documenta esse e mais quinze achados, todos medidos sobre a base de 2015 a julho de 2026.</p>
+  <div class="mast-meta">
+    <span>4.680.288 registros</span>
+    <span>100 estações INMET/RS</span>
+    <span>jan/2015 – jul/2026</span>
+    <span>16 achados</span>
+  </div>
+</header>
+
+<div class="keys">
+  <div class="key"><span class="n crit">0,23 → 0,57</span><span class="l">F1 após corrigir a ordenação antes do split temporal</span></div>
+  <div class="key"><span class="n crit">380.688</span><span class="l">linhas de 2019 colapsadas numa estação fantasma</span></div>
+  <div class="key"><span class="n acc">3.990</span><span class="l">episódios extremos reais (não 83 mil, como a métrica sugere)</span></div>
+  <div class="key"><span class="n acc">0,46</span><span class="l">PR-AUC da persistência — a baseline que faltava</span></div>
+</div>
+
+<!-- ================= 1 ================= -->
+<section>
+  <div class="sec-rule">
+    <span class="sec-num">01 — O achado principal</span>
+    <h2>O <code>TimeSeriesSplit</code> não está dividindo por tempo</h2>
+    <p class="lede">O pipeline ordena o DataFrame por <code>['estacao','data_hora']</code> e nunca reordena. Como o <code>TimeSeriesSplit</code> corta pela posição das linhas, ele acaba separando <em>estações</em>, não períodos.</p>
+  </div>
+
+  <div class="col">
+    <p>O efeito é duplo e ambos empurram a métrica para baixo. Primeiro, treino e teste cobrem exatamente o mesmo intervalo — 2015 a 2026 nos dois lados —, então não existe validação temporal alguma. Segundo, e mais importante para o resultado, o teste vira um conjunto de estações que o modelo nunca viu. Como <code>estacao_id</code>, <code>latitude</code> e <code>longitude</code> estão entre as features mais usadas, o modelo aprende a identidade da estação e depois é cobrado justamente onde essa informação não serve para nada.</p>
+    <p>O resultado é uma avaliação <strong>pessimista</strong>, não otimista. O F1 de 0,25 que está no resumo do SIC subestima bastante o que o modelo realmente faz.</p>
+  </div>
+
+  <div class="evid">último fold do TimeSeriesSplit, como está hoje:
+  treino:  2015-01-01 → 2025-12-31   (67 estações)
+  teste:   2015-01-01 → 2025-12-31   ( 5 estações)
+  estações em comum entre treino e teste: 1</div>
+
+  <figure class="chart">
+    <div class="bar-row">
+      <div class="bar-lab"><b>A · Como está hoje</b>ordem por estação; threshold e calibração no teste</div>
+      <div class="track"><div class="fill dim" style="width:34.9%"></div></div>
+      <div class="bar-val">0,209</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lab"><b>B · Threshold honesto</b>ordem por estação; calibração fora do teste</div>
+      <div class="track"><div class="fill dim" style="width:50.9%"></div></div>
+      <div class="bar-val">0,305</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lab"><b>C · Ordem temporal</b>ordenado por tempo; threshold ainda no teste</div>
+      <div class="track"><div class="fill" style="width:93.6%"></div></div>
+      <div class="bar-val">0,560</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lab"><b>D · Temporal + honesto</b>ordenado por tempo; calibração fora do teste</div>
+      <div class="track"><div class="fill" style="width:100%"></div></div>
+      <div class="bar-val">0,598</div>
+    </div>
+    <figcaption>PR-AUC do classificador de evento extremo, mesmas features e mesmos hiperparâmetros nos quatro protocolos. Só muda a forma de separar treino e teste. Medido em 4,68 M de linhas, sem enriquecimento Open-Meteo.</figcaption>
+  </figure>
+
+  <h3>Confirmação com desenho experimental limpo</h3>
+  <p class="col">Repeti o teste com janelas fixas e embargo de 24 h nas fronteiras, threshold escolhido numa janela de validação separada e teste em dados que o modelo nunca viu — set/2025 a jul/2026.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Protocolo</th><th>F1</th><th>Precisão</th><th>Recall</th><th>PR-AUC</th></tr></thead>
+      <tbody>
+        <tr><td>Relatado hoje (report de jun/2026)</td><td class="num">0,238</td><td class="num">0,243</td><td class="num">0,233</td><td class="num">0,192</td></tr>
+        <tr class="hi"><td>Split temporal, por linha horária</td><td class="num">0,512</td><td class="num">0,458</td><td class="num">0,580</td><td class="num">0,610</td></tr>
+        <tr class="hi"><td>Split temporal, por estação-dia</td><td class="num">0,553</td><td class="num">0,594</td><td class="num">0,518</td><td class="num">0,606</td></tr>
+        <tr><td>Baseline: persistência (<code>chuva_24h</code>)</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">0,462</td></tr>
+        <tr><td>Baseline: climatologia</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">0,017</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="lede" style="margin-top:14px">Treino jan/2015–dez/2024 · validação jan–ago/2025 · teste set/2025–jul/2026 · 661.719 linhas de teste, 1,74 % positivas.</p>
+
+  <div class="verdict">
+    <h3>O que isso significa para o resumo do SIC</h3>
+    <p>Dois ajustes de redação se impõem. O primeiro é o número: 0,55 de F1 por estação-dia é uma afirmação bem mais forte e igualmente defensável. O segundo é a comparação. O texto atual diz que o resultado é «significativamente superior ao acaso» — e o acaso, aqui, é 0,017 de PR-AUC, uma régua baixa demais para ter valor argumentativo. A referência honesta é a persistência: prever com base apenas em quanto já choveu nas últimas 24 h rende 0,462. O modelo entrega 0,610, ou seja, <strong>+32 % sobre a baseline que um meteorologista usaria de graça</strong>. É esse o ganho real, e ele sustenta muito melhor a tese do que a comparação com o acaso.</p>
+  </div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section>
+  <div class="sec-rule">
+    <span class="sec-num">02 — Achados</span>
+    <h2>Dezesseis pontos, por severidade</h2>
+    <p class="lede">Cada achado traz o local no código, a evidência medida e a correção. Os quatro primeiros mudam os números; os demais mudam a robustez.</p>
+  </div>
+
+  <div class="ledger">
+
+    <div class="find">
+      <div class="find-id">F-01</div>
+      <div>
+        <div class="find-h"><span class="find-t">Split por estação disfarçado de split temporal</span><span class="chip c-crit">crítico</span></div>
+        <span class="where">processing.py:82 · ingestion.py:177 · model.py:118</span>
+        <p>Detalhado na seção anterior. É o achado de maior impacto e o de correção mais barata.</p>
+        <div class="fix"><b>Correção</b><code>df = df.sort_values('data_hora').reset_index(drop=True)</code> antes de gerar os splits, mais um embargo de 24 h nas fronteiras — sem ele, a janela-alvo das últimas linhas de treino invade o início do teste.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-02</div>
+      <div>
+        <div class="find-h"><span class="find-t">2019 inteiro vira uma estação fantasma</span><span class="chip c-crit">crítico</span></div>
+        <span class="where">ingestion.py:100 · <code>metadata.get('ESTACAO', 'UNKNOWN')</code></span>
+        <p>Os CSVs do INMET têm três grafias de cabeçalho ao longo dos anos. O normalizador cobre duas. A de 2019 traz um <code>?</code> literal no lugar do cedilha, a chave não bate, e o <code>.get</code> com default silencia a falha: as 44 estações do ano viram uma só, chamada <code>UNKNOWN</code>.</p>
+        <div class="evid">2018   ESTA \307 \303 O :   →  "ESTAÇÃO"  → normaliza p/ ESTACAO   ✓
+2019   ESTA C ? O :       →  "ESTAC?O"  → normaliza p/ ESTAC?O   ✗
+2020+  ESTA C A O :       →  "ESTACAO"                            ✓
+
+consequência: 380.688 linhas (100 % de 2019; 7,94 % da base)
+com lags, acumulados e target calculados misturando 44 cidades</div>
+        <p>Isso corrompe o alvo, não só as features: a chuva das «próximas 24 h» de uma linha de Erechim é somada a partir das linhas seguintes, que pertencem a outros municípios. O <code>enrich_openmeteo</code> ainda agrava, buscando ERA5 de um único ponto e aplicando às 44 estações.</p>
+        <div class="fix"><b>Correção</b>Trocar a identidade da estação do nome para o <strong>código WMO do nome do arquivo</strong> (<code>_A829_</code>), que é estável em todos os anos. Resolve F-02 e F-04 de uma vez. E remover o default <code>'UNKNOWN'</code>: metadado ausente deve levantar erro, não virar dado.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-03</div>
+      <div>
+        <div class="find-h"><span class="find-t">Calibração e threshold ajustados no próprio teste</span><span class="chip c-crit">crítico</span></div>
+        <span class="where">model.py:186–190</span>
+        <p>O <code>CalibratedClassifierCV(cv='prefit')</code> é treinado em <code>X_test</code> e avaliado em <code>X_test</code>; o threshold ótimo sai do mesmo conjunto. Brier e PR-AUC reportados são, por construção, otimistas.</p>
+        <p>Medi o efeito e ele é pequeno — F1 0,564 contra 0,571 — porque 780 mil linhas de teste e um grid de 19 thresholds dão pouca margem para overfitar. Mas continua indefensável num trabalho que vai a banca.</p>
+        <div class="fix"><b>Correção</b>Três janelas: treino → validação (calibra e escolhe threshold) → teste (só mede). O <code>find_best_threshold</code> dentro do objetivo do Optuna tem o mesmo problema e infla o F1 que guia a busca.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-04</div>
+      <div>
+        <div class="find-h"><span class="find-t">Estações que trocam de nome viram duas séries</span><span class="chip c-high">alto</span></div>
+        <span class="where">ingestion.py:100</span>
+        <div class="evid">A801  "PORTO ALEGRE"                            → "PORTO ALEGRE - JARDIM BOTANICO"
+A878  "MOSTARDAS"                               → "TAVARES - FAROL DE MOSTARDAS"
+B841  "TORRES"                                  → "TORRES-AEROPORTO"
+A899  "SANTA VITORIA DO PALMAR - BARRA DO CHUI" → mesma grafia em caixa diferente</div>
+        <p>Quatro estações têm a série partida no ano da renomeação. Lags, acumulados e target quebram na fronteira, e a mesma estação física conta como duas no <code>estacao_id</code>.</p>
+        <div class="fix"><b>Correção</b>A mesma de F-02: chavear por código WMO.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-05</div>
+      <div>
+        <div class="find-h"><span class="find-t">As features Open-Meteo significam coisas diferentes no treino e na inferência</span><span class="chip c-high">alto</span></div>
+        <span class="where">predict.py:62–68</span>
+        <p>No treino, <code>cape</code> é o valor ERA5 na hora <em>t</em>. Na inferência, é a <strong>média das próximas 24 h da previsão</strong>. São distribuições diferentes alimentando a mesma coluna — o modelo recebe em produção um sinal que nunca viu no treino. Vale para as cinco variáveis Open-Meteo.</p>
+        <div class="fix"><b>Correção</b>Definir a janela uma vez e usá-la nos dois lados. A opção certa é a da seção 3: adotar a janela futura <em>t+1…t+24</em> em ambos, o que resolve este achado por construção e ainda melhora o modelo.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-06</div>
+      <div>
+        <div class="find-h"><span class="find-t">Metade das colunas do INMET é descartada</span><span class="chip c-high">alto</span></div>
+        <span class="where">processing.py:23–31</span>
+        <p>O <code>clean_data</code> renomeia cinco colunas e joga o resto fora. Entre o resto está o <strong>ponto de orvalho</strong>, disponível em 85,5 % das linhas e um dos melhores preditores de chuva que existe em superfície — mede o conteúdo absoluto de umidade, enquanto a umidade relativa confunde umidade com temperatura.</p>
+        <div class="evid">disponibilidade nas colunas ignoradas:
+  TEMPERATURA DO PONTO DE ORVALHO      85,5 %
+  VENTO, RAJADA MAXIMA                 84,1 %
+  VENTO, DIREÇÃO HORARIA               83,8 %
+  RADIACAO GLOBAL                      19,5 %
+  + pressão, temperatura e umidade máx/mín da hora anterior</div>
+        <p>Detalhe irônico: o projeto gasta requisição na Open-Meteo para buscar <code>wind_gusts_10m</code> tendo rajada medida no próprio INMET, com resolução local de verdade.</p>
+        <div class="fix"><b>Correção</b>Aproveitar ponto de orvalho (e o <em>déficit</em> temperatura − orvalho, que é o sinal de saturação), rajada, direção do vento decomposta em seno/cosseno, e as amplitudes máx−mín como proxy de instabilidade.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-07</div>
+      <div>
+        <div class="find-h"><span class="find-t">Falha de um sensor descarta a linha inteira</span><span class="chip c-high">alto</span></div>
+        <span class="where">processing.py:89–92</span>
+        <p>Os filtros físicos usam <code>between</code> e <code>&gt;=</code>, que retornam <code>False</code> para <code>NaN</code>. Uma linha com precipitação perfeitamente medida é descartada porque o anemômetro falhou.</p>
+        <div class="evid">observações de chuva válidas perdidas por falha em outro sensor: 327.536</div>
+        <div class="fix"><b>Correção</b>Anular a coluna fora de faixa (<code>df.loc[~mask, col] = np.nan</code>) em vez de remover a linha. O LightGBM lida com <code>NaN</code> nativamente.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-08</div>
+      <div>
+        <div class="find-h"><span class="find-t">Interpolação sem limite fabrica dados</span><span class="chip c-med">médio</span></div>
+        <span class="where">processing.py:85–87</span>
+        <p><code>interpolate(limit_direction='both')</code> sem <code>limit</code> preenche linearmente qualquer buraco. O maior gap da base tem <strong>651 dias</strong>. São 44 gaps acima de uma semana.</p>
+        <div class="fix"><b>Correção</b><code>limit=3</code> — três horas é o que se justifica fisicamente. Acima disso, deixar <code>NaN</code>.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-09</div>
+      <div>
+        <div class="find-h"><span class="find-t">Janelas móveis contam linhas, não horas</span><span class="chip c-med">médio</span></div>
+        <span class="where">processing.py:138–188</span>
+        <p>Todos os acumulados e o target usam <code>rolling(window=N)</code> posicional. Atravessando um gap, «as próximas 24 linhas» podem cobrir dois anos. Como a base é densa (o INMET preenche as horas faltantes com <code>-9999</code>), o efeito fica restrito aos 44 gaps grandes — mas esses ficam completamente errados.</p>
+        <div class="fix"><b>Correção</b>Indexar por <code>data_hora</code> e usar janelas temporais: <code>rolling('24h')</code>.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-10</div>
+      <div>
+        <div class="find-h"><span class="find-t">A métrica conta 83 mil amostras onde há 4 mil eventos</span><span class="chip c-high">alto</span></div>
+        <span class="where">model.py:155–170</span>
+        <div class="evid">linhas positivas:                83.037
+episódios extremos distintos:     3.990   (mediana de 19 linhas cada)</div>
+        <p>Como a janela-alvo é deslizante, uma única tempestade gera ~19 linhas positivas quase idênticas. O F1 por linha e o desvio-padrão entre folds tratam isso como 83 mil observações independentes. O tamanho amostral efetivo é vinte vezes menor, e as barras de erro do relatório são otimistas na mesma proporção.</p>
+        <div class="fix"><b>Correção</b>Reportar por <strong>estação-dia</strong> — 3,65 % de eventos em 179.517 pares, que é também a unidade em que um alerta é emitido na prática. Já incluí essa linha na tabela da seção 1.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-11</div>
+      <div>
+        <div class="find-h"><span class="find-t">MAE num alvo com 59 % de zeros</span><span class="chip c-med">médio</span></div>
+        <span class="where">model.py:77 · config.py:134</span>
+        <p>Otimizar MAE empurra a predição para a mediana condicional, que é zero na maioria das linhas. O modelo aprende a acertar a ausência de chuva e a subestimar sistematicamente os volumes altos — justamente os que importam.</p>
+        <div class="fix"><b>Correção</b><code>objective='tweedie'</code> com <code>tweedie_variance_power≈1.5</code>, feito para alvos zero-inflados contínuos. Alternativa: duas etapas, P(chover) × volume dado que choveu. E reportar também o erro condicionado a eventos com chuva.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-12</div>
+      <div>
+        <div class="find-h"><span class="find-t"><code>estacao_id</code> não é reproduzível na inferência</span><span class="chip c-med">médio</span></div>
+        <span class="where">processing.py:120–124</span>
+        <p><code>cat.codes</code> atribui o código pela ordem alfabética do conjunto presente. Adicionar uma estação renumera todas as outras, e o <code>predict()</code> não tem como reconstruir o mapa. Além disso, o código é tratado como ordinal — «estação 40» fica numericamente entre 39 e 41 sem que isso signifique nada.</p>
+        <p>Medi a contribuição: removendo <code>estacao_id</code>, <code>latitude</code> e <code>longitude</code>, o PR-AUC cai de 0,610 para 0,593. Elas quase não ajudam no split temporal — e são exatamente o que destrói o desempenho no split por estação.</p>
+        <div class="fix"><b>Correção</b>Substituir por características climatológicas da estação calculadas <em>só no treino</em>: chuva média mensal, percentil 99 histórico, altitude, distância do litoral. Generalizam para estações novas, o que o <code>estacao_id</code> nunca fará.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-13</div>
+      <div>
+        <div class="find-h"><span class="find-t">Imputação usa estatística do dataset inteiro</span><span class="chip c-med">médio</span></div>
+        <span class="where">processing.py:108–113</span>
+        <p>Os <code>NaN</code> das colunas Open-Meteo são preenchidos com a média por estação-mês calculada sobre treino <em>e</em> teste. Vazamento pequeno, mas gratuito.</p>
+        <div class="fix"><b>Correção</b>Calcular no treino, aplicar no resto. Ou simplesmente deixar <code>NaN</code> — o LightGBM aprende a rota de ausência sozinho, e a imputação é justificada no código por um motivo (não distorcer a importância de features) que não vale o vazamento.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-14</div>
+      <div>
+        <div class="find-h"><span class="find-t">Limiar fixo de 50 mm ignora o regime local</span><span class="chip c-med">médio</span></div>
+        <span class="where">config.py:22</span>
+        <p>50 mm em 24 h no litoral norte e na Campanha são eventos de períodos de retorno muito diferentes. Um limiar absoluto faz o modelo aprender «onde chove muito» em vez de «quando é anômalo».</p>
+        <div class="fix"><b>Correção</b>Manter os 50 mm como alerta operacional — é o número que a Defesa Civil entende — e acrescentar um alvo pelo percentil 99 de cada estação. Treinar nos dois e reportar ambos fortalece o argumento.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-15</div>
+      <div>
+        <div class="find-h"><span class="find-t">Nenhuma informação das estações vizinhas</span><span class="chip c-med">médio</span></div>
+        <span class="where">processing.py (features)</span>
+        <p>Cada estação é tratada como uma ilha. Mas chuva é advectiva: um sistema que atinge Uruguaiana chega a Santa Maria em algumas horas. Com 100 estações mapeadas, essa informação está na base e não é usada.</p>
+        <div class="fix"><b>Correção</b>Para cada estação, as <em>k</em> vizinhas mais próximas (~150 km) e suas features defasadas — chuva acumulada, queda de pressão, orvalho. É barato e usa dado que já está em disco.</div>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="find-id">F-16</div>
+      <div>
+        <div class="find-h"><span class="find-t">Higiene do repositório</span><span class="chip c-med">baixo</span></div>
+        <span class="where">diversos</span>
+        <ul style="margin-top:4px">
+          <li><strong>Sem controle de versão.</strong> O diretório não é um repositório git. Para um trabalho que vai a banca e que já passou por uma correção metodológica, não ter histórico é um risco real.</li>
+          <li><strong>Sem testes.</strong> F-01 e F-02 seriam pegos por duas asserções: «o índice está ordenado no tempo antes do split» e «nenhuma estação se chama UNKNOWN».</li>
+          <li><code>LGBM_REGRESSOR_PARAMS</code> e <code>LGBM_CLASSIFIER_PARAMS</code> (config.py:134–152) são código morto — o Optuna sobrescreve tudo.</li>
+          <li><code>precipitation_probability</code> é buscada na API e nunca entra em <code>FEATURE_COLUMNS</code>.</li>
+          <li><code>analysis.py:71</code> acessa <code>corr['chuva_48h']</code> sem proteção — quebra se a coluna sair.</li>
+          <li><code>enrich_openmeteo</code> varre o DataFrame inteiro uma vez por estação (100 × 4,7 M). Um <code>groupby</code> resolve.</li>
+          <li><code>X.astype(float)</code> materializa ~1,1 GB em float64; <code>float32</code> corta pela metade sem perda para o LightGBM.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section>
+  <div class="sec-rule">
+    <span class="sec-num">03 — A maior alavanca</span>
+    <h2>O modelo não tem nenhuma informação sobre o futuro</h2>
+    <p class="lede">Ele prevê 24 h à frente usando apenas o estado atmosférico no instante <em>t</em>. Nenhum sistema operacional de previsão faz isso — e é por isso que a persistência chega tão perto dele.</p>
+  </div>
+
+  <div class="col">
+    <p>Uma frente fria que chega em dezoito horas é, hoje, invisível para o IA_VAND. Toda a habilidade do modelo vem de inferir a evolução a partir de um retrato instantâneo, e é notável que ele consiga 0,61 de PR-AUC assim. Mas o teto está próximo.</p>
+    <p>A prática consolidada em meteorologia operacional se chama <strong>MOS</strong> — <em>Model Output Statistics</em>: em vez de competir com o modelo numérico de previsão, você o usa como entrada e aprende a corrigir seu viés local a partir das observações de superfície. O IA_VAND já tem as duas metades — observação INMET e acesso a modelo numérico — e só falta conectá-las na janela certa.</p>
+
+    <h3>O endpoint que resolve isso</h3>
+    <p>Testei e está disponível: <code>historical-forecast-api.open-meteo.com</code> serve <strong>previsões arquivadas</strong>, isto é, o que o modelo numérico realmente previu em cada dia do passado. Cobertura desde 2021, cinco anos e meio — inclui maio de 2024.</p>
+  </div>
+
+  <div class="evid">verificado nesta auditoria:
+  archive-api            ERA5 reanálise, 1940→D-5      ✓
+  historical-forecast    previsões arquivadas, 2021→   ✓  ← treino MOS
+  api (forecast)         operacional, até 16 dias      ✓  ← inferência
+  ensemble-api           31 membros GFS                ✓  ← incerteza</div>
+
+  <div class="col">
+    <p>Com isso, cada linha de treino ganha as covariáveis previstas para a janela <em>t+1…t+24</em> — precipitação prevista acumulada, CAPE máximo, índice de levantamento mínimo, água precipitável, advecção em 850 hPa —, exatamente as mesmas que estarão disponíveis na inferência. O treino passa a espelhar a produção em vez de divergir dela, e o F-05 desaparece por construção.</p>
+    <p>Um cuidado importante: treinar com ERA5 sobre a janela futura seria mais fácil e daria números melhores, mas seria uma armadilha. A reanálise é uma análise <em>a posteriori</em>, quase perfeita; a previsão real erra. Um modelo treinado com o futuro perfeito aprende a confiar demais nele e desaba em produção. É o mesmo tipo de erro do F-01, com uma cara mais bonita. Use a previsão arquivada, que é o dado real.</p>
+
+    <h3>O ensemble dá a incerteza de graça</h3>
+    <p>O <code>ensemble-api</code> retorna 31 membros do GFS. A fração de membros que ultrapassa 50 mm em 24 h já é, por si só, uma probabilidade de evento extremo — e a dispersão entre membros informa quando confiar nela. Duas features com poder desproporcional para um problema de cauda como este.</p>
+
+    <h3>Variáveis atmosféricas que faltam</h3>
+    <p>O projeto usa cinco variáveis da Open-Meteo. Confirmei que todas as abaixo estão disponíveis, tanto no arquivo histórico quanto na previsão, e cobrem os mecanismos que o conjunto atual não representa:</p>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Variável</th><th>O que adiciona</th></tr></thead>
+      <tbody>
+        <tr><td class="num">lifted_index</td><td>Instabilidade convectiva — complementa o CAPE e costuma discriminar melhor eventos severos</td></tr>
+        <tr><td class="num">convective_inhibition</td><td>A «tampa» que impede a convecção disparar. CAPE alto com CIN alto não gera tempestade; é o que separa alarme falso de evento</td></tr>
+        <tr><td class="num">total_column_integrated_water_vapour</td><td>Água precipitável — o combustível. Sem isso não há como distinguir uma tempestade seca de uma de 100 mm</td></tr>
+        <tr><td class="num">dew_point_2m</td><td>Umidade absoluta em superfície; ancora a previsão à observação INMET equivalente (F-06)</td></tr>
+        <tr><td class="num">temperature_850hPa · geopotential_height_500hPa</td><td>Estrutura sinótica: passagem de frente, cavado em altitude. É o que faz chover no RS</td></tr>
+        <tr><td class="num">relative_humidity_850hPa · wind_speed_850hPa</td><td>Jato de baixos níveis — o transporte de umidade da Amazônia que alimenta os eventos extremos do Sul</td></tr>
+        <tr><td class="num">boundary_layer_height · vapour_pressure_deficit</td><td>Acoplamento superfície-atmosfera</td></tr>
+        <tr><td class="num">soil_moisture 7–28 cm · 28–100 cm</td><td>Umidade antecedente profunda. Determina se a chuva vira enchente — decisivo em maio de 2024</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h3>Índices de larga escala</h3>
+    <p>A chuva no Rio Grande do Sul é fortemente modulada pelo ENSO — El Niño carrega as primaveras e outonos gaúchos, e 2023–24 foi um evento forte. A NOAA publica os índices ONI e SOI mensais em texto puro, sem cadastro. Duas colunas, atualizadas uma vez por mês, que dão ao modelo o contexto de baixa frequência que ele não tem como inferir de dados horários.</p>
+  </div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section>
+  <div class="sec-rule">
+    <span class="sec-num">04 — Sua pergunta</span>
+    <h2>NASA POWER: funciona, mas não é o que falta</h2>
+    <p class="lede">Testei a API durante a auditoria. É melhor do que a reputação sugere — e ainda assim não é prioridade para o IA_VAND.</p>
+  </div>
+
+  <div class="col">
+    <p>O que encontrei de bom: sem chave, sem cadastro, série horária desde 1981, e latência de apenas 7 dias — bem melhor do que os dois a três meses que se costuma atribuir a ela. A precipitação vem no <code>PRECTOTCORR</code>, corrigida por viés contra observações GPCP, o que é um diferencial real frente a uma reanálise pura. Puxei maio de 2024 em Porto Alegre e a série veio completa e coerente.</p>
+  </div>
+
+  <div class="evid">NASA POWER — verificado em 18/08/2026
+  autenticação      nenhuma                                    ✓
+  série horária     1981 → D-7                                 ✓
+  latência          dados de 11/08/2026 já disponíveis         ✓
+  PRECTOTCORR       corrigido por viés (GPCP)                  ✓
+  grade             MERRA-2, 0,5° × 0,625°  (~55 × 70 km)      ✗
+  previsão          não existe                                 ✗</div>
+
+  <div class="col">
+    <p>Os dois problemas, porém, atingem exatamente o que o projeto precisa.</p>
+    <p><strong>A resolução é grossa demais para o caso de uso.</strong> Uma célula MERRA-2 cobre cerca de 55 por 70 km. O Rio Grande do Sul inteiro cabe em poucas dezenas delas, e várias estações INMET caem na mesma célula. A API interpola, então os valores não saem literalmente idênticos entre estações vizinhas — mas o campo subjacente é o mesmo, e a feature carrega pouca informação local. A Open-Meteo entrega ERA5 a 0,25° e ERA5-Land a 0,1°, entre cinco e vinte e cinco vezes mais fina.</p>
+    <p><strong>E não há previsão.</strong> A POWER é um arquivo histórico. No instante da inferência, que é onde o projeto mais carece de dado, ela não tem nada a oferecer. Compare com o que a seção 3 propõe: previsão arquivada para treinar e previsão operacional para servir. É a diferença entre uma fonte que só olha para trás e uma que olha para frente.</p>
+  </div>
+
+  <div class="verdict">
+    <h3>Veredito</h3>
+    <p><strong>Não investir agora.</strong> Tudo que a POWER oferece já vem da Open-Meteo com resolução melhor, pelo cliente que você já escreveu. O custo de integrar um segundo provedor — mais um cliente, mais um cache, mais uma dependência de disponibilidade — não se paga.</p>
+    <p>Há um nicho legítimo, se você quiser guardá-lo para depois: a radiação solar da POWER vem de observação de satélite (CERES), não de reanálise, e é a especialidade da casa. A coluna de radiação do INMET só tem 19,5 % de cobertura. Se um dia a radiação se mostrar relevante — ela é proxy de aquecimento diurno e de disparo convectivo à tarde —, a POWER é a melhor fonte gratuita. Mas isso é um refinamento de terceira ordem diante de F-01, F-02 e do MOS.</p>
+  </div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section>
+  <div class="sec-rule">
+    <span class="sec-num">05 — Ordem de ataque</span>
+    <h2>Por onde começar</h2>
+    <p class="lede">As fases estão em ordem de retorno por esforço. A primeira muda os números que vão para o SIC e leva uma tarde.</p>
+  </div>
+
+  <div class="phase">
+    <div class="phase-h"><span class="phase-n">Fase 1</span><span class="phase-t">Correções que mudam os números</span><span class="phase-cost">~1 dia</span></div>
+    <div class="col">
+      <p>Ordenar por tempo antes do split e adicionar embargo de 24 h (F-01). Chavear estações pelo código WMO (F-02, F-04). Separar validação de teste para calibração e threshold (F-03). Passar a reportar por estação-dia com a baseline de persistência ao lado (F-10).</p>
+      <p><strong>Retorno esperado:</strong> F1 de 0,24 para ~0,55 e uma metodologia que sustenta arguição. Recuperação de 7,94 % da base hoje corrompida. Nada disso depende de dado novo.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-h"><span class="phase-n">Fase 2</span><span class="phase-t">Dado que já está em disco</span><span class="phase-cost">~2 dias</span></div>
+    <div class="col">
+      <p>Aproveitar as colunas INMET descartadas — ponto de orvalho e o déficit orvalho-temperatura à frente (F-06). Corrigir os filtros para anular coluna em vez de linha (F-07) e limitar a interpolação (F-08). Migrar as janelas para base temporal (F-09). Trocar <code>estacao_id</code> por climatologia da estação (F-12). Acrescentar features de estações vizinhas (F-15).</p>
+      <p><strong>Retorno esperado:</strong> incremento moderado e consistente, sem uma única requisição de rede.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-h"><span class="phase-n">Fase 3</span><span class="phase-t">MOS — dar futuro ao modelo</span><span class="phase-cost">~1 semana</span></div>
+    <div class="col">
+      <p>Ingerir a previsão arquivada de 2021 em diante e treinar com as covariáveis da janela <em>t+1…t+24</em> (seção 3). Ampliar o conjunto de variáveis atmosféricas. Acrescentar a fração de membros do ensemble acima de 50 mm. Alinhar a inferência à mesma janela, o que encerra o F-05.</p>
+      <p><strong>Retorno esperado:</strong> é a mudança estrutural. Sai de «inferir o futuro a partir de um instante» para «corrigir localmente um modelo numérico», que é como a previsão operacional funciona de fato. Custo: o histórico de treino encolhe de 11 anos para 5 e meio — vale a pena, e os anos anteriores continuam servindo para a climatologia por estação.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-h"><span class="phase-n">Fase 4</span><span class="phase-t">Consolidação</span><span class="phase-cost">contínuo</span></div>
+    <div class="col">
+      <p>Objetivo Tweedie na regressão (F-11). Alvo por percentil da estação em paralelo ao limiar absoluto (F-14). Índices ENSO. Colocar o projeto sob git e escrever os dois testes que teriam pego F-01 e F-02 (F-16).</p>
+    </div>
+  </div>
+
+  <div class="verdict" style="margin-top:44px">
+    <h3>Uma observação sobre o resumo do SIC</h3>
+    <p>O texto atual afirma que «a correção de uma limitação metodológica presente em versões anteriores, que produzia resultados artificialmente otimistas, reforça o rigor científico adotado». O F-01 é uma limitação metodológica ainda presente, e desta vez ela empurra o resultado para <em>baixo</em>. Corrigi-la antes da submissão melhora os números <em>e</em> honra literalmente a frase que já está escrita.</p>
+  </div>
+</section>
+
+<p style="margin-top:64px; padding-top:18px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); letter-spacing:.03em">
+  Medições feitas em 18/08/2026 sobre <code>cache/dataset.parquet</code> reconstruído com os dados de 2015 a jul/2026 · 4.680.288 linhas após <code>create_features</code> · classificador LightGBM com hiperparâmetros fixos nos comparativos, para isolar o efeito do protocolo de validação
+</p>
+
+</div>
+
+</body>
+</html>

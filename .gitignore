@@ -1,0 +1,14 @@
+# Dados brutos e derivados — 4,5 GB de CSV do INMET, reconstruíveis do portal
+data/raw/
+data/processed/
+
+# Caches: dataset consolidado e respostas da Open-Meteo (reconstruíveis)
+cache/
+
+# Modelos treinados — binários grandes, saída do pipeline
+models/*.pkl
+
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
