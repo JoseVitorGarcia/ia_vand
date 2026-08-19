@@ -78,7 +78,7 @@ correção é trocar a fonte (caro: rebaixar tudo e retreinar) ou alinhar a jane
     vindas de `historical-forecast-api.open-meteo.com/v1/forecast`.
   - `src.config.OPENMETEO_PREVISAO_CACHE_DIR: Path`.
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 ```python
 """Testes do cliente Open-Meteo — a parte que fala com a API de previsão arquivada."""
@@ -150,7 +150,7 @@ def test_colunas_iguais_as_do_historico(monkeypatch, tmp_path):
     assert set(OPENMETEO_COLUNAS) <= set(df.columns)
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 ```bash
 ./run.sh -m pytest tests/test_openmeteo_client.py -v
@@ -159,7 +159,7 @@ def test_colunas_iguais_as_do_historico(monkeypatch, tmp_path):
 Esperado: FAIL com `AttributeError: module 'src.openmeteo_client' has no
 attribute 'fetch_forecast_arquivado'`.
 
-- [ ] **Step 3: Acrescentar a configuração**
+- [x] **Step 3: Acrescentar a configuração**
 
 Em `src/config.py`, junto das outras chaves `OPENMETEO_`:
 
@@ -170,7 +170,7 @@ OPENMETEO_PREVISAO_CACHE_DIR = OPENMETEO_CACHE_DIR / 'previsao'
 OPENMETEO_PREVISAO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 ```
 
-- [ ] **Step 4: Implementar o cliente**
+- [x] **Step 4: Implementar o cliente**
 
 Em `src/openmeteo_client.py`, ao lado das outras URLs:
 
@@ -233,7 +233,7 @@ def fetch_forecast_arquivado(lat: float, lon: float,
     return resultado[janela].sort_values('data_hora').reset_index(drop=True)
 ```
 
-- [ ] **Step 5: Rodar os testes**
+- [x] **Step 5: Rodar os testes**
 
 ```bash
 ./run.sh -m pytest tests/test_openmeteo_client.py -v
@@ -241,12 +241,61 @@ def fetch_forecast_arquivado(lat: float, lon: float,
 
 Esperado: 3 passando.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/openmeteo_client.py src/config.py tests/test_openmeteo_client.py
 git commit -m "Lê previsões arquivadas da Open-Meteo, não só reanálise"
 ```
+
+#### CORREÇÃO da Task 1 — medida em 19/08/2026, antes de seguir
+
+O plano previa chamar `historical-forecast-api` sem `models`. **Assim ele
+devolve o MESMO ERA5 do archive-api.** Verificado em 1.440 horas (Porto Alegre,
+set–out/2025), sem cache no caminho: as 8 colunas voltam **byte a byte
+idênticas** — r = 1,0000, viés 0,0000, MAE 0,0000, 100% dos valores iguais. A
+causa é o `models=best_match` default resolvendo para reanálise. Sem essa
+correção, as Tasks 2 a 4 rodariam inteiras e mediriam **degradação zero por
+construção** — e o resultado pareceria a boa notícia de que não há descasamento.
+
+Sondagem das alternativas (Porto Alegre, 15 dias, contra o ERA5):
+
+| configuração | é distinta do ERA5? | soil_moisture |
+|---|---|---|
+| default (best_match) | **não** — idêntica | ok |
+| `models=ecmwf_ifs025` | **sim** (r 0,63–0,96) | **ok** |
+| `models=gfs_seamless` | sim | **100% nula** |
+| `models=icon_seamless` | sim | **100% nula** |
+| `*_previous_day1` / `_day3` | sim | **100% nula** (só vento existe) |
+
+**`ecmwf_ifs025` é a única escolha viável**, porque é a única distinta do ERA5
+que ainda tem `soil_moisture` — e `soil_moisture_profundo` é a 3ª feature mais
+usada do modelo. Fixado em `OPENMETEO_PREVISAO_MODELO`.
+
+Divergência das 8 variáveis contra o ERA5 (1.440 h), que é o descasamento que
+esta fase vai propagar até a métrica:
+
+| coluna | r | MAE / desvio do ERA5 |
+|---|---|---|
+| soil_moisture_profundo | 0,936 | **1,57** |
+| soil_moisture | 0,961 | 0,77 |
+| cloud_cover_mid | 0,632 | 0,47 |
+| wind_gusts_10m | 0,881 | 0,43 |
+| wind_speed_100m | 0,877 | 0,37 |
+| cloud_cover_low | 0,791 | 0,31 |
+| cloud_cover_high | 0,843 | 0,27 |
+| wind_direction_100m | 0,787 | 0,24 |
+
+**Segunda correção:** o cache passou a ser chaveado pela **janela**, não pelo
+ano. A janela de previsão é parcial por construção, e um `prev_..._2025.parquet`
+com 3 dias dentro fazia qualquer pedido de 2025 ser servido por esses 3 dias, em
+silêncio — foi como o problema apareceu.
+
+**Limitação que fica registrada:** o `historical-forecast-api` serve a previsão
+válida naquela hora vinda da rodada mais recente, ou seja, lead time curto. As
+variantes `_previous_dayN`, que dariam lead de 1 a 7 dias, não têm as nossas
+variáveis. Então a variante B mede a troca de fonte com lead curto — é um
+**limite inferior** da degradação real, não o número pessimista.
 
 ---
 
