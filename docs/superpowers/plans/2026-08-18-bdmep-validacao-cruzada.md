@@ -95,7 +95,7 @@ Isso importa por dois motivos:
     indexada por `dia`, somando a chuva de 13 UTC do dia anterior a 12 UTC.
   - `reports/validacao_bdmep_<timestamp>.md`.
 
-- [ ] **Step 1: Escrever os testes que falham**
+- [x] **Step 1: Escrever os testes que falham**
 
 ```python
 """Testes da validação cruzada com o BDMEP diário."""
@@ -167,7 +167,7 @@ def test_dia_pluviometrico_vai_de_13utc_a_12utc():
     assert diario[pd.Timestamp('2015-01-03')] == pytest.approx(7.0)
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 ```bash
 ./run.sh -m pytest tests/test_validar_bdmep.py -v
@@ -176,7 +176,7 @@ def test_dia_pluviometrico_vai_de_13utc_a_12utc():
 Esperado: FAIL com `ModuleNotFoundError: No module named 'scripts'`. Corrigir
 criando `scripts/__init__.py` vazio (o `run.sh` já exporta `PYTHONPATH`).
 
-- [ ] **Step 3: Escrever o script**
+- [x] **Step 3: Escrever o script**
 
 ```python
 """Compara a nossa série horária com os totais diários oficiais do BDMEP.
@@ -297,7 +297,7 @@ if __name__ == '__main__':
     logger.info('Relatório salvo em %s', destino)
 ```
 
-- [ ] **Step 4: Rodar os testes e depois o script**
+- [x] **Step 4: Rodar os testes e depois o script**
 
 ```bash
 ./run.sh -m pytest tests/test_validar_bdmep.py -v
@@ -307,7 +307,7 @@ if __name__ == '__main__':
 Esperado nos testes: 4 passando. No script: tabela das piores estações e o
 relatório salvo.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add scripts/validar_com_bdmep.py scripts/__init__.py tests/test_validar_bdmep.py reports/validacao_bdmep_*.md
@@ -326,7 +326,7 @@ consertar, e mexer em `clean_data` sem evidência é como se introduz regressão
 - Modify: `src/processing.py` (só se a evidência exigir)
 - Modify: `tests/test_pipeline.py`
 
-- [ ] **Step 1: Classificar cada estação divergente**
+- [x] **Step 1: Classificar cada estação divergente**
 
 Para cada uma, responder com dados qual é a causa, nesta ordem de probabilidade:
 
@@ -343,12 +343,12 @@ Para cada uma, responder com dados qual é a causa, nesta ordem de probabilidade
    `clean_data` sobre horas repetidas. Diagnóstico: contar duplicatas de
    (estação, hora) no bruto daquelas estações.
 
-- [ ] **Step 2: Escrever um teste de regressão para a causa encontrada**
+- [x] **Step 2: Escrever um teste de regressão para a causa encontrada**
 
 Antes de qualquer correção. O teste tem que falhar com o código atual e passar
 depois — sem isso, não há como saber se a correção corrigiu.
 
-- [ ] **Step 3: Corrigir, rodar a suíte inteira, commitar**
+- [x] **Step 3: Corrigir, rodar a suíte inteira, commitar**
 
 ```bash
 ./run.sh -m pytest tests -v
@@ -365,14 +365,14 @@ precisa ser lido como base nova, não como continuação do A/B das features.
 
 **Files:** memória do projeto.
 
-- [ ] **Step 1: Registrar o veredito**
+- [x] **Step 1: Registrar o veredito**
 
 Em `roadmap_fases.md`: Fase 0.5 concluída com veredito **negativo** (as estações
 novas são novas mesmo), o que confirma a herança de climatologia e encerra a
 dúvida sobre download incompleto. Em `project_ia_vand.md`: o dia pluviométrico
 (12 UTC → 12 UTC, r = 1,0000) e o resultado da auditoria.
 
-- [ ] **Step 2: Decidir o próximo pedido ao BDMEP, se houver**
+- [x] **Step 2: Decidir o próximo pedido ao BDMEP, se houver**
 
 O que os arquivos atuais **não** dão e o que pedir para cada objetivo:
 
@@ -386,8 +386,58 @@ O que os arquivos atuais **não** dão e o que pedir para cada objetivo:
 como plano próprio — não são grade horária. **A prioridade real é a Fase 1**
 (`2026-08-18-mos-medir-degradacao.md`), que é o bloqueio do produto.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add docs/ && git commit -m "Fecha a Fase 0.5 com o veredito da validação"
 ```
+
+---
+
+## RESULTADO — fase concluída em 19/08/2026
+
+Relatório: `reports/validacao_bdmep_2026_08_19_09_39.md`. Commit `8a7a06e`.
+
+**Veredito: a limpeza está correta.** Das 97 estações do BDMEP, 74 têm dias
+suficientes para comparar, e **todas as 74 batem com o total diário oficial com
+r > 0,999**. Viés global de **+0,0116 mm/dia** — a nossa soma horária reproduz o
+pluviômetro do INMET. A pior correlação é 0,9954 (B825).
+
+As 23 fora da comparação são estações novas com menos de 100 dias completos; 5
+delas (B845, B848, B849, B856, B857) têm **zero** — o arquivo do BDMEP é todo
+`null` e uma delas está marcada `Situacao: Pane`. É ausência de dado deles, não
+nossa.
+
+### A Task 2 foi executada, e o defeito estava na régua
+
+A primeira passada acusou B819 (Rolante) com **r = 0,890**, abaixo do corte de
+0,95. O diagnóstico (categoria 1 do Step 1 — buracos na nossa série) encontrou 3
+dias — 28, 29 e 30/07/2026 — em que **as 24 linhas horárias existem e a
+precipitação é NaN em todas**, contra 61,4 e 41,9 mm no BDMEP. Sensor horário
+fora do ar com o total diário ainda publicado.
+
+Só que isso expôs um defeito no próprio script: `groupby.sum()` devolve **0.0**
+para um dia inteiro de NaN. Um dia sem medição nenhuma entrava na comparação
+como "choveu 0 mm" e **concordava com o BDMEP toda vez que ele também marcasse
+zero** — inflando o `iguais_%` das 74 estações, não só o de B819.
+
+Correção, com teste de regressão antes (`test_dia_sem_hora_valida_vira_nan_e_nao_zero`
+e `test_min_horas_exclui_dia_com_cobertura_parcial`):
+`agregar_dia_pluviometrico` ganhou `min_horas`, e a auditoria compara só dias
+com as 24 horas válidas. Com a régua certa **B819 vai a r = 0,99993** e nenhuma
+estação fica abaixo de 0,995.
+
+**Nada foi alterado em `src/`.** A comparação com
+`reports/report_2026_08_18_20_07.md` continua válida — o próximo treino é
+continuação do A/B, não base nova.
+
+### O que isso permite afirmar
+
+- O descarte das 979.722 linhas (21%) **não come chuva** — agora verificado nas
+  74 estações, não só em A801. Um dia sem medição válida é descartado no treino
+  (`min_periods=24` em `chuva_futura_24h` + `precipitacao` em `obrigatorias`),
+  em vez de virar zero falso. O descarte está protegendo o alvo.
+- O dia pluviométrico 12 UTC → 12 UTC está confirmado em escala de rede.
+- Cobertura mediana de **100%**; a pior é B815 com 52%, e mesmo assim r = 0,9992.
+  Cobertura baixa limita quantos dias da estação chegam ao treino, mas não
+  distorce os que chegam.
