@@ -66,6 +66,27 @@ def _pr(y, score):
     return float(average_precision_score(np.asarray(y), np.asarray(score)))
 
 
+def _bootstrap_diferenca(y, base, alternativa, n=2000, semente=42):
+    """IC 95% da diferença de PR-AUC, pareado nas mesmas unidades.
+
+    Pareado importa: base e alternativa são pontuadas nas MESMAS estação-dias, e
+    reamostrar as unidades preserva esse pareamento. Comparar dois números soltos
+    não distingue ganho real de variação amostral, e a dívida de variância entre
+    folds deste projeto (±38%) mostra que aqui isso não é preciosismo.
+    """
+    rng = np.random.default_rng(semente)
+    y, base, alternativa = map(np.asarray, (y, base, alternativa))
+    diferencas = np.empty(n)
+    for i in range(n):
+        idx = rng.integers(0, len(y), len(y))
+        if y[idx].sum() == 0:
+            diferencas[i] = np.nan
+            continue
+        diferencas[i] = (average_precision_score(y[idx], alternativa[idx])
+                         - average_precision_score(y[idx], base[idx]))
+    return np.nanpercentile(diferencas, [2.5, 97.5]), np.nanmean(diferencas)
+
+
 def _avaliar(nome, tes, score, dentro=None):
     y = tes['evento_extremo'].to_numpy()
     ag = _agregar_estacao_dia(tes, np.asarray(score), y)
@@ -111,6 +132,7 @@ if __name__ == '__main__':
 
     y_val = val['evento_extremo'].to_numpy()
     emissao_val = (val['data_hora'].dt.hour == HORA_EMISSAO).to_numpy()
+    scores_teste = {}
 
     def dentro_da_amostra(score_val):
         return _pr(y_val[emissao_val], np.asarray(score_val)[emissao_val])
@@ -126,13 +148,18 @@ if __name__ == '__main__':
         if not extras:
             continue
         colunas = ['ifs_log'] + extras
+        # SEM class_weight: logística não ponderada é regra de pontuação própria,
+        # então o ajuste ótimo dá a ordenação ótima — que é o que PR-AUC mede.
+        # Com `balanced` (peso ~80:1 a 1,2% de positivos) a perda otimizada deixa
+        # de alinhar com a métrica, e variantes chegaram a piorar DENTRO da
+        # amostra, o que denunciou o descasamento.
         modelo = make_pipeline(StandardScaler(),
-                               LogisticRegression(max_iter=2000, C=1.0,
-                                                  class_weight='balanced'))
+                               LogisticRegression(max_iter=2000, C=1.0))
         modelo.fit(val[colunas], y_val)
         score = modelo.predict_proba(tes[colunas])[:, 1]
         r = _avaliar(nome, tes, score,
                      dentro_da_amostra(modelo.predict_proba(val[colunas])[:, 1]))
+        scores_teste[nome] = score
         resultados.append(r)
         coeficientes[nome] = dict(zip(colunas,
                                       modelo[-1].coef_[0].round(4).tolist()))
@@ -144,15 +171,33 @@ if __name__ == '__main__':
         colunas = ['ifs_log', 'p_modelo'] + LOCAIS
         arvore = LGBMClassifier(n_estimators=200, learning_rate=0.05, num_leaves=15,
                                 min_child_samples=200, reg_lambda=10.0,
-                                class_weight='balanced', verbose=-1, random_state=42)
+                                verbose=-1, random_state=42)
         arvore.fit(val[colunas], y_val)
-        r = _avaliar('V5 árvore (com interação)', tes,
-                     arvore.predict_proba(tes[colunas])[:, 1],
+        score = arvore.predict_proba(tes[colunas])[:, 1]
+        r = _avaliar('V5 árvore (com interação)', tes, score,
                      dentro_da_amostra(arvore.predict_proba(val[colunas])[:, 1]))
+        scores_teste['V5 árvore (com interação)'] = score
         resultados.append(r)
         logger.info('%-28s validação %.4f | TESTE estação-dia %.4f | operacional %.4f',
                     'V5 árvore', r['pr_auc_validacao'], r['pr_auc_estacao_dia'],
                     r['pr_auc_operacional'])
+
+    logger.info('=== IC 95%% da diferença contra o IFS sozinho (bootstrap pareado) ===')
+    y_tes = tes['evento_extremo'].to_numpy()
+    emissao_t = (tes['data_hora'].dt.hour == HORA_EMISSAO).to_numpy()
+    ag_base = _agregar_estacao_dia(tes, tes['ifs_chuva_24h'].to_numpy(), y_tes)
+    intervalos = {}
+    for nome, score in scores_teste.items():
+        ag = _agregar_estacao_dia(tes, score, y_tes)
+        ic_dia, media_dia = _bootstrap_diferenca(ag_base['y'], ag_base['p'], ag['p'])
+        ic_op, media_op = _bootstrap_diferenca(
+            y_tes[emissao_t], tes['ifs_chuva_24h'].to_numpy()[emissao_t], score[emissao_t])
+        intervalos[nome] = {'dia': (media_dia, ic_dia), 'op': (media_op, ic_op)}
+        sig_dia = 'SIM' if ic_dia[0] > 0 else ('não' if ic_dia[1] > 0 else 'PIOR')
+        sig_op = 'SIM' if ic_op[0] > 0 else ('não' if ic_op[1] > 0 else 'PIOR')
+        logger.info('%-28s dia %+.4f [%+.4f, %+.4f] %-4s | op %+.4f [%+.4f, %+.4f] %s',
+                    nome, media_dia, ic_dia[0], ic_dia[1], sig_dia,
+                    media_op, ic_op[0], ic_op[1], sig_op)
 
     base = resultados[0]['pr_auc_operacional']
     for r in resultados:
@@ -185,6 +230,15 @@ if __name__ == '__main__':
                   f"{r['pr_auc_estacao_dia']:.4f} | "
                   f"{r['pr_auc_operacional']:.4f} | {r['ganho_sobre_ifs']:+.1f}% |"
                   for r in resultados) +
+        "\n\n## Intervalo de confiança de 95% da diferença contra o IFS\n\n"
+        "Bootstrap pareado, 2000 reamostragens das mesmas unidades. Um intervalo "
+        "que não cruza zero é ganho distinguível de variação amostral.\n\n"
+        "| variante | Δ estação-dia | IC 95% | Δ operacional | IC 95% |\n"
+        "|---|---|---|---|---|\n" +
+        "\n".join(
+            f"| {n} | {v['dia'][0]:+.4f} | [{v['dia'][1][0]:+.4f}, {v['dia'][1][1]:+.4f}] | "
+            f"{v['op'][0]:+.4f} | [{v['op'][1][0]:+.4f}, {v['op'][1][1]:+.4f}] |"
+            for n, v in intervalos.items()) +
         "\n\n## Coeficientes (features padronizadas)\n\n"
         "Magnitude comparável entre si. Peso próximo de zero numa entrada "
         "significa que ela não acrescenta sobre as demais.\n\n```\n" +
