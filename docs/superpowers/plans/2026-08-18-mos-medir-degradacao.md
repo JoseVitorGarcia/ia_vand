@@ -310,7 +310,7 @@ variáveis. Então a variante B mede a troca de fonte com lead curto — é um
   `2026-07-30` (a janela de teste, definida por `VALID_END` + embargo em
   `src/config.py`) para todas as estações.
 
-- [ ] **Step 1: Escrever o preenchedor**
+- [x] **Step 1: Escrever o preenchedor**
 
 ```python
 """Enche o cache de previsão arquivada da janela de teste.
@@ -396,7 +396,7 @@ if faltando:
 logger.info('CACHE DE PREVISÃO COMPLETO')
 ```
 
-- [ ] **Step 2: Rodar até completar**
+- [x] **Step 2: Rodar até completar**
 
 ```bash
 ./run.sh scripts/preencher_cache_previsao.py 10 60
@@ -406,7 +406,7 @@ Esperado: `CACHE DE PREVISÃO COMPLETO`. Se sair com código 1 listando estaçõ
 repetir mais tarde — é cota, e ela reseta (comprovado em 18/08/2026: as mesmas 4
 estações que falhavam às 17:18 baixaram inteiras às 18:54).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add scripts/preencher_cache_previsao.py
@@ -438,7 +438,7 @@ A tem que reproduzir o relatório de 20:07 dentro de 0,001. **Se não reproduzir
 harness está errado e as outras três não significam nada** — pare e conserte
 antes de interpretar qualquer coisa.
 
-- [ ] **Step 1: Escrever o medidor**
+- [x] **Step 1: Escrever o medidor**
 
 ```python
 """Mede quanto do desempenho sobrevive quando as features vêm de previsão.
@@ -570,7 +570,7 @@ destino.write_text(
 logger.info('Relatório salvo em %s', destino)
 ```
 
-- [ ] **Step 2: Rodar**
+- [x] **Step 2: Rodar**
 
 ```bash
 MEM_MAX=11G ./run.sh scripts/medir_degradacao_mos.py
@@ -578,14 +578,14 @@ MEM_MAX=11G ./run.sh scripts/medir_degradacao_mos.py
 
 Esperado: quatro linhas de métrica e o relatório salvo. ~15 min.
 
-- [ ] **Step 3: Conferir a variante A antes de olhar as outras**
+- [x] **Step 3: Conferir a variante A antes de olhar as outras**
 
 A tem que dar `F1 0.3274 | P 0.2970 | R 0.3648 | PR-AUC 0.2426`. Divergência
 acima de 0,001 significa que o harness não reproduz o pipeline — causas prováveis,
 em ordem: `astype('float32')` esquecido, threshold vindo de outro lugar, janela
 de teste diferente (conferir `separar_janelas` e o embargo).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add scripts/medir_degradacao_mos.py reports/degradacao_mos_*.md
@@ -599,7 +599,7 @@ git commit -m "Mede quanto do desempenho sobrevive com previsão em vez de ERA5"
 **Files:** nenhum de código. Atualiza `reports/degradacao_mos_<data>.md` com a
 leitura e a memória do projeto.
 
-- [ ] **Step 1: Ler as quatro linhas na ordem certa**
+- [x] **Step 1: Ler as quatro linhas na ordem certa**
 
 - **D é o número honesto.** É ele, não 0,3274, que pode ser prometido a alguém.
 - **B − A** isola o custo de trocar reanálise por previsão.
@@ -615,13 +615,13 @@ leitura e a memória do projeto.
   insistir — mas nesse caso releia se `_trocar_por_previsao` não está devolvendo
   NaN em massa (checar `df[OPENMETEO_COLUNAS].isna().mean()` antes de concluir).
 
-- [ ] **Step 2: Registrar na memória**
+- [x] **Step 2: Registrar na memória**
 
 Atualizar `roadmap_fases.md`: Fase 1 deixa de ser "bloqueio de número
 desconhecido" e passa a ter um número. Atualizar `project_ia_vand.md` com as
 quatro variantes e a decisão tomada.
 
-- [ ] **Step 3: Atualizar o aviso de predict.py**
+- [x] **Step 3: Atualizar o aviso de predict.py**
 
 O docstring no topo cita "fase 3 (MOS)" — a numeração mudou para Fase 1. Corrigir
 e acrescentar o número medido, para que quem ler o módulo saiba o tamanho real do
@@ -722,7 +722,7 @@ crontab -l 2>/dev/null | { cat; echo "0 9 * * * cd $PWD && ./run.sh scripts/colh
 Confirmar com `crontab -l`. Trinta dias de colheita já dão uma janela pequena mas
 real para medir o desempenho com antecedência verdadeira.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add scripts/colher_previsao_diaria.py
@@ -751,3 +751,69 @@ contra persistência, navegar os eventos de 2024) pode ser feito a qualquer
 momento e é honesto porque não promete previsão operacional. O preditivo depende
 do número da Fase 1 — construir interface antes é apoiar a aplicação num
 resultado que não se sustenta fora do laboratório.
+
+
+---
+
+## RESULTADO das Tasks 1-4 — 19/08/2026
+
+Relatório: `reports/degradacao_mos_2026_08_19_10_50.md`. Commits `6f87d18`,
+`d083b22`, `4a2718b`, `142aa0f`.
+
+**O gate passou:** a variante A reproduziu a referência exatamente
+(F1 0,3274 | P 0,2970 | R 0,3648 | PR-AUC 0,2426).
+
+### O número que a fase existia para produzir
+
+Enquadramento operacional — um alerta por estação-dia, emitido às 12 UTC, que é
+o início do dia pluviométrico do INMET:
+
+| variante | PR-AUC | persistência | ganho |
+|---|---|---|---|
+| A ERA5, valor em `t` | 0,0787 | 0,0228 | +245% |
+| B previsão, valor em `t` | 0,0825 | 0,0228 | +261% |
+| C ERA5, média `t+1..t+24` | 0,1131 | 0,0228 | +396% |
+| **D previsão, média `t+1..t+24`** | **0,1085** | 0,0228 | **+375%** |
+
+**D é 38% melhor que A.** A hipótese que motivou a fase — de que o desempenho
+medido com reanálise seria um teto otimista — está refutada nesta janela.
+Alinhar a janela é o efeito dominante (C−A = +44%); trocar a fonte custa quase
+nada (B fica acima de A).
+
+### Três defeitos do plano, corrigidos por medição
+
+1. **`historical-forecast-api` sem `models` devolve ERA5.** Byte a byte, em
+   1.440 horas. As quatro variantes teriam rodado e dado degradação zero.
+   Corrigido com `ecmwf_ifs025` — a única opção distinta do ERA5 que ainda tem
+   `soil_moisture`.
+2. **A média `t+1..t+24` não pode ser aplicada a `OPENMETEO_COLUNAS`**, que
+   inclui `wind_direction_100m`: média de direção em graus é a descontinuidade
+   0°/360°. Movida para depois de `create_features`, sobre as 9 features finais.
+3. **O ganho sobre a persistência estava em unidades trocadas** (PR-AUC por
+   estação-dia sobre persistência por linha horária → "+829%"). Corrigido, e a
+   correção revelou o item abaixo.
+
+### Descoberta lateral: a agregação por max invalida a régua
+
+| unidade | modelo | persistência | ganho |
+|---|---|---|---|
+| linha horária | 0,0744 | 0,0261 | +185% |
+| estação-dia, max do dia | 0,2426 | 0,2900 | **−16%** |
+| operacional 12 UTC | 0,0787 | 0,0228 | +245% |
+| operacional 00 UTC | 0,0807 | 0,0387 | +109% |
+
+O max de `chuva_24h` do dia cai na hora 0 em 11.281 dos 17.311 dias-estação e na
+hora 23 em outros 1.016 — e a janela de 24 h passada nessas horas sobrepõe a
+chuva do próprio dia que o alvo tenta prever. A persistência vira diagnóstico.
+**O F1 de 0,327 continua válido como descrição do modelo; o que não vale é
+comparar com a persistência naquela unidade.**
+
+### O que falta
+
+1. **Recalibrar o threshold** na validação com a construção de D. O corte de
+   0,26 não transfere — recall por estação-dia cai de 0,36 para 0,10. Precisa da
+   previsão de jan–ago/2025 (~7 min de download).
+2. **Religar o enriquecimento em `predict.py`** por padrão, depois de (1).
+3. **Task 5** — colheita diária de previsões reais. Continua necessária: o
+   arquivo devolve, para cada hora, a rodada mais recente antes dela, não a
+   rodada disponível no momento da decisão. D é limite inferior.
