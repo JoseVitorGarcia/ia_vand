@@ -10,6 +10,7 @@ Cache:
   - Forecast:  por (lat, lon) em parquet — TTL configurável
 """
 
+import hashlib
 import logging
 import time
 from datetime import datetime
@@ -52,8 +53,18 @@ def _forecast_cache_path(lat: float, lon: float) -> Path:
     return OPENMETEO_CACHE_DIR / f"forecast_{_cache_key(lat, lon)}.parquet"
 
 
+def _tag_variaveis(variaveis) -> str:
+    """Etiqueta curta e estável do conjunto de variáveis, para a chave do cache.
+
+    Sem ela, o cache das 8 variáveis atmosféricas seria escolhido para um pedido
+    de precipitação; `_cache_utilizavel` recusaria o arquivo em silêncio e o
+    rebaixe aconteceria de novo a cada chamada.
+    """
+    return hashlib.sha1(','.join(sorted(variaveis)).encode()).hexdigest()[:8]
+
+
 def _previsao_cache_path(lat: float, lon: float,
-                         start_date: str, end_date: str) -> Path:
+                         start_date: str, end_date: str, variaveis=None) -> Path:
     """Chaveado pela janela pedida, não pelo ano.
 
     O cache do histórico é por ano porque `_baixar_intervalo` sempre grava anos
@@ -62,8 +73,9 @@ def _previsao_cache_path(lat: float, lon: float,
     3 dias dentro fazia qualquer pedido de 2025 ser servido por esses 3 dias,
     em silêncio.
     """
+    sufixo = '' if variaveis is None else '_' + _tag_variaveis(variaveis)
     return (OPENMETEO_PREVISAO_CACHE_DIR /
-            f"prev_{_cache_key(lat, lon)}_{start_date}_{end_date}.parquet")
+            f"prev_{_cache_key(lat, lon)}_{start_date}_{end_date}{sufixo}.parquet")
 
 
 def _cache_is_fresh(path: Path, ttl_hours: float) -> bool:
@@ -106,7 +118,7 @@ def _parse_response(data: dict, variables: list) -> pd.DataFrame:
     return df.rename(columns=OPENMETEO_RENAME)
 
 
-def _cache_utilizavel(cache) -> bool:
+def _cache_utilizavel(cache, variaveis=None) -> bool:
     """True se o arquivo existe, é legível e tem todas as variáveis pedidas."""
     if not cache.exists():
         return False
@@ -115,7 +127,8 @@ def _cache_utilizavel(cache) -> bool:
     except Exception:
         return False
     return all(
-        OPENMETEO_RENAME.get(v, v) in colunas for v in OPENMETEO_HISTORICAL_VARS
+        OPENMETEO_RENAME.get(v, v) in colunas
+        for v in (variaveis or OPENMETEO_HISTORICAL_VARS)
     )
 
 
@@ -229,8 +242,8 @@ def fetch_forecast(lat: float, lon: float) -> pd.DataFrame:
     return df
 
 
-def fetch_forecast_arquivado(lat: float, lon: float,
-                             start_date: str, end_date: str) -> pd.DataFrame:
+def fetch_forecast_arquivado(lat: float, lon: float, start_date: str,
+                             end_date: str, variaveis=None) -> pd.DataFrame:
     """Previsões como foram emitidas no passado, não reanálise.
 
     Mesma assinatura e mesmas colunas de fetch_historical, de propósito: as duas
@@ -243,8 +256,9 @@ def fetch_forecast_arquivado(lat: float, lon: float,
 
     O `models=OPENMETEO_PREVISAO_MODELO` não é opcional; ver a nota no config.
     """
-    caminho = _previsao_cache_path(lat, lon, start_date, end_date)
-    if _cache_utilizavel(caminho):
+    pedidas = list(variaveis) if variaveis else OPENMETEO_HISTORICAL_VARS
+    caminho = _previsao_cache_path(lat, lon, start_date, end_date, variaveis)
+    if _cache_utilizavel(caminho, pedidas):
         return pd.read_parquet(caminho)
 
     logger.info("Open-Meteo previsão arquivada %s..%s (%.3f, %.3f)",
@@ -252,12 +266,12 @@ def fetch_forecast_arquivado(lat: float, lon: float,
     dados = _request(_PREVISAO_ARQUIVADA_URL, {
         'latitude': lat, 'longitude': lon,
         'start_date': start_date, 'end_date': end_date,
-        'hourly': ','.join(OPENMETEO_HISTORICAL_VARS),
+        'hourly': ','.join(pedidas),
         'models': OPENMETEO_PREVISAO_MODELO,
         'timezone': 'UTC',
     }, timeout=OPENMETEO_TIMEOUT_INTERVALO)
 
-    df = _parse_response(dados, OPENMETEO_HISTORICAL_VARS)
+    df = _parse_response(dados, pedidas)
     if df.empty:
         return df
 

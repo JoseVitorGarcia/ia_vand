@@ -107,3 +107,56 @@ def test_cache_de_janela_parcial_nao_serve_janela_maior(monkeypatch, tmp_path):
 
     assert chamadas == ['2025-09-02', '2025-09-30'], \
         'a janela maior foi servida pelo cache da menor'
+
+
+RESPOSTA_CHUVA = {
+    'hourly': {
+        'time': ['2025-09-02T00:00', '2025-09-02T01:00', '2025-09-02T02:00'],
+        'precipitation': [0.0, 1.2, 3.4],
+        'precipitation_probability': [10, 55, 80],
+    }
+}
+
+
+def test_aceita_conjunto_de_variaveis_proprio(monkeypatch, tmp_path):
+    """A régua do IFS precisa de `precipitation`, que não está em
+    OPENMETEO_HISTORICAL_VARS — aquelas 8 são de propósito as que o INMET não
+    fornece."""
+    monkeypatch.setattr(oc, 'OPENMETEO_PREVISAO_CACHE_DIR', tmp_path)
+    capturado = {}
+
+    def falso_request(url, params, **kwargs):
+        capturado.update(params)
+        return RESPOSTA_CHUVA
+
+    monkeypatch.setattr(oc, '_request', falso_request)
+    df = oc.fetch_forecast_arquivado(-30.05, -51.17, '2025-09-02', '2025-09-02',
+                                     variaveis=['precipitation',
+                                                'precipitation_probability'])
+
+    assert capturado['hourly'] == 'precipitation,precipitation_probability'
+    assert list(df.columns) == ['data_hora', 'precipitation', 'precipitation_probability']
+    assert df['precipitation'].tolist() == [0.0, 1.2, 3.4]
+
+
+def test_cache_nao_mistura_conjuntos_de_variaveis(monkeypatch, tmp_path):
+    """Sem o conjunto na chave, o cache das 8 variáveis atmosféricas seria
+    servido para um pedido de precipitação — e `_cache_utilizavel` recusaria o
+    arquivo em silêncio a cada chamada, rebaixando tudo de novo toda vez."""
+    monkeypatch.setattr(oc, 'OPENMETEO_PREVISAO_CACHE_DIR', tmp_path)
+
+    monkeypatch.setattr(oc, '_request', lambda url, params, **k: RESPOSTA)
+    oc.fetch_forecast_arquivado(-30.05, -51.17, '2025-09-02', '2025-09-02')
+
+    chamadas = []
+
+    def falso_request(url, params, **kwargs):
+        chamadas.append(params['hourly'])
+        return RESPOSTA_CHUVA
+
+    monkeypatch.setattr(oc, '_request', falso_request)
+    df = oc.fetch_forecast_arquivado(-30.05, -51.17, '2025-09-02', '2025-09-02',
+                                     variaveis=['precipitation'])
+
+    assert len(chamadas) == 1, 'o cache das 8 variáveis foi servido para a chuva'
+    assert 'precipitation' in df.columns
