@@ -69,6 +69,22 @@ VIZINHOS_RAIO_KM = 150
 OPENMETEO_CACHE_DIR = CACHE_DIR / 'openmeteo'
 OPENMETEO_CACHE_DIR.mkdir(exist_ok=True)
 
+# Previsões arquivadas — o que o modelo de previsão dizia no passado, sem a
+# assimilação retroativa que o ERA5 tem. É a fonte que a inferência real terá,
+# e por isso a única com que dá para medir o desempenho fora do laboratório.
+OPENMETEO_PREVISAO_CACHE_DIR = OPENMETEO_CACHE_DIR / 'previsao'
+OPENMETEO_PREVISAO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+# O `models` é obrigatório e não é detalhe: sem ele a Open-Meteo resolve
+# best_match e o historical-forecast-api devolve o MESMO ERA5 do archive-api —
+# medido em 1.440 horas, as 8 colunas voltam byte a byte idênticas, e a medição
+# de degradação daria zero por construção.
+# ecmwf_ifs025 é a única escolha que serve: gfs_seamless e icon_seamless são de
+# fato distintos do ERA5, mas devolvem `soil_moisture` 100% nula — e
+# soil_moisture_profundo é a 3ª feature mais usada do modelo. As variantes
+# `_previous_dayN` (lead time maior) só têm vento.
+OPENMETEO_PREVISAO_MODELO = 'ecmwf_ifs025'
+
 # TTL em horas para o cache da previsão (forecast)
 OPENMETEO_FORECAST_TTL_HOURS = 1
 

@@ -20,6 +20,8 @@ import requests
 
 from src.config import (
     OPENMETEO_CACHE_DIR,
+    OPENMETEO_PREVISAO_CACHE_DIR,
+    OPENMETEO_PREVISAO_MODELO,
     OPENMETEO_RENAME,
     OPENMETEO_FORECAST_TTL_HOURS,
     OPENMETEO_HISTORICAL_VARS,
@@ -32,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 _HISTORICAL_URL = "https://archive-api.open-meteo.com/v1/archive"
 _FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+_PREVISAO_ARQUIVADA_URL = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 
 
 
@@ -47,6 +50,20 @@ def _hist_cache_path(lat: float, lon: float, year: int) -> Path:
 
 def _forecast_cache_path(lat: float, lon: float) -> Path:
     return OPENMETEO_CACHE_DIR / f"forecast_{_cache_key(lat, lon)}.parquet"
+
+
+def _previsao_cache_path(lat: float, lon: float,
+                         start_date: str, end_date: str) -> Path:
+    """Chaveado pela janela pedida, não pelo ano.
+
+    O cache do histórico é por ano porque `_baixar_intervalo` sempre grava anos
+    inteiros. Aqui não: a janela de previsão é parcial por construção (começa no
+    fim do embargo e termina no fim da série), e um arquivo `_2025.parquet` com
+    3 dias dentro fazia qualquer pedido de 2025 ser servido por esses 3 dias,
+    em silêncio.
+    """
+    return (OPENMETEO_PREVISAO_CACHE_DIR /
+            f"prev_{_cache_key(lat, lon)}_{start_date}_{end_date}.parquet")
 
 
 def _cache_is_fresh(path: Path, ttl_hours: float) -> bool:
@@ -209,4 +226,42 @@ def fetch_forecast(lat: float, lon: float) -> pd.DataFrame:
     data = _request(_FORECAST_URL, params)
     df = _parse_response(data, OPENMETEO_FORECAST_VARS)
     df.to_parquet(cache, index=False)
+    return df
+
+
+def fetch_forecast_arquivado(lat: float, lon: float,
+                             start_date: str, end_date: str) -> pd.DataFrame:
+    """Previsões como foram emitidas no passado, não reanálise.
+
+    Mesma assinatura e mesmas colunas de fetch_historical, de propósito: as duas
+    precisam ser intercambiáveis para que a medição de degradação troque só a
+    origem do dado, mantendo todo o resto igual.
+
+    Cobertura: o arquivo de previsões da Open-Meteo começa em 2021 — bem depois
+    do início da nossa série (2015). Por isso este cliente serve para MEDIR na
+    janela de teste, não para retreinar a base inteira.
+
+    O `models=OPENMETEO_PREVISAO_MODELO` não é opcional; ver a nota no config.
+    """
+    caminho = _previsao_cache_path(lat, lon, start_date, end_date)
+    if _cache_utilizavel(caminho):
+        return pd.read_parquet(caminho)
+
+    logger.info("Open-Meteo previsão arquivada %s..%s (%.3f, %.3f)",
+                start_date, end_date, lat, lon)
+    dados = _request(_PREVISAO_ARQUIVADA_URL, {
+        'latitude': lat, 'longitude': lon,
+        'start_date': start_date, 'end_date': end_date,
+        'hourly': ','.join(OPENMETEO_HISTORICAL_VARS),
+        'models': OPENMETEO_PREVISAO_MODELO,
+        'timezone': 'UTC',
+    }, timeout=OPENMETEO_TIMEOUT_INTERVALO)
+
+    df = _parse_response(dados, OPENMETEO_HISTORICAL_VARS)
+    if df.empty:
+        return df
+
+    df = df.sort_values('data_hora').reset_index(drop=True)
+    df.to_parquet(caminho, index=False)
+    time.sleep(OPENMETEO_REQUEST_DELAY)
     return df
