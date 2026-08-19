@@ -822,3 +822,28 @@ comparar com a persistência naquela unidade.**
 3. **Task 5** — colheita diária de previsões reais. Continua necessária: o
    arquivo devolve, para cada hora, a rodada mais recente antes dela, não a
    rodada disponível no momento da decisão. D é limite inferior.
+
+
+---
+
+## RESSALVA POSTERIOR — 19/08/2026, 13:17
+
+Este plano mede tudo contra a **persistência**, e conclui com ganhos de +375% a
++396%. Uma medição feita depois de fechá-lo mostra que a régua estava fraca
+demais para sustentar essas conclusões como valor do projeto.
+
+A soma da chuva que o próprio ECMWF prevê para as próximas 24 h — gratuita, sem
+treinar nada — tem **PR-AUC operacional de 0,3957 contra 0,1085 do nosso modelo**.
+A persistência marca 0,0228 no mesmo enquadramento: a previsão europeia a supera
+em 17x. Relatório: `reports/baseline_ifs_2026_08_19_13_17.md`, commit `fca8863`.
+
+**O que continua válido deste plano:** a comparação ENTRE as quatro variantes, o
+achado de que alinhar a janela para t+1..t+24 é ganho e não perda, a correção do
+`models=ecmwf_ifs025`, e a descoberta de que a agregação por max invalida a régua
+da persistência. Nada disso depende de qual baseline se usa.
+
+**O que não sustenta mais:** "o modelo ganha +375% da régua trivial" como
+afirmação de valor. A régua trivial certa é o IFS, e contra ela perdemos.
+
+O reenquadramento resultante está em `roadmap_fases.md`, seção
+"REENQUADRAMENTO — 19/08/2026".
