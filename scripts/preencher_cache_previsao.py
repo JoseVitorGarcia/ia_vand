@@ -19,10 +19,13 @@ import time
 
 import pandas as pd
 
-from src.config import VALID_END, OPENMETEO_PREVISAO_MODELO
+from src.config import OPENMETEO_PREVISAO_MODELO
 from src.ingestion import load_data
 from src.openmeteo_client import (_cache_utilizavel, _previsao_cache_path,
                                   fetch_forecast_arquivado)
+# A janela vive no medidor, que é quem a consome — duas definições divergiriam e
+# o cache de uma não serviria à outra.
+from scripts.medir_degradacao_mos import INICIO_PREV
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(name)s — %(message)s',
@@ -32,8 +35,7 @@ logger = logging.getLogger('preencher_previsao')
 MAX_PASSADAS = int(sys.argv[1]) if len(sys.argv) > 1 else 5
 PAUSA = float(sys.argv[2]) if len(sys.argv) > 2 else 60.0
 
-# A janela de teste começa depois do embargo de 24 h sobre VALID_END.
-INICIO = (VALID_END + pd.Timedelta(hours=25)).strftime('%Y-%m-%d')
+INICIO = INICIO_PREV
 
 
 def _estacoes():
@@ -49,14 +51,14 @@ def _estacoes():
 
 
 def _buracos(estacoes, fim):
-    """Estações cuja janela de teste ainda não está em cache."""
+    """Estações cuja janela ainda não está em cache."""
     return [est for est, r in estacoes.iterrows()
             if not _cache_utilizavel(_previsao_cache_path(r['lat'], r['lon'], INICIO, fim))]
 
 
 estacoes = _estacoes()
 FIM = estacoes['fim'].max().strftime('%Y-%m-%d')
-logger.info('%d estações | janela de teste %s a %s | modelo %s',
+logger.info('%d estações | janela %s a %s | modelo %s',
             len(estacoes), INICIO, FIM, OPENMETEO_PREVISAO_MODELO)
 
 for passada in range(1, MAX_PASSADAS + 1):

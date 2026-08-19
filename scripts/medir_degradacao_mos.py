@@ -23,7 +23,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 
 from src.config import (FEATURE_COLUMNS, FEATURES_OPENMETEO, MODELS_DIR,
-                        OPENMETEO_COLUNAS, REPORTS_DIR, VALID_END)
+                        OPENMETEO_COLUNAS, REPORTS_DIR, TRAIN_END)
 from src.ingestion import enrich_openmeteo, load_data
 from src.model import (_agregar_estacao_dia, avaliar_por_estacao_dia,
                        calcular_baselines, separar_janelas)
@@ -37,12 +37,15 @@ logger = logging.getLogger('degradacao_mos')
 
 JANELA_HORAS = 24
 
-# A previsão arquivada só foi baixada para a janela de teste (ver
-# scripts/preencher_cache_previsao.py). Pedir o intervalo inteiro da série
-# dispararia 100 downloads de 11 anos de um arquivo que só começa em 2021.
-# Restringir é correto e não contamina nada: nenhuma feature Open-Meteo usa lag
-# ou janela móvel, então trocar o valor numa hora só afeta aquela hora.
-INICIO_PREV = (VALID_END + pd.Timedelta(hours=25)).strftime('%Y-%m-%d')
+# Janela em que a previsão substitui o ERA5: começa no fim do treino, para
+# cobrir validação E teste. A validação é necessária porque é lá que o threshold
+# e a calibração são reajustados — no teste seria vazamento.
+#
+# Não é o intervalo inteiro da série de propósito: pedir 2015-2026 dispararia 100
+# downloads de 11 anos de um arquivo que só começa em 2021. Restringir não
+# contamina nada — nenhuma feature Open-Meteo usa lag ou janela móvel, então
+# trocar o valor numa hora só afeta aquela hora.
+INICIO_PREV = (TRAIN_END + pd.Timedelta(hours=1)).strftime('%Y-%m-%d')
 
 
 def _trocar_por_previsao(df: pd.DataFrame, fim: str) -> pd.DataFrame:
