@@ -8,14 +8,30 @@ Uso básico (apenas features INMET):
 Uso com enriquecimento automático Open-Meteo:
     resultado = predict(features_dict, lat=-30.05, lon=-51.17)
 
-AVISO — ver F-05 da auditoria de 18/08/2026:
-    O enriquecimento com previsão está desativado por padrão porque as features
-    Open-Meteo significam coisas diferentes no treino e aqui. No treino,
-    `soil_moisture` é o valor ERA5 na hora t; aqui era a média das próximas 24 h
-    da previsão.
-    São distribuições distintas alimentando a mesma coluna. A correção definitiva
-    é a fase 3 (MOS): adotar a janela t+1..t+24 nos dois lados. Até lá, o
-    enriquecimento só acontece se explicitamente pedido.
+SOBRE O DESCASAMENTO TREINO/INFERÊNCIA (F-05) — MEDIDO EM 19/08/2026:
+    O aviso original dizia que as features Open-Meteo significam coisas
+    diferentes no treino e aqui — no treino `soil_moisture` é o valor ERA5 na
+    hora t, aqui é a média das próximas 24 h da previsão — e que por isso o
+    enriquecimento ficava desligado por padrão.
+
+    A medição desfez o receio, e na direção oposta à esperada. No enquadramento
+    operacional (um alerta por estação-dia, emitido às 12 UTC), a configuração
+    desta inferência — previsão + janela t+1..t+24 — dá PR-AUC 0,1085 contra
+    0,0787 da configuração de treino. **38% melhor, não pior.** Alinhar a janela
+    é o efeito dominante: prever chuva de t+1 a t+24 pede a atmosfera ao longo
+    dessa janela, não o retrato instantâneo em t. Ver
+    `reports/degradacao_mos_2026_08_19_10_50.md`.
+
+    Duas ressalvas antes de religar por padrão:
+    1. O THRESHOLD NÃO TRANSFERE. O corte de models/threshold.json foi calibrado
+       na distribuição do treino; com as features desta janela as probabilidades
+       deslocam para baixo e o recall por estação-dia cai de 0,36 para 0,10.
+       Recalibrar na validação, com esta mesma construção, é pré-requisito.
+    2. A medição usou previsão arquivada, cujo valor em cada hora vem da rodada
+       mais recente antes daquela hora — não de uma única rodada emitida no
+       momento da decisão. É um limite inferior da degradação real.
+
+    Até que (1) esteja feito, o enriquecimento continua só sob pedido explícito.
 """
 
 import json
