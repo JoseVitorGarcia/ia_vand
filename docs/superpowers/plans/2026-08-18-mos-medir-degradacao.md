@@ -810,9 +810,14 @@ comparar com a persistência naquela unidade.**
 
 ### O que falta
 
-1. **Recalibrar o threshold** na validação com a construção de D. O corte de
-   0,26 não transfere — recall por estação-dia cai de 0,36 para 0,10. Precisa da
-   previsão de jan–ago/2025 (~7 min de download).
+1. ~~Recalibrar o threshold~~ **FEITO** — `reports/recalibracao_mos_2026_08_19_12_40.md`,
+   commit `1beb168`. Reajustando isotônica e corte na validação, o F1 volta a
+   **0,3388**, acima da referência de laboratório (0,3274), com P 0,3197 e
+   R 0,3604. O desabamento para 0,163 era artefato de escala — o PR-AUC é
+   idêntico nos três cenários, então a ordenação nunca se perdeu.
+
+   Bônus para a Fase 2: reajustando só o corte (0,160), o ponto vai para
+   **recall 0,4901 / precisão 0,2481** com F1 equivalente (0,3294).
 2. **Religar o enriquecimento em `predict.py`** por padrão, depois de (1).
 3. **Task 5** — colheita diária de previsões reais. Continua necessária: o
    arquivo devolve, para cada hora, a rodada mais recente antes dela, não a
