@@ -821,7 +821,11 @@ comparar com a persistência naquela unidade.**
 2. **Religar o enriquecimento em `predict.py`** por padrão, depois de (1).
 3. **Task 5** — colheita diária de previsões reais. Continua necessária: o
    arquivo devolve, para cada hora, a rodada mais recente antes dela, não a
-   rodada disponível no momento da decisão. D é limite inferior.
+   rodada disponível no momento da decisão. **O desempenho de D é otimista; o
+   que é limite inferior é a DEGRADAÇÃO A→D.** As duas frases dizem a mesma
+   coisa — a redação original desta linha omitia o substantivo e lia-se ao
+   contrário. Ver a Task 1, que já registrava "limite inferior *da degradação
+   real*".
 
 
 ---
