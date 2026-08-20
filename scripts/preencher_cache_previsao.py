@@ -12,6 +12,7 @@ Uso:
     ./run.sh scripts/preencher_cache_previsao.py        # até 5 passadas
     ./run.sh scripts/preencher_cache_previsao.py 10 60
     ./run.sh scripts/preencher_cache_previsao.py 0      # só relata
+    ./run.sh scripts/preencher_cache_previsao.py 10 90 2024-04-01   # janela de ajuste do MOS
 """
 import logging
 import sys
@@ -35,7 +36,11 @@ logger = logging.getLogger('preencher_previsao')
 MAX_PASSADAS = int(sys.argv[1]) if len(sys.argv) > 1 else 5
 PAUSA = float(sys.argv[2]) if len(sys.argv) > 2 else 60.0
 
-INICIO = INICIO_PREV
+# A janela vem por argumento porque a medição de acréscimo local ajusta em 2024,
+# antes do fim do treino. Mudar o início troca a chave do cache: a janela nova
+# baixa tudo de novo, e é justamente por isso que ela precisa deste preenchedor
+# em vez de baixar dentro da medição.
+INICIO = sys.argv[3] if len(sys.argv) > 3 else INICIO_PREV
 
 
 def _estacoes():

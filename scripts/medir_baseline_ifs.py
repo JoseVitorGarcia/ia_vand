@@ -53,13 +53,19 @@ def _max_futuro(serie: pd.Series) -> pd.Series:
             .rolling(JANELA_HORAS, min_periods=JANELA_HORAS).max().iloc[::-1])
 
 
-def _baixar_regua(estacoes, fim, passadas=6, pausa=60.0):
-    """Enche o cache da régua. Falha alto: medir com estação faltando mentiria."""
+def _baixar_regua(estacoes, fim, passadas=6, pausa=60.0, inicio=None):
+    """Enche o cache da régua. Falha alto: medir com estação faltando mentiria.
+
+    `inicio` recua a janela para antes do fim do treino, quando a medição precisa
+    de previsão arquivada em 2024. Mudar o início troca a chave do cache, então
+    uma janela nova baixa tudo de novo — é esperado, não é bug.
+    """
     import time
+    inicio = inicio or INICIO_PREV
     for passada in range(1, passadas + 1):
         faltando = [e for e, r in estacoes.iterrows()
                     if not _cache_utilizavel(
-                        _previsao_cache_path(r['lat'], r['lon'], INICIO_PREV, fim,
+                        _previsao_cache_path(r['lat'], r['lon'], inicio, fim,
                                              VARS_REGUA), VARS_REGUA)]
         if not faltando:
             logger.info('cache da régua completo')
@@ -68,7 +74,7 @@ def _baixar_regua(estacoes, fim, passadas=6, pausa=60.0):
         for est in faltando:
             r = estacoes.loc[est]
             try:
-                fetch_forecast_arquivado(r['lat'], r['lon'], INICIO_PREV, fim,
+                fetch_forecast_arquivado(r['lat'], r['lon'], inicio, fim,
                                          variaveis=VARS_REGUA)
             except Exception as exc:
                 logger.warning('%s falhou: %s', est, exc)
@@ -78,15 +84,16 @@ def _baixar_regua(estacoes, fim, passadas=6, pausa=60.0):
     sys.exit(1)
 
 
-def _anexar_regua(df, estacoes, fim):
+def _anexar_regua(df, estacoes, fim, inicio=None):
     """Junta ao frame a soma de chuva prevista e o pico de probabilidade em t+1..t+24."""
+    inicio = inicio or INICIO_PREV
     horas = df['data_hora'].to_numpy()
     soma = np.full(len(df), np.nan)
     prob = np.full(len(df), np.nan)
 
     for codigo, posicoes in df.groupby('estacao_codigo', observed=True).indices.items():
         r = estacoes.loc[codigo]
-        prev = fetch_forecast_arquivado(r['lat'], r['lon'], INICIO_PREV, fim,
+        prev = fetch_forecast_arquivado(r['lat'], r['lon'], inicio, fim,
                                         variaveis=VARS_REGUA)
         if prev.empty:
             continue

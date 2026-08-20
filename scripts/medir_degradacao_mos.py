@@ -48,15 +48,22 @@ JANELA_HORAS = 24
 INICIO_PREV = (TRAIN_END + pd.Timedelta(hours=1)).strftime('%Y-%m-%d')
 
 
-def _trocar_por_previsao(df: pd.DataFrame, fim: str) -> pd.DataFrame:
-    """Troca as 8 colunas Open-Meteo pelo que a previsão dizia, na janela de teste.
+def _trocar_por_previsao(df: pd.DataFrame, fim: str, inicio: str = None) -> pd.DataFrame:
+    """Troca as 8 colunas Open-Meteo pelo que a previsão dizia, na janela pedida.
+
+    `inicio` existe para que um ajuste feito em 2024 também veja PREVISÃO. Sem
+    ele, `soil_moisture` seria reanálise no ajuste e previsão na avaliação, e o
+    combinador aprenderia numa distribuição para ser medido em outra. O padrão é
+    None resolvido no corpo, não INICIO_PREV na assinatura: congelar a constante
+    no import a faria parar de acompanhar TRAIN_END.
 
     Alinha por gather posicional em vez de merge — mesmo motivo de
     `_features_vizinhas` em processing.py: cada merge do frame inteiro custa uma
     cópia de vários GB.
     """
+    inicio = inicio or INICIO_PREV
     colunas = [c for c in OPENMETEO_COLUNAS if c in df.columns]
-    janela = df['data_hora'] >= pd.Timestamp(INICIO_PREV, tz='UTC')
+    janela = df['data_hora'] >= pd.Timestamp(inicio, tz='UTC')
     logger.info('trocando ERA5 por previsão em %d linhas (%.1f%% da base)',
                 int(janela.sum()), 100 * janela.mean())
 
@@ -74,7 +81,7 @@ def _trocar_por_previsao(df: pd.DataFrame, fim: str) -> pd.DataFrame:
     for codigo, posicoes_locais in posicoes_por_estacao.items():
         linhas = indice_janela[posicoes_locais]
         prev = fetch_forecast_arquivado(latitudes[linhas[0]], longitudes[linhas[0]],
-                                        INICIO_PREV, fim)
+                                        inicio, fim)
         if prev.empty:
             sem_previsao.append(codigo)
             continue
