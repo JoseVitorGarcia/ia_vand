@@ -49,8 +49,19 @@ def _hist_cache_path(lat: float, lon: float, year: int) -> Path:
     return OPENMETEO_CACHE_DIR / f"hist_{_cache_key(lat, lon)}_{year}.parquet"
 
 
-def _forecast_cache_path(lat: float, lon: float) -> Path:
-    return OPENMETEO_CACHE_DIR / f"forecast_{_cache_key(lat, lon)}.parquet"
+def _forecast_cache_path(lat: float, lon: float, variaveis=None,
+                         modelo=None) -> Path:
+    """Caminho do cache de previsão, etiquetado por variáveis e modelo.
+
+    A etiqueta não é enfeite: a colheita diária pede `precipitation` e fixa o
+    ecmwf_ifs025, enquanto a inferência usa best_match sem precipitação. Sem
+    separar as chaves, a primeira das duas a rodar entregaria seu parquet à
+    outra dentro do TTL — e a colheita arquivaria a previsão do modelo errado
+    sem nada gritar, que é exatamente o defeito que ela existe para não ter.
+    """
+    tag = _tag_variaveis(variaveis or OPENMETEO_FORECAST_VARS)
+    sufixo = f"_{modelo}" if modelo else ""
+    return OPENMETEO_CACHE_DIR / f"forecast_{_cache_key(lat, lon)}_{tag}{sufixo}.parquet"
 
 
 def _tag_variaveis(variaveis) -> str:
@@ -208,7 +219,8 @@ def fetch_historical(lat: float, lon: float, start_date: str, end_date: str) -> 
     return result[mask].reset_index(drop=True)
 
 
-def fetch_forecast(lat: float, lon: float) -> pd.DataFrame:
+def fetch_forecast(lat: float, lon: float, variaveis=None,
+                   modelo=None) -> pd.DataFrame:
     """
     Retorna previsão horária para as próximas 48h para um ponto lat/lon.
 
@@ -216,12 +228,19 @@ def fetch_forecast(lat: float, lon: float) -> pd.DataFrame:
 
     Args:
         lat, lon: coordenadas da estação
+        variaveis: lista a pedir. Padrão OPENMETEO_FORECAST_VARS, que é o que a
+            inferência consome. A colheita diária acrescenta `precipitation`,
+            porque o volume previsto é o que carrega o sinal na régua do IFS.
+        modelo: fixa o modelo numérico (ex.: `ecmwf_ifs025`). Padrão None =
+            best_match, que é o comportamento histórico da inferência. Fixar
+            importa quando o número vai ser comparado com a régua já medida:
+            best_match troca de modelo sem avisar.
 
     Returns:
-        DataFrame com 'data_hora' (UTC), variáveis de OPENMETEO_FORECAST_VARS
-        renomeadas, incluindo 'precipitation_probability'.
+        DataFrame com 'data_hora' (UTC) e as variáveis pedidas, renomeadas.
     """
-    cache = _forecast_cache_path(lat, lon)
+    variaveis = list(variaveis or OPENMETEO_FORECAST_VARS)
+    cache = _forecast_cache_path(lat, lon, variaveis, modelo)
 
     if _cache_is_fresh(cache, OPENMETEO_FORECAST_TTL_HOURS):
         logger.debug("Forecast cache hit (%.3f, %.3f)", lat, lon)
@@ -230,14 +249,16 @@ def fetch_forecast(lat: float, lon: float) -> pd.DataFrame:
     params = {
         "latitude": lat,
         "longitude": lon,
-        "hourly": ",".join(OPENMETEO_FORECAST_VARS),
+        "hourly": ",".join(variaveis),
         "timezone": "UTC",
         "forecast_days": 2,
     }
+    if modelo:
+        params["models"] = modelo
 
     logger.info("Open-Meteo forecast (%.3f, %.3f)", lat, lon)
     data = _request(_FORECAST_URL, params)
-    df = _parse_response(data, OPENMETEO_FORECAST_VARS)
+    df = _parse_response(data, variaveis)
     df.to_parquet(cache, index=False)
     return df
 
