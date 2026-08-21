@@ -13,7 +13,7 @@ medido, o que está decidido e o que continua em aberto.
 
 Começou como um modelo próprio para prever chuva extrema no Rio Grande do Sul a
 partir de 100 estações do INMET. Ao ser medido contra uma régua forte — a
-previsão do **ECMWF** (*European Centre for Medium-Range Weather Forecasts*) —
+previsão do **ECMWF** (_European Centre for Medium-Range Weather Forecasts_) —
 descobriu-se que a previsão europeia, gratuita e sem treino nenhum, supera o
 modelo local por **3,6x** em PR-AUC (área sob a curva precisão-recall) no
 enquadramento operacional.
@@ -21,7 +21,7 @@ enquadramento operacional.
 Isso redirecionou o trabalho duas vezes, sempre por medição:
 
 1. **Corrigir a previsão europeia com observação local** (o que a sigla **MOS**,
-   *Model Output Statistics*, descreve). Medido e **refutado**.
+   _Model Output Statistics_, descreve). Medido e **refutado**.
 2. **Medir a lacuna de granularidade** entre o alerta regional oficial e o que se
    observa num ponto — que é a justificativa técnica da aplicação. **Feito.**
 
@@ -33,13 +33,13 @@ registros de alagamento dos cidadãos.
 
 ## O que foi medido
 
-| # | pergunta | resposta | relatório |
-|---|---|---|---|
-| 1 | A previsão do ECMWF ganha do nosso modelo? | **Sim, por 3,6x** em PR-AUC operacional | `reports/baseline_ifs_2026_08_19_13_17.md` |
-| 2 | O erro de volume do ECMWF é corrigível? | **Não.** A estação explica 0,80% da variância do resíduo | `reports/vies_ifs_2026_08_19_13_34.md` |
-| 3 | A observação local acrescenta sobre o ECMWF? | **Não — piora.** −0,0481 [−0,0856, −0,0144] | `reports/acrescimo_local_2026_08_20_15_58.md` |
-| 4 | A previsão europeia crua é entregável? | **Sim.** Corte em 30 mm dá 71% dos eventos a 30% de confirmação, 5,1 avisos por estação-ano | `reports/curva_operacao_ifs_2026_08_20_16_12.md` |
-| 5 | Quanto o alerta regional perde até o ponto? | **De 3,1x a 17,9x**, e quanto mais grave o aviso, maior a lacuna | `reports/lacuna_granularidade_avisos_2026_08_21_00_29.md` |
+| #   | pergunta                                     | resposta                                                                                    | relatório                                                 |
+| --- | -------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| 1   | A previsão do ECMWF ganha do nosso modelo?   | **Sim, por 3,6x** em PR-AUC operacional                                                     | `reports/baseline_ifs_2026_08_19_13_17.md`                |
+| 2   | O erro de volume do ECMWF é corrigível?      | **Não.** A estação explica 0,80% da variância do resíduo                                    | `reports/vies_ifs_2026_08_19_13_34.md`                    |
+| 3   | A observação local acrescenta sobre o ECMWF? | **Não — piora.** −0,0481 [−0,0856, −0,0144]                                                 | `reports/acrescimo_local_2026_08_20_15_58.md`             |
+| 4   | A previsão europeia crua é entregável?       | **Sim.** Corte em 30 mm dá 71% dos eventos a 30% de confirmação, 5,1 avisos por estação-ano | `reports/curva_operacao_ifs_2026_08_20_16_12.md`          |
+| 5   | Quanto o alerta regional perde até o ponto?  | **De 3,1x a 17,9x**, e quanto mais grave o aviso, maior a lacuna                            | `reports/lacuna_granularidade_avisos_2026_08_21_00_29.md` |
 
 Contexto do estudo 5: 98,4% dos eventos observados tinham aviso vigente, ao preço
 de 45% de todos os estação-dias estarem sob algum aviso. Desenho e método em
@@ -88,13 +88,11 @@ linhas), depois o relatório 5, depois o 4.
    Roda à mão: `./run.sh scripts/colher_previsao_diaria.py`, idealmente às
    **09:00 local (12 UTC)**, que é o enquadramento de todo o resto do projeto.
 3. **O protótipo.** Nada construído; nenhuma linha de aplicação no repositório.
-4. **Registro de alagamento:** decidir a coleta do "não" (*"está alagado aí?
-   sim / não / não sei"*) **no desenho da tela**. Sem isso o dado é só de
+4. **Registro de alagamento:** decidir a coleta do "não" (_"está alagado aí?
+   sim / não / não sei"_) **no desenho da tela**. Sem isso o dado é só de
    presença e não treina nada — e não tem conserto retroativo. Vale lembrar por
    que essa funcionalidade não é o que foi refutado: alagamento **não é chuva**,
    depende de drenagem e topografia, e nenhum modelo meteorológico o prevê.
-5. **Resumo do SIC** com 646 palavras contra o limite de 300. A inscrição fechou
-   em 30/06; o texto serve à apresentação oral de 19–23/10.
 
 ## Dívidas técnicas que não bloqueiam
 
