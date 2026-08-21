@@ -50,6 +50,29 @@ linhas), depois o relatório 5, depois o 4.
 
 ---
 
+## Os três objetivos da aplicação
+
+Entrega prevista: **protótipo navegável**, uma pessoa, até outubro de 2026.
+Nenhuma linha de aplicação existe no repositório — o que está pronto é o **dado e
+a medição** que as três funcionalidades consomem.
+
+| objetivo                                                       | o que já existe                                                                                                                                                                                    | o que falta                                                                                                          |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. E decidir **quais tipos de aviso empurram notificação** — hoje o INMET emite dez tipos, e nem todos interessam. |
+| **2. Registro de alagamento pelo cidadão**                     | Nada construído. A justificativa técnica está clara: alagamento **não é chuva**, depende de drenagem e topografia, e nenhum modelo meteorológico o prevê — então isto não é o que foi refutado.       | Tudo. E a decisão da coleta do "não", que **não tem conserto retroativo** (ver "Em aberto", item 4).                    |
+| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima: cinco relatórios de medição e as regras da seção acima. É onde a parte científica do trabalho vira conteúdo honesto.                                                               | Escrever e exibir.                                                                                                     |
+
+A camada consultável do objetivo 1 — a nossa previsão ao lado do aviso oficial —
+também já tem os números de que precisa: corte em 30 mm dá 71% dos eventos a 30%
+de confirmação, e é essa taxa que deve aparecer junto do aviso, não escondida.
+
+**Leitura honesta do estágio:** os objetivos 1 e 3 estão prontos do lado do dado e
+parados do lado da interface. O objetivo 2 não começou, e é o único cujo atraso
+custa caro — cada dia sem a tela é um dia sem coletar registros, e o valor dele
+depende de acumular tempo.
+
+---
+
 ## Regras que qualquer texto do projeto precisa respeitar
 
 - **Nunca citar ganho sobre a persistência** como afirmação de valor. Os ganhos
