@@ -37,6 +37,17 @@ URL = 'https://apiprevmet3.inmet.gov.br/aviso/getByID/{id}'
 # distinguir pesquisa de abuso caso olhe os registros.
 CABECALHOS = {'User-Agent': 'IA_VAND/1.0 (pesquisa academica; UFRGS)'}
 
+# Os limites vieram de busca binária, que assume data crescente com o
+# identificador. Medido em 20/08/2026 sobre os 5.758 colhidos: a ordem NÃO é
+# estrita — há 188 quebras (3,3%) e o maior recuo é de 6 dias. Nenhum aviso caiu
+# fora da janela, mas o recuo significa que pode existir aviso DENTRO da janela
+# de datas com identificador FORA da faixa, logo perdido em silêncio.
+# A margem de 100 identificadores de cada lado cobre folgadamente 6 dias (a
+# emissão média é de ~10 avisos/dia no Brasil) e custa 200 requisições.
+# A margem entra como DUAS faixas extras, não deslocando o núcleo: mudar
+# ID_INICIO reposicionaria toda a grade de blocos e os 12 parquets já colhidos
+# deixariam de casar com os nomes novos, forçando 1h50 de recoleta.
+MARGEM = 100
 ID_INICIO, ID_FIM = 49435, 55192
 TAMANHO_BLOCO = 500
 PAUSA = 1.0
@@ -90,7 +101,8 @@ def _buscar(sessao, aviso_id, tentativas=3):
 
 
 if __name__ == '__main__':
-    faixas = blocos(ID_INICIO, ID_FIM, TAMANHO_BLOCO)
+    faixas = blocos(ID_INICIO, ID_FIM, TAMANHO_BLOCO) + [
+        (ID_INICIO - MARGEM, ID_INICIO - 1), (ID_FIM + 1, ID_FIM + MARGEM)]
     faltando = [(lo, hi) for lo, hi in faixas if not caminho_bloco(lo, hi).exists()]
     logger.info('%d blocos no total, %d a colher (%d avisos)',
                 len(faixas), len(faltando), sum(hi - lo + 1 for lo, hi in faltando))
