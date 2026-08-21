@@ -12,3 +12,7 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Skills instalados pelo CLI `npx skills` — recuperáveis com `npx skills experimental_install`
+.claude/skills/
+skills-lock.json
