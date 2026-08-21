@@ -1,6 +1,8 @@
-# IA_VAND — Previsão de Eventos Extremos de Chuva
+# IA_VAND — Chuva extrema no Rio Grande do Sul
 
-Sistema de machine learning para prever chuva acumulada nas próximas 24 horas e detectar risco de eventos extremos (> 50 mm/24h), com dados históricos do INMET e enriquecimento via API Open-Meteo.
+Pipeline de aprendizado de máquina sobre dados do INMET e da Open-Meteo, e as medições que ele produziu.
+
+> **Leia [`ESTADO.md`](ESTADO.md) primeiro.** Este README documenta como o pipeline funciona e como rodá-lo. O *estado* do projeto — o que foi medido, o que foi refutado e o que virou produto — está no ESTADO.md, e mudou substancialmente em agosto de 2026.
 
 ---
 
@@ -30,6 +32,19 @@ O sistema resolve dois problemas de previsão climática:
 | Evento extremo | Classificação | 1 se chuva futura > 50 mm, 0 caso contrário |
 
 Ambos os modelos usam LightGBM com validação cruzada temporal (TimeSeriesSplit de 5 folds), garantindo que o conjunto de teste seja sempre posterior ao de treino.
+
+### O que as medições mostraram
+
+O pipeline acima continua funcionando e é reprodutível. Mas quando o modelo foi comparado com uma régua forte, o resultado redirecionou o projeto:
+
+| medição | resultado |
+|---|---|
+| A previsão do **ECMWF** supera este modelo | por **3,6x** em PR-AUC operacional |
+| A observação local corrige o ECMWF? | **Não — piora.** −0,0481 [−0,0856, −0,0144] |
+| A previsão europeia crua é entregável? | **Sim.** Corte em 30 mm → 71% dos eventos a 30% de confirmação |
+| Quanto o alerta regional perde até o ponto? | **De 3,1x a 17,9x** |
+
+Consequência: o projeto deixou de tentar competir com a previsão europeia. Detalhes, ponteiros para os relatórios e as regras que qualquer texto do projeto precisa respeitar estão em [`ESTADO.md`](ESTADO.md).
 
 ---
 
@@ -97,7 +112,9 @@ predict()            → chuva_24h_prevista (mm) + risco_evento_extremo (0–1) 
 
 ```
 IA_VAND/
+├── ESTADO.md                  # ESTADO ATUAL do projeto — leia primeiro
 ├── main.py                    # Entrypoint do pipeline de treino
+├── run.sh                     # Roda em cgroup próprio (use SEMPRE — ver "Como usar")
 ├── requirements.txt
 ├── README.md
 ├── src/
@@ -108,18 +125,25 @@ IA_VAND/
 │   ├── analysis.py            # Análise exploratória
 │   ├── model.py               # Treinamento com validação cruzada temporal
 │   ├── predict.py             # Inferência em produção
+│   ├── avisos.py              # Avisos do INMET: geometria, critérios, casamento
 │   └── reporting.py           # Relatórios e visualizações
+├── scripts/                   # Medições e coletores, um assunto por arquivo
+├── tests/                     # 69 testes, sem rede
+├── docs/superpowers/plans/    # Planos de execução das medições
 ├── data/
 │   └── raw/                   # CSVs do INMET (não versionados)
 ├── cache/
 │   ├── dataset.parquet        # Cache do dataset INMET bruto
-│   └── openmeteo/             # Cache ERA5 por estação/ano
+│   ├── openmeteo/             # Cache ERA5, previsão arquivada e colheita diária
+│   └── avisos_inmet/          # Arquivo de avisos oficiais colhidos por identificador
 ├── models/
 │   ├── regressor.pkl          # Modelo de regressão treinado
 │   ├── classifier.pkl         # Modelo de classificação treinado
 │   └── threshold.json         # Threshold ótimo do classificador
 └── reports/
-    ├── report_YYYY_MM_DD.md   # Relatório mais recente
+    ├── report_YYYY_MM_DD.md   # Relatórios de treino
+    ├── <medicao>_YYYY_MM_DD.md # Relatórios de medição — não são atualizados;
+    │                           # quando dois se contradizem, vale o mais recente
     ├── confusion_matrix.png
     └── feature_importance.png
 ```
@@ -308,10 +332,12 @@ REGRESSÃO — MAE CV: 1.23 ± 0.18 mm
 - `± 0.18 mm`: variabilidade entre períodos — quanto menor, mais estável
 
 ```
-CLASSIFICAÇÃO — F1 CV: 0.72 ± 0.08
+CLASSIFICAÇÃO — F1 CV: 0.33 ± 0.05
 ```
-- F1 CV de 0.65–0.80 é realista e confiável para este problema
+- O F1 medido por estação-dia no treino de 18/08/2026 foi **0,3274**, e **0,3388** depois de recalibrar o corte
 - Valores acima de 0.93 (como os originais) eram inflados por erro de definição do target
+- A faixa de "0.65–0.80" que este README trazia até 21/08/2026 **estava errada por um fator de dois** e nunca correspondeu a uma medição deste projeto
+- Para o desempenho comparado à previsão do ECMWF, que é a régua que importa, ver [`ESTADO.md`](ESTADO.md)
 
 ---
 
