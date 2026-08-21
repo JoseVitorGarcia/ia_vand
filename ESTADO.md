@@ -3,9 +3,10 @@
 Atualizado em **21/08/2026**. Uma página com onde o projeto está, o que foi
 medido, o que está decidido e o que continua em aberto.
 
-> O `README.md` descreve o escopo **original** — um sistema de aprendizado de
-> máquina para prever chuva extrema — e não foi reescrito depois do
-> reenquadramento de 19/08/2026. Para entender o projeto hoje, leia este arquivo.
+> **Divisão de trabalho com o `README.md`:** ele documenta como o pipeline
+> funciona e como rodá-lo — instalação, features, configuração, uso da API. Este
+> arquivo guarda o **estado**: o que foi medido, o que foi refutado, o que está
+> decidido e o que falta. Quando os dois divergirem, vale este.
 
 ---
 
