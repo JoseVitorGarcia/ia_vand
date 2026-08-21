@@ -59,7 +59,7 @@ a medição** que as três funcionalidades consomem.
 
 | objetivo                                                       | o que já existe                                                                                                                                                                                    | o que falta                                                                                                          |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. E decidir **quais tipos de aviso empurram notificação** — hoje o INMET emite dez tipos, e nem todos interessam. |
+| **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. A política de notificação está decidida (ver abaixo). |
 | **2. Registro de alagamento pelo cidadão**                     | Nada construído. A justificativa técnica está clara: alagamento **não é chuva**, depende de drenagem e topografia, e nenhum modelo meteorológico o prevê — então isto não é o que foi refutado.       | Tudo. E a decisão da coleta do "não", que **não tem conserto retroativo** (ver "Em aberto", item 4).                    |
 | **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima: cinco relatórios de medição e as regras da seção acima. É onde a parte científica do trabalho vira conteúdo honesto.                                                               | Escrever e exibir.                                                                                                     |
 
@@ -99,6 +99,19 @@ Regras que fazem esses números:
   confirmação no ponto é de 3,4%, então a lacuna medida precisa estar visível na
   própria frase.
 - Cores da severidade vêm do campo `aviso_cor` do próprio INMET.
+
+Como isso aparece no protótipo — os três estados na mesma navegação mostram a
+política inteira em três toques:
+
+| nível            | representação na tela                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| Grande Perigo    | maquete de notificação: tela de bloqueio ou banner, com o texto _"para a sua região"_             |
+| Perigo           | selo na lista de avisos e ponto na aba, sem maquete de notificação                                |
+| Perigo Potencial | só na lista, sem selo — presente para quem procura, invisível para quem não                       |
+
+O protótipo é navegável e **não implementa notificação de verdade**: estas regras
+são especificação de tela, e servem para a apresentação demonstrar a decisão em
+vez de apenas descrevê-la.
 
 ---
 
