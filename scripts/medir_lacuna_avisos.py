@@ -189,8 +189,20 @@ def tabela_unidades(par_obs, chaves, base, coluna='confirmado', so_chuva=False, 
     t = pd.DataFrame(linhas)
     if t.empty:
         return t, t
+    # A lacuna vai ao texto como RAZÃO (decisão do usuário em 21/08/2026), por ser
+    # adimensional e responder direto "quantas vezes o aviso vale mais para a
+    # região do que para o seu ponto".
+    #
+    # NÃO é por estabilidade — medido, é o oposto: com o critério composto a
+    # DIFERENÇA é que fica quase constante (0,575 / 0,589 / 0,583) enquanto a
+    # razão varia de 3,1x a 17,9x. Essa variação é informativa, não defeito:
+    # quanto mais severo o aviso, mais localizado o fenômeno, e chuva extrema é
+    # espacialmente mais concentrada que chuva moderada. As duas colunas ficam
+    # lado a lado porque contam coisas diferentes.
     lac = (t.pivot(index='grupo', columns='unidade', values='taxa')
-           .assign(lacuna=lambda d: (d['área'] - d['ponto']).round(3)).reset_index())
+           .assign(razao=lambda d: (d['área'] / d['ponto'].replace(0, np.nan)).round(1),
+                   diferenca=lambda d: (d['área'] - d['ponto']).round(3))
+           .reset_index())
     return t, lac
 
 
@@ -309,8 +321,16 @@ def escrever_relatorio(secoes):
         "\n### Por tipo\n", _md(secoes['tipo_chuva']),
         "\n### A lacuna, só por chuva\n", _md(secoes['lac_sev_chuva']),
         "\n## A lacuna\n",
-        "A diferença entre área e ponto é o resultado central: quantifica quanta informação se "
-        "perde entre *o aviso é correto para a região* e *o aviso diz algo sobre a minha rua*.\n",
+        "O resultado central: quanta informação se perde entre *o aviso é correto para a região* "
+        "e *o aviso diz algo sobre a minha rua*.\n",
+        "**A leitura principal é a RAZÃO** — quantas vezes o aviso se confirma na área em relação "
+        "ao ponto. Ela é adimensional e responde direto à pergunta do usuário do alerta.\n",
+        "As duas colunas contam coisas diferentes e por isso ficam lado a lado. A **diferença** é "
+        "quase constante entre os níveis de severidade (0,575, 0,589 e 0,583), o que é uma "
+        "regularidade notável. A **razão** varia de 3,1x a 17,9x, e essa variação é informativa: "
+        "quanto mais severo o aviso, maior a razão — chuva extrema é espacialmente mais "
+        "concentrada que chuva moderada, então o alerta de área perde mais significado no ponto "
+        "justamente nos casos mais graves.\n",
         "\n### Por severidade\n", _md(secoes['lac_sev']),
         "\n### Por tipo\n", _md(secoes['lac_tipo']),
         "\n## Ao lado da previsão do ECMWF, nos mesmos estação-dias\n",

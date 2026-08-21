@@ -1,6 +1,6 @@
 # A lacuna de granularidade do alerta regional
 
-Gerado em 21/08/2026 00:09
+Gerado em 21/08/2026 00:29
 
 **IFS** (*Integrated Forecasting System*) é o modelo global de previsão do **ECMWF** (*European Centre for Medium-Range Weather Forecasts*).
 
@@ -80,33 +80,37 @@ A tabela abaixo repete a medição ignorando a cláusula de vento, com a climato
 
 ### A lacuna, só por chuva
 
-| grupo | ponto | área | lacuna |
-|---|---|---|---|
-| Grande Perigo | 0.031 | 0.591 | 0.56 |
-| Perigo | 0.075 | 0.564 | 0.489 |
-| Perigo Potencial | 0.038 | 0.309 | 0.271 |
+| grupo | ponto | área | razao | diferenca |
+|---|---|---|---|---|
+| Grande Perigo | 0.031 | 0.591 | 19.1 | 0.56 |
+| Perigo | 0.075 | 0.564 | 7.5 | 0.489 |
+| Perigo Potencial | 0.038 | 0.309 | 8.1 | 0.271 |
 
 ## A lacuna
 
-A diferença entre área e ponto é o resultado central: quantifica quanta informação se perde entre *o aviso é correto para a região* e *o aviso diz algo sobre a minha rua*.
+O resultado central: quanta informação se perde entre *o aviso é correto para a região* e *o aviso diz algo sobre a minha rua*.
+
+**A leitura principal é a RAZÃO** — quantas vezes o aviso se confirma na área em relação ao ponto. Ela é adimensional e responde direto à pergunta do usuário do alerta.
+
+As duas colunas contam coisas diferentes e por isso ficam lado a lado. A **diferença** é quase constante entre os níveis de severidade (0,575, 0,589 e 0,583), o que é uma regularidade notável. A **razão** varia de 3,1x a 17,9x, e essa variação é informativa: quanto mais severo o aviso, maior a razão — chuva extrema é espacialmente mais concentrada que chuva moderada, então o alerta de área perde mais significado no ponto justamente nos casos mais graves.
 
 
 ### Por severidade
 
-| grupo | ponto | área | lacuna |
-|---|---|---|---|
-| Grande Perigo | 0.034 | 0.609 | 0.575 |
-| Perigo | 0.143 | 0.732 | 0.589 |
-| Perigo Potencial | 0.281 | 0.864 | 0.583 |
+| grupo | ponto | área | razao | diferenca |
+|---|---|---|---|---|
+| Grande Perigo | 0.034 | 0.609 | 17.9 | 0.575 |
+| Perigo | 0.143 | 0.732 | 5.1 | 0.589 |
+| Perigo Potencial | 0.281 | 0.864 | 3.1 | 0.583 |
 
 ### Por tipo
 
-| grupo | ponto | área | lacuna |
-|---|---|---|---|
-| Acumulado de Chuva | 0.069 | 0.529 | 0.46 |
-| Chuvas Intensas | 0.258 | 0.786 | 0.528 |
-| Tempestade | 0.228 | 0.86 | 0.632 |
-| Vendaval | 0.38 | 0.87 | 0.49 |
+| grupo | ponto | área | razao | diferenca |
+|---|---|---|---|---|
+| Acumulado de Chuva | 0.069 | 0.529 | 7.7 | 0.46 |
+| Chuvas Intensas | 0.258 | 0.786 | 3 | 0.528 |
+| Tempestade | 0.228 | 0.86 | 3.8 | 0.632 |
+| Vendaval | 0.38 | 0.87 | 2.3 | 0.49 |
 
 ## Ao lado da previsão do ECMWF, nos mesmos estação-dias
 
