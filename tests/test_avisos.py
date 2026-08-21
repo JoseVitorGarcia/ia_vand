@@ -127,3 +127,23 @@ def test_aviso_que_nao_cobre_estacao_nenhuma_e_ignorado():
     longe = {'type': 'Polygon', 'coordinates': [
         [[-40.0, -10.0], [-39.0, -10.0], [-39.0, -9.0], [-40.0, -9.0], [-40.0, -10.0]]]}
     assert av.expandir_estacao_dia(_aviso(poligono=json.dumps(longe)), ESTACOES).empty
+
+
+def test_taxa_confirmacao_e_intervalo():
+    p, (lo, hi) = av.taxa_confirmacao(np.array([1, 1, 1, 0, 0, 0, 0, 0, 0, 0]))
+    assert p == pytest.approx(0.3)
+    assert lo < 0.3 < hi
+    assert 0.0 <= lo and hi <= 1.0
+
+
+def test_intervalo_de_wilson_nao_degenera_com_zero_confirmacoes():
+    """Com 0 de 20, o intervalo normal daria [0, 0] — afirmação forte demais."""
+    p, (lo, hi) = av.taxa_confirmacao(np.zeros(20, dtype=int))
+    assert p == 0.0
+    assert lo == 0.0 and hi > 0.05
+
+
+def test_taxa_confirmacao_com_amostra_vazia_nao_quebra():
+    """Células cruzadas raras (Vendaval x Grande Perigo) podem ficar vazias."""
+    p, (lo, hi) = av.taxa_confirmacao(np.array([]))
+    assert np.isnan(p) and np.isnan(lo) and np.isnan(hi)

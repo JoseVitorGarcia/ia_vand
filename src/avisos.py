@@ -183,3 +183,25 @@ def expandir_estacao_dia(avisos, estacoes, hora_emissao=12):
     return pd.DataFrame(linhas, columns=['estacao_codigo', 'dia', 'id', 'descricao',
                                          'severidade', 'id_severidade',
                                          'criterio_mm', 'criterio_ms'])
+
+
+def taxa_confirmacao(confirmados, z=1.96):
+    """Proporção confirmada, com intervalo de 95% por Wilson.
+
+    Wilson e não normal: com poucas dezenas de avisos por nível, o intervalo
+    normal escapa de [0,1] e colapsa para largura zero quando não há nenhuma
+    confirmação — o que afirmaria "a taxa é exatamente 0%", forte demais para o
+    dado. Células cruzadas raras (Vendaval x Grande Perigo) tornam isso comum.
+
+    NÃO é taxa de acerto. Aviso não confirmado é risco comunicado que não se
+    materializou, que é o funcionamento normal de um sistema de alerta.
+    """
+    c = np.asarray(confirmados, dtype=float)
+    n = len(c)
+    if n == 0:
+        return float('nan'), (float('nan'), float('nan'))
+    p = c.mean()
+    denom = 1 + z**2 / n
+    centro = (p + z**2 / (2 * n)) / denom
+    margem = z * np.sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / denom
+    return float(p), (float(max(0.0, centro - margem)), float(min(1.0, centro + margem)))
