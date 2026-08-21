@@ -71,6 +71,34 @@ parados do lado da interface. O objetivo 2 não começou, e é o único cujo atr
 custa caro — cada dia sem a tela é um dia sem coletar registros, e o valor dele
 depende de acumular tempo.
 
+### Política de notificação (decidida em 21/08/2026)
+
+Empurrar todos os avisos daria **413 notificações por pessoa por ano** — mais de
+uma por dia. A severidade domina o tipo: filtrar tipos leva 413 para 343;
+filtrar severidade leva para 18.
+
+| nível                                     | dispara                                      | por pessoa/ano       |
+| ----------------------------------------- | -------------------------------------------- | -------------------- |
+| **Interrompe** — acende a tela e vibra    | Grande Perigo, tipos de chuva e vento        | **6,4** (pior mês 4) |
+| **Silencioso** — ponto na aba, sem número | Perigo, mesmos tipos                         | 45,1 (pior mês 12)   |
+| Não notifica                              | Perigo Potencial e os outros sete tipos      | —                    |
+
+Regras que fazem esses números:
+
+- **Deduplicação de 6 h por localização.** 56,8% das notificações consecutivas na
+  mesma estação são o mesmo episódio re-avisado; a dedup sozinha corta o volume
+  pela metade e vale mais que qualquer escolha de tipo.
+- **Grande Perigo sempre dispara**, mesmo logo após um Perigo. A dedup nunca pode
+  rebaixar uma interrupção a selo.
+- **Sem horário de silêncio:** só 5,4% chegam entre 22h e 6h, e é o caso em que
+  acordar se justifica.
+- **O selo indica presença, não contagem.** Um badge com número lê como caixa de
+  e-mail e convida a limpar sem ler.
+- **Redação: _"aviso de Grande Perigo para a sua região"_**, nunca a rua — a
+  confirmação no ponto é de 3,4%, então a lacuna medida precisa estar visível na
+  própria frase.
+- Cores da severidade vêm do campo `aviso_cor` do próprio INMET.
+
 ---
 
 ## Regras que qualquer texto do projeto precisa respeitar
@@ -100,6 +128,8 @@ depende de acumular tempo.
 - **Aplicação:** protótipo navegável, três funcionalidades (alerta, registro de
   alagamento, conteúdo de estudo), construído por uma pessoa até outubro.
 - **Enquadramento do estudo:** lacuna de granularidade, não avaliação do INMET.
+- **Notificação:** dois níveis — Grande Perigo interrompe, Perigo é silencioso,
+  Perigo Potencial não notifica; com deduplicação de 6 h. Detalhe acima.
 - **A lacuna vai ao texto como razão**, por ser adimensional.
 
 ## Em aberto
