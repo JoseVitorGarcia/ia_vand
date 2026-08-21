@@ -140,10 +140,24 @@ def taxa_base_por_combo(obs, combos):
     return base
 
 
-def _esperado(g, base):
+def _esperado(g, base, so_chuva=False):
     """Taxa que a climatologia sozinha entregaria para os critérios deste grupo."""
-    chaves = [_chave(mm, ms) for mm, ms in zip(g['criterio_mm'], g['criterio_ms'])]
+    ventos = [None] * len(g) if so_chuva else list(g['criterio_ms'])
+    chaves = [_chave(mm, ms) for mm, ms in zip(g['criterio_mm'], ventos)]
     return float(np.mean([base[k] for k in chaves])) if chaves else float('nan')
+
+
+def confirmado_so_chuva(d):
+    """Confirma SÓ pela chuva anunciada, ignorando a cláusula de vento.
+
+    Existe porque o critério composto ficou frouxo demais para ser informativo:
+    os avisos de chuva também anunciam vento de 40 km/h, que se cumpre em 19,5%
+    dos dias por acaso, então quase todo aviso de chuva se confirma pelo vento e
+    não pela chuva. A composta responde "o aviso estava certo sobre alguma
+    coisa?"; esta responde "o aviso estava certo sobre CHUVA?". As duas juntas
+    são honestas; só a composta, não.
+    """
+    return (d['criterio_mm'].notna() & (d['chuva_24h_obs'] >= d['criterio_mm'])).to_numpy()
 
 
 def _linha(nome, unidade, conf, n, esperado=float('nan')):
@@ -154,19 +168,24 @@ def _linha(nome, unidade, conf, n, esperado=float('nan')):
             'climatologia': round(esperado, 3), 'ganho': round(ganho, 1)}
 
 
-def tabela_unidades(par_obs, chaves, base, minimo=0):
-    """Taxa de confirmação em PONTO e em ÁREA, agrupada pelas chaves pedidas."""
+def tabela_unidades(par_obs, chaves, base, coluna='confirmado', so_chuva=False, minimo=0):
+    """Taxa de confirmação em PONTO e em ÁREA, agrupada pelas chaves pedidas.
+
+    Com `so_chuva`, a climatologia de referência também passa a ser só a de
+    chuva — comparar confirmação por chuva contra uma base que inclui vento
+    subestimaria o ganho e produziria a conclusão oposta à correta.
+    """
     linhas = []
     for chave, g in par_obs.groupby(chaves, observed=True):
         nome = ' / '.join(str(k) for k in (chave if isinstance(chave, tuple) else (chave,)))
-        esperado = _esperado(g, base)
+        esperado = _esperado(g, base, so_chuva)
         # ÁREA: o aviso conta como confirmado se QUALQUER estação dele confirmou.
-        por_aviso = g.groupby('id', observed=True)['confirmado'].max()
+        por_aviso = g.groupby('id', observed=True)[coluna].max()
         if len(por_aviso) < minimo:
             continue
         linhas.append(_linha(nome, 'área', por_aviso.to_numpy(), len(por_aviso), esperado))
         # PONTO: cada (estação, dia, aviso) é uma unidade — o que a pessoa vive.
-        linhas.append(_linha(nome, 'ponto', g['confirmado'].to_numpy(), len(g), esperado))
+        linhas.append(_linha(nome, 'ponto', g[coluna].to_numpy(), len(g), esperado))
     t = pd.DataFrame(linhas)
     if t.empty:
         return t, t
@@ -276,6 +295,19 @@ def escrever_relatorio(secoes):
         _md(secoes['sev']),
         "\n## Taxa de confirmação por tipo de aviso\n",
         _md(secoes['tipo']),
+        "\n## Confirmação apenas pela chuva anunciada\n",
+        "O critério verificado acima é **composto**: confirma se chuva **ou** rajada cumpriu o "
+        "anunciado. Isso é justo — um aviso de Chuvas Intensas também promete vento, e exigir os "
+        "dois penalizaria quem acertou o vendaval. Mas a cláusula de vento desses avisos "
+        "(40 km/h) se cumpre em 19,5% dos dias por acaso, então **quase todo aviso de chuva se "
+        "confirma pelo vento, não pela chuva**.\n",
+        "A tabela abaixo repete a medição ignorando a cláusula de vento, com a climatologia de "
+        "referência também recalculada só para chuva. A composta responde *o aviso estava certo "
+        "sobre alguma coisa?*; esta responde *o aviso estava certo sobre CHUVA?*. As duas juntas "
+        "são honestas; só a composta, não. Vendaval não aparece porque não anuncia chuva.\n",
+        "\n### Por severidade\n", _md(secoes['sev_chuva']),
+        "\n### Por tipo\n", _md(secoes['tipo_chuva']),
+        "\n### A lacuna, só por chuva\n", _md(secoes['lac_sev_chuva']),
         "\n## A lacuna\n",
         "A diferença entre área e ponto é o resultado central: quantifica quanta informação se "
         "perde entre *o aviso é correto para a região* e *o aviso diz algo sobre a minha rua*.\n",
@@ -333,12 +365,21 @@ if __name__ == '__main__':
     logger.info('%d pares com observação | %.1f%% confirmados no ponto',
                 len(par_obs), 100 * par_obs['confirmado'].mean())
 
+    par_obs['confirmado_chuva'] = confirmado_so_chuva(par_obs)
     combos = {_chave(mm, ms) for mm, ms in zip(par_obs['criterio_mm'], par_obs['criterio_ms'])}
+    combos |= {_chave(mm, None) for mm in par_obs['criterio_mm']}
     base = taxa_base_por_combo(obs, combos)
     logger.info('%d combinações de critério | taxa base de %.2f%% a %.2f%%', len(base),
                 100 * min(base.values()), 100 * max(base.values()))
     sev, lac_sev = tabela_unidades(par_obs, ['severidade'], base)
     tipo, lac_tipo = tabela_unidades(par_obs, ['descricao'], base)
+    # Só quem anuncia chuva entra na tabela de chuva; Vendaval não anuncia.
+    chuvosos = par_obs[par_obs['criterio_mm'].notna()]
+    sev_chuva, lac_sev_chuva = tabela_unidades(chuvosos, ['severidade'], base,
+                                               coluna='confirmado_chuva', so_chuva=True)
+    tipo_chuva, _ = tabela_unidades(chuvosos, ['descricao'], base,
+                                    coluna='confirmado_chuva', so_chuva=True)
+    logger.info('\nSÓ CHUVA — por severidade:\n%s', sev_chuva.to_string(index=False))
     logger.info('\n%s', sev.to_string(index=False))
     logger.info('\n%s', lac_sev.to_string(index=False))
 
@@ -360,6 +401,7 @@ if __name__ == '__main__':
                    f"{100 * p['tem_aviso'].mean():.1f}% de todos os estação-dias estavam sob algum "
                    f"aviso dos quatro tipos estudados."),
         'sev': sev, 'tipo': tipo, 'lac_sev': lac_sev, 'lac_tipo': lac_tipo,
+        'sev_chuva': sev_chuva, 'tipo_chuva': tipo_chuva, 'lac_sev_chuva': lac_sev_chuva,
         'pontos': pontos, 'curva': curva,
         'cobertura': (f"Critério de chuva extraído em **{cob_mm:.1f}%** dos pares e critério de "
                       f"vento em **{cob_ms:.1f}%**. A comparação usa {n_comp:,} estação-dias com "

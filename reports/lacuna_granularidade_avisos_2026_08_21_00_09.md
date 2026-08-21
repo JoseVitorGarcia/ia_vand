@@ -1,6 +1,6 @@
 # A lacuna de granularidade do alerta regional
 
-Gerado em 21/08/2026 00:04
+Gerado em 21/08/2026 00:09
 
 **IFS** (*Integrated Forecasting System*) é o modelo global de previsão do **ECMWF** (*European Centre for Medium-Range Weather Forecasts*).
 
@@ -48,6 +48,43 @@ A coluna **climatologia** é a taxa que o acaso entregaria para os mesmos crité
 | Tempestade | ponto | 42238 | 0.228 | 0.224 | 0.232 | 0.147 | 1.6 |
 | Vendaval | área | 54 | 0.87 | 0.756 | 0.936 | 0.128 | 6.8 |
 | Vendaval | ponto | 2802 | 0.38 | 0.362 | 0.398 | 0.128 | 3 |
+
+## Confirmação apenas pela chuva anunciada
+
+O critério verificado acima é **composto**: confirma se chuva **ou** rajada cumpriu o anunciado. Isso é justo — um aviso de Chuvas Intensas também promete vento, e exigir os dois penalizaria quem acertou o vendaval. Mas a cláusula de vento desses avisos (40 km/h) se cumpre em 19,5% dos dias por acaso, então **quase todo aviso de chuva se confirma pelo vento, não pela chuva**.
+
+A tabela abaixo repete a medição ignorando a cláusula de vento, com a climatologia de referência também recalculada só para chuva. A composta responde *o aviso estava certo sobre alguma coisa?*; esta responde *o aviso estava certo sobre CHUVA?*. As duas juntas são honestas; só a composta, não. Vendaval não aparece porque não anuncia chuva.
+
+
+### Por severidade
+
+| grupo | unidade | n | taxa | ic_inf | ic_sup | climatologia | ganho |
+|---|---|---|---|---|---|---|---|
+| Grande Perigo | área | 44 | 0.591 | 0.444 | 0.723 | 0.001 | 397.5 |
+| Grande Perigo | ponto | 2722 | 0.031 | 0.025 | 0.038 | 0.001 | 21 |
+| Perigo | área | 287 | 0.564 | 0.507 | 0.621 | 0.014 | 41.3 |
+| Perigo | ponto | 13990 | 0.075 | 0.071 | 0.079 | 0.014 | 5.5 |
+| Perigo Potencial | área | 781 | 0.309 | 0.277 | 0.342 | 0.014 | 22.6 |
+| Perigo Potencial | ponto | 37551 | 0.038 | 0.036 | 0.04 | 0.014 | 2.8 |
+
+### Por tipo
+
+| grupo | unidade | n | taxa | ic_inf | ic_sup | climatologia | ganho |
+|---|---|---|---|---|---|---|---|
+| Acumulado de Chuva | área | 85 | 0.529 | 0.424 | 0.632 | 0.009 | 57.9 |
+| Acumulado de Chuva | ponto | 2785 | 0.069 | 0.06 | 0.079 | 0.009 | 7.6 |
+| Chuvas Intensas | área | 262 | 0.286 | 0.235 | 0.344 | 0.014 | 20.9 |
+| Chuvas Intensas | ponto | 9240 | 0.026 | 0.023 | 0.03 | 0.014 | 1.9 |
+| Tempestade | área | 765 | 0.404 | 0.37 | 0.439 | 0.013 | 30.6 |
+| Tempestade | ponto | 42238 | 0.05 | 0.048 | 0.053 | 0.013 | 3.8 |
+
+### A lacuna, só por chuva
+
+| grupo | ponto | área | lacuna |
+|---|---|---|---|
+| Grande Perigo | 0.031 | 0.591 | 0.56 |
+| Perigo | 0.075 | 0.564 | 0.489 |
+| Perigo Potencial | 0.038 | 0.309 | 0.271 |
 
 ## A lacuna
 
