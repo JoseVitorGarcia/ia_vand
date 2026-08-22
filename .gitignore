@@ -16,3 +16,6 @@ __pycache__/
 # Skills instalados pelo CLI `npx skills` — recuperáveis com `npx skills experimental_install`
 .claude/skills/
 skills-lock.json
+
+# Renderização do ESTADO.md — regerável, não versionada
+ESTADO.pdf
