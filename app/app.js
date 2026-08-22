@@ -232,18 +232,18 @@
 
     tema.secoes.forEach(function (s, indice) {
       if (s.tipo === 'texto') {
-        var bloco = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
+        var bloco = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
         s.paragrafos.forEach(function (par) { bloco.appendChild(el('p', { text: par })); });
         tela.appendChild(bloco);
       } else if (s.tipo === 'destaque') {
         tela.appendChild(
           el('section', { class: 'secao destaque' }, [
-            el('h3', { text: s.titulo }),
+            el('h2', { text: s.titulo }),
             el('p', { text: s.texto })
           ])
         );
       } else if (s.tipo === 'glossario') {
-        var glo = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
+        var glo = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
         var listaG = el('div', { class: 'glossario' });
         s.termos.forEach(function (t) {
           listaG.appendChild(
@@ -257,7 +257,7 @@
         if (s.nota) glo.appendChild(el('p', { class: 'nota', text: s.nota }));
         tela.appendChild(glo);
       } else if (s.tipo === 'dados') {
-        var sec = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
+        var sec = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
         var grid = el('div', { class: 'dados' });
         s.itens.forEach(function (d) {
           var cls = 'dado' + (d.largo ? ' largo' : '');
@@ -277,7 +277,7 @@
     });
 
     if (tema.reflexoes.length) {
-      var refSec = el('section', { class: 'secao reflexoes' }, [el('h3', { text: 'Para pensar' })]);
+      var refSec = el('section', { class: 'secao reflexoes' }, [el('h2', { text: 'Para pensar' })]);
       tema.reflexoes.forEach(function (r) {
         refSec.appendChild(
           el('div', { class: 'reflexao' }, [
@@ -307,7 +307,7 @@
       );
     });
     return el('section', { class: 'fontes' }, [
-      el('h4', { text: 'Fontes' }),
+      el('h2', { text: 'Fontes' }),
       lista,
       el('p', {
         class: 'aviso-redacao',
@@ -349,7 +349,7 @@
           }, [trilhoQuiz])
         ])
       );
-      raiz.appendChild(el('h3', { text: item.enunciado }));
+      raiz.appendChild(el('h2', { text: item.enunciado }));
 
       var alts = el('div', { class: 'alts' });
       var botoes = [];
@@ -384,7 +384,7 @@
       }
 
       raiz.appendChild(
-        el('div', { class: 'explica ' + (certo ? 'certa' : 'errada') }, [
+        el('div', { class: 'explica ' + (certo ? 'certa' : 'errada'), role: 'status', 'aria-live': 'polite' }, [
           el('strong', { text: certo ? 'Isso mesmo.' : 'Não é essa.' }),
           el('span', { text: item.explicacao })
         ])
