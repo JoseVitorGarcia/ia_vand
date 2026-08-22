@@ -62,18 +62,18 @@ consomem.
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. A política de notificação está decidida (ver abaixo). |
 | **2. Registro de alagamento pelo cidadão**                     | Nada construído. A justificativa técnica está clara: alagamento **não é chuva**, depende de drenagem e topografia, e nenhum modelo meteorológico o prevê — então isto não é o que foi refutado.       | Tudo. E a decisão da coleta do "não", que **não tem conserto retroativo** (ver "Em aberto", item 4).                    |
-| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP) e a cartilha _Desastres Hidrológicos_ (Corrêa e Marques, UERJ/Prodocência, 2023 — publicação independente **hospedada** no Cemaden Educação, não emitida por ele), todos em `material_estudo_vand_modulo_3/`. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. O protótipo existe em `app/` e a Trilha tem **dois dos três Temas escritos**, com 43 verificações passando. | O Tema 3, Avançado. |
+| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP) e a cartilha _Desastres Hidrológicos_ (Corrêa e Marques, UERJ/Prodocência, 2023 — publicação independente **hospedada** no Cemaden Educação, não emitida por ele), todos em `material_estudo_vand_modulo_3/`. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. O protótipo existe em `app/` e a Trilha está **completa: os três Temas escritos**, com 62 verificações passando. | Nada. É o único dos três objetivos entregue. |
 
 A camada consultável do objetivo 1 — a nossa previsão ao lado do aviso oficial —
 também já tem os números de que precisa: corte em 30 mm dá 71% dos eventos a 30%
 de confirmação, e é essa taxa que deve aparecer junto do aviso, não escondida.
 
-**Leitura honesta do estágio:** o objetivo 3 saiu do papel — tem app e dois
-Temas escritos. O objetivo 1 está pronto do lado do dado e parado do lado da
+**Leitura honesta do estágio:** o objetivo 3 está **entregue** — app, três
+Temas e teste. O objetivo 1 está pronto do lado do dado e parado do lado da
 interface. O objetivo 2 não começou, e é o único cujo atraso custa caro: cada
 dia sem a tela é um dia sem coletar registros, e o valor dele depende de
-acumular tempo. Vale reparar que o objetivo que mais andou é o que menos
-depende do relógio, e o que não andou é o que mais depende.
+acumular tempo. Vale reparar que o objetivo concluído é o que menos depende do
+relógio, e o que não começou é o que mais depende.
 
 ### Política de notificação (decidida em 21/08/2026)
 
