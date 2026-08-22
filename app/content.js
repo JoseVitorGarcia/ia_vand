@@ -246,32 +246,41 @@ window.VAND_CONTENT = {
             {
               palavra: 'Enchente',
               definicao:
-                'O nível da água sobe acima do normal por causa do aumento da vazão, mas a água ' +
-                'ainda corre dentro do leito do rio.'
+                'O nível da água sobe acima do normal por causa do aumento da vazão, mas a ' +
+                'água ainda corre dentro do leito do rio. É a palavra mais usada no dia a dia ' +
+                '— e a única das quatro que a classificação oficial de desastres não lista.'
             },
             {
-              palavra: 'Inundação',
+              palavra: 'Inundação — COBRADE 1.2.1.0.0',
               definicao:
-                'A água extravasa: passa dos limites normais do curso d’água e ocupa o que ' +
-                'está em volta.'
+                'A água submerge áreas fora dos limites normais do curso d’água, que ' +
+                'normalmente não ficam submersas. O transbordamento é gradual, e costuma vir ' +
+                'de chuva prolongada em área de planície.'
             },
             {
-              palavra: 'Enxurrada',
+              palavra: 'Enxurrada — COBRADE 1.2.2.0.0',
               definicao:
-                'Escoamento superficial concentrado e rápido, com alta energia de transporte. ' +
-                'Pode ocorrer sem rio nenhum transbordar, e é a de maior poder destrutivo.'
+                'Escoamento superficial de alta velocidade e energia, provocado por chuva ' +
+                'intensa e concentrada, normalmente em bacias pequenas de relevo acidentado. A ' +
+                'vazão sobe de repente e a calha do rio transborda de forma brusca. É a de ' +
+                'maior poder destrutivo.'
             },
             {
-              palavra: 'Alagamento',
+              palavra: 'Alagamento — COBRADE 1.2.3.0.0',
               definicao:
-                'Acúmulo de água em área urbana porque o sistema de drenagem foi excedido. ' +
-                'É um problema de bueiro e de galeria, não de rio.'
+                'Acúmulo de água em ruas, calçadas e outras estruturas urbanas porque a ' +
+                'capacidade de escoamento da drenagem foi excedida por chuva intensa. É um ' +
+                'problema de bueiro e de galeria, não de rio.'
             }
           ],
           nota:
-            'A distinção não é preciosismo de vocabulário: as quatro pedem respostas diferentes ' +
-            'da defesa civil e nascem de causas diferentes. As definições são as oficiais ' +
-            'brasileiras, registradas na classificação do Ministério da Integração Nacional.'
+            'Repare no contraste entre as duas do meio, porque ele é a diferença entre ter ' +
+            'tempo e não ter: a inundação sobe devagar, em terreno plano, depois de dias de ' +
+            'chuva — dá para avisar, dá para sair. A enxurrada desce de uma vez, em terreno ' +
+            'inclinado, durante a chuva — e é justamente por isso que mata mais. As três com ' +
+            'código são tipos oficiais da Classificação e Codificação Brasileira de Desastres ' +
+            '(COBRADE), que a defesa civil usa para registrar cada ocorrência do país. As ' +
+            'palavras acima são nossas; os códigos permitem conferir cada uma na fonte.'
         },
         {
           tipo: 'texto',
@@ -388,6 +397,15 @@ window.VAND_CONTENT = {
             '(impermeabilização urbana, erosão de margens e ocupação de áreas de risco)'
         },
         {
+          obra: 'Classificação e Codificação Brasileira de Desastres (COBRADE), Anexo V da Instrução Normativa nº 36',
+          orgao: 'Ministério do Desenvolvimento Regional — hoje Ministério da Integração e do Desenvolvimento Regional, Secretaria Nacional de Proteção e Defesa Civil',
+          ano: 2020,
+          detalhe:
+            'Grupo Hidrológico: Inundações (1.2.1.0.0), Enxurradas (1.2.2.0.0) e Alagamentos ' +
+            '(1.2.3.0.0). É a classificação em vigor, sucedendo a IN nº 1/2012, que criou o ' +
+            'COBRADE, e a IN nº 2/2016. "Enchente" não é um tipo do COBRADE'
+        },
+        {
           obra:
             'Desastres Hidrológicos: uma cartilha com informações e orientações sobre como agir ' +
             'em situações de risco (Gustavo Gaião Corrêa e Vitória Paula Freitas Marques; org. ' +
@@ -395,10 +413,9 @@ window.VAND_CONTENT = {
           orgao: 'UERJ — grupo Prodocência; publicação independente dos autores, hospedada na midiateca do Cemaden Educação',
           ano: 2023,
           detalhe:
-            'Conceitos de risco, vulnerabilidade e resiliência, e a distinção entre enchente, ' +
-            'inundação, enxurrada e alagamento — que a cartilha atribui à classificação oficial ' +
-            'de BRASIL (Ministério da Integração Nacional, Diário Oficial da União, 24/12/2013) ' +
-            'e a CPRM (2017)'
+            'Os conceitos de risco, vulnerabilidade e resiliência, que sustentam a distinção ' +
+            'entre a ameaça que vem do céu e o dano que ela causa. As definições dos quatro ' +
+            'termos vêm do COBRADE acima, não daqui'
         }
       ]
     },
