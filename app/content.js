@@ -182,21 +182,223 @@ window.VAND_CONTENT = {
       resumo:
         'Chuva forte não explica sozinha uma enchente. O que o solo, o córrego e o ' +
         'asfalto fazem com essa chuva explica o resto.',
-      secoes: [],
-      reflexoes: [],
-      quiz: [],
+      secoes: [
+        {
+          tipo: 'texto',
+          titulo: 'A mesma chuva, dois destinos',
+          paragrafos: [
+            'Ninguém consegue impedir a chuva — e ainda bem. É dela que vêm os açudes, os ' +
+              'poços e os reservatórios que abastecem cidades inteiras. O Tema anterior mostrou ' +
+              'que a água não é fabricada por ninguém: ela só circula. A chuva é a etapa desse ' +
+              'ciclo em que a água volta para o chão.',
+            'O que muda tudo é o que ela encontra quando chega lá. Água que cai sobre solo ' +
+              'coberto de vegetação infiltra devagar, alimenta o lençol subterrâneo e demora a ' +
+              'chegar ao rio. A mesma água caindo sobre asfalto não infiltra: escorre na hora, ' +
+              'inteira, para o ponto mais baixo do bairro — e chega ao bueiro toda de uma vez.',
+            'É por isso que duas ruas da mesma cidade, debaixo da mesma nuvem, podem terminar ' +
+              'a tarde de formas completamente diferentes. A chuva foi igual. O que o chão fez ' +
+              'com ela, não.'
+          ]
+        },
+        {
+          tipo: 'dados',
+          titulo: 'Quarenta minutos',
+          itens: [
+            { rotulo: 'de chuva forte, em São Paulo, em 28 de novembro de 2001', valor: '40 min' },
+            { rotulo: 'pontos de alagamento na cidade', valor: '20' },
+            {
+              rotulo: 'Carros arrastados pelas ruas, um rio transbordado e o trânsito parado — tudo dentro desses quarenta minutos',
+              valor: '',
+              largo: true
+            }
+          ],
+          nota:
+            'O episódio é o exemplo que o livro oficial do ENCCEJA usa para abrir a discussão. ' +
+            'Ele desfaz a intuição de que enchente exige um temporal de dias: quando o solo já ' +
+            'não absorve e a drenagem já está no limite, quarenta minutos bastam.'
+        },
+        {
+          tipo: 'texto',
+          titulo: 'O que a cidade faz com a água',
+          paragrafos: [
+            'As alterações que agravam uma enchente quase nunca foram feitas para agravar ' +
+              'nada. Foram feitas para facilitar a vida — e o efeito colateral só aparece no dia ' +
+              'da chuva. O livro do ENCCEJA lista as principais: córregos canalizados de forma ' +
+              'malfeita, cursos de pequenos rios alterados, barragens mal construídas e, acima ' +
+              'de tudo, a impermeabilização do solo pelo asfaltamento das ruas e pela ' +
+              'pavimentação dos quintais.',
+            'Some a isso o que acontece nas margens. Desmatar a beira de um rio para plantar ou ' +
+              'criar gado deixa o solo exposto; sem raiz que o segure, ele é levado pela erosão e ' +
+              'vai parar no fundo do rio. O leito sobe, a passagem estreita, e o mesmo volume de ' +
+              'água que antes cabia passa a transbordar.',
+            'O lixo fecha a conta. Jogado na rua ou no córrego, ele é levado pela água até o ' +
+              'bueiro e o entope justamente quando o bueiro mais precisa funcionar. É a única ' +
+              'peça dessa lista que não depende de obra pública nenhuma para mudar.',
+            'E há uma injustiça embutida em tudo isso: quem mora mais perto do rio e da encosta ' +
+              'costuma ser quem teve menos escolha sobre onde morar. O risco não se distribui por ' +
+              'sorteio — ele se concentra em quem já tinha menos.'
+          ]
+        },
+        {
+          tipo: 'glossario',
+          titulo: 'Quatro palavras que não são sinônimos',
+          termos: [
+            {
+              palavra: 'Enchente',
+              definicao:
+                'O nível da água sobe acima do normal por causa do aumento da vazão, mas a água ' +
+                'ainda corre dentro do leito do rio.'
+            },
+            {
+              palavra: 'Inundação',
+              definicao:
+                'A água extravasa: passa dos limites normais do curso d’água e ocupa o que ' +
+                'está em volta.'
+            },
+            {
+              palavra: 'Enxurrada',
+              definicao:
+                'Escoamento superficial concentrado e rápido, com alta energia de transporte. ' +
+                'Pode ocorrer sem rio nenhum transbordar, e é a de maior poder destrutivo.'
+            },
+            {
+              palavra: 'Alagamento',
+              definicao:
+                'Acúmulo de água em área urbana porque o sistema de drenagem foi excedido. ' +
+                'É um problema de bueiro e de galeria, não de rio.'
+            }
+          ],
+          nota:
+            'A distinção não é preciosismo de vocabulário: as quatro pedem respostas diferentes ' +
+            'da defesa civil e nascem de causas diferentes. As definições são as oficiais ' +
+            'brasileiras, registradas na classificação do Ministério da Integração Nacional.'
+        },
+        {
+          tipo: 'texto',
+          titulo: 'Por que nenhuma previsão do tempo prevê alagamento',
+          paragrafos: [
+            'Repare no que a definição de alagamento diz: capacidade de escoamento do sistema de ' +
+              'drenagem. Não há uma palavra sobre atmosfera. Um modelo meteorológico calcula como ' +
+              'o ar se comporta — para onde vai a umidade, onde ela condensa, quanta chuva cai em ' +
+              'cada pedaço do mapa. Ele não sabe onde ficam os bueiros da sua rua, se estão ' +
+              'entupidos, nem que o terreno da esquina é o ponto mais baixo do quarteirão.',
+            'Prever chuva e prever alagamento são, portanto, dois problemas diferentes. O ' +
+              'primeiro a meteorologia resolve razoavelmente bem. O segundo depende de drenagem, ' +
+              'topografia e manutenção — informação que não está em satélite nenhum, e que ' +
+              'costuma existir apenas na cabeça de quem mora ali.',
+            'É a diferença entre a ameaça e o dano. A previsão descreve a ameaça que vem do céu; ' +
+              'o estrago que ela causa depende de vulnerabilidade — quem está exposto, onde, e ' +
+              'com que capacidade de se recuperar depois.'
+          ]
+        },
+        {
+          tipo: 'destaque',
+          titulo: 'Onde este aplicativo entra',
+          texto:
+            'É exatamente por isso que a aba Registro existe. Nenhum modelo nos diria que a sua ' +
+            'esquina alagou — só você pode. E o registro mais valioso não é o "sim, alagou": é o ' +
+            '"não, aqui está seco", enviado no meio de uma chuva forte. Sem os dois, existe apenas ' +
+            'uma lista de lugares que alagaram, e não dá para aprender onde não alaga a partir de ' +
+            'uma lista dessas. O aviso do INMET, que você vê na aba Alerta, cobre uma região ' +
+            'inteira; o que acontece na sua rua, dentro dessa região, só o seu registro conta.'
+        }
+      ],
+      reflexoes: [
+        'Existe um ponto na sua cidade que alaga toda vez que chove forte? Olhando para ele, o que você vê: asfalto até a guia, um córrego canalizado, terreno mais baixo que a vizinhança, bueiro entupido?',
+        'Depois de uma chuva forte onde você mora, quanto tempo a água leva para escoar? E quem você acha que deveria resolver isso — o morador, a prefeitura, os dois?'
+      ],
+      quiz: [
+        {
+          enunciado:
+            'Duas ruas da mesma cidade recebem exatamente a mesma chuva. Uma alaga, a outra não. O que melhor explica a diferença?',
+          alternativas: [
+            'A chuva foi mais forte numa delas, mesmo que não pareça',
+            'O que cada rua faz com a água depois que ela cai: infiltração, escoamento e drenagem',
+            'A sorte, já que enchente é um fenômeno imprevisível',
+            'A quantidade de moradores em cada rua'
+          ],
+          correta: 1,
+          explicacao:
+            'O enunciado já fixa a chuva como igual nas duas. O que sobra para explicar a ' +
+            'diferença é o destino da água: solo que infiltra ou asfalto que não infiltra, ' +
+            'terreno alto ou baixo, drenagem que dá conta ou não.'
+        },
+        {
+          enunciado: 'Qual destas alterações feitas pelo ser humano tende a AUMENTAR o risco de enchente?',
+          alternativas: [
+            'Plantar vegetação na margem de um córrego',
+            'Ampliar a área de solo permeável em praças e quintais',
+            'Asfaltar ruas e pavimentar quintais em grande extensão',
+            'Desassorear o leito de um rio, retirando o material acumulado no fundo'
+          ],
+          correta: 2,
+          explicacao:
+            'Asfalto e pavimento impermeabilizam o solo: a água que antes infiltrava passa a ' +
+            'escorrer inteira para a drenagem, de uma vez. As outras três opções vão na direção ' +
+            'contrária — todas aumentam a capacidade de absorver ou de escoar.'
+        },
+        {
+          enunciado: 'Por que desmatar a margem de um rio aumenta o risco de enchente?',
+          alternativas: [
+            'Porque as árvores da margem consomem a água que causaria a enchente',
+            'Porque sem vegetação o solo sofre erosão, vai para o fundo do rio e reduz a passagem da água',
+            'Porque a mata das margens faz a chuva cair em outro lugar',
+            'Porque o desmatamento aquece o rio e evapora menos água'
+          ],
+          correta: 1,
+          explicacao:
+            'Sem raiz que segure o solo, a erosão carrega terra para dentro do rio. O material se ' +
+            'acumula no fundo, o leito perde profundidade, e o volume de água que antes passava ' +
+            'sem problema começa a transbordar.'
+        },
+        {
+          enunciado:
+            'Uma rua do centro acumula água porque a galeria de drenagem não deu conta do volume, sem que rio nenhum transbordasse. Como se chama isso?',
+          alternativas: ['Inundação', 'Enxurrada', 'Alagamento', 'Enchente'],
+          correta: 2,
+          explicacao:
+            'Alagamento é acúmulo de água em área urbana por extrapolação da capacidade do ' +
+            'sistema de drenagem. Enchente é o nível subindo dentro do leito do rio; inundação é ' +
+            'a água extravasando para fora dele; enxurrada é o escoamento concentrado e violento.'
+        },
+        {
+          enunciado: 'Por que a previsão meteorológica não consegue prever que uma esquina específica vai alagar?',
+          alternativas: [
+            'Porque a previsão do tempo ainda é uma ciência pouco confiável',
+            'Porque alagamento depende de drenagem, topografia e manutenção locais, que o modelo de atmosfera não enxerga',
+            'Porque os satélites não cobrem áreas urbanas com detalhe suficiente',
+            'Porque só é possível prever chuva com poucas horas de antecedência'
+          ],
+          correta: 1,
+          explicacao:
+            'Um modelo meteorológico calcula o comportamento da atmosfera. Bueiro entupido, ' +
+            'terreno baixo e galeria subdimensionada não são atmosfera — são a cidade. Por isso a ' +
+            'previsão descreve a ameaça que vem do céu, mas não o estrago que ela vai causar em ' +
+            'cada ponto.'
+        }
+      ],
       fontes: [
         {
           obra: 'Ciências — Livro do Estudante, Ensino Fundamental',
           orgao: 'MEC/INEP — ENCCEJA',
           ano: 2006,
-          detalhe: 'Cap. VIII, seção "Chuva de menos: seca. Chuva demais: enchente"'
+          detalhe:
+            'Cap. VIII, seção "Chuva de menos: seca. Chuva demais: enchente" (alterações humanas ' +
+            'que agravam a enchente e o episódio de São Paulo em 2001) e Cap. IX ' +
+            '(impermeabilização urbana, erosão de margens e ocupação de áreas de risco)'
         },
         {
-          obra: 'Desastres Hidrológicos — cartilha de informações e orientações',
-          orgao: 'CEMADEN Educação / MCTI',
-          ano: 2024,
-          detalhe: 'Orientações de o que fazer'
+          obra:
+            'Desastres Hidrológicos: uma cartilha com informações e orientações sobre como agir ' +
+            'em situações de risco (Gustavo Gaião Corrêa e Vitória Paula Freitas Marques; org. ' +
+            'Cássia Barreto Brandão)',
+          orgao: 'UERJ — grupo Prodocência; publicação independente dos autores, hospedada na midiateca do Cemaden Educação',
+          ano: 2023,
+          detalhe:
+            'Conceitos de risco, vulnerabilidade e resiliência, e a distinção entre enchente, ' +
+            'inundação, enxurrada e alagamento — que a cartilha atribui à classificação oficial ' +
+            'de BRASIL (Ministério da Integração Nacional, Diário Oficial da União, 24/12/2013) ' +
+            'e a CPRM (2017)'
         }
       ]
     },

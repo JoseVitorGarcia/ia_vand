@@ -8,58 +8,86 @@
 <script>
 var log = [];
 function ok(cond, msg) { log.push((cond ? 'PASS ' : 'FALHA ') + msg); }
-try {
-  localStorage.removeItem('vand.progresso.v1');
-  var tema = window.VAND_CONTENT.trilha[0];
 
-  ok(document.querySelectorAll('.tema-card').length === 3, 'trilha lista 3 temas');
-  ok(document.querySelectorAll('.tema-card[disabled]').length === 2,
-     'os 2 temas ainda sem conteudo estao desabilitados');
-
-  location.hash = '#/estudar/' + tema.id;
+function irPara(hash) {
+  location.hash = hash;
   window.dispatchEvent(new HashChangeEvent('hashchange'));
+}
 
-  ok(!document.getElementById('voltar').hidden, 'botao voltar aparece no tema');
-  ok(document.querySelectorAll('.reflexao').length === 2, 'as 2 reflexoes aparecem');
-  ok(document.querySelectorAll('.fontes li').length === 1, 'fonte declarada');
+// Percorre um Tema inteiro: secoes, reflexoes, fontes, quiz certo, quiz errado.
+// Vale para qualquer Tema escrito — Tema novo nao pede teste novo.
+function percorre(tema) {
+  var nome = '[' + tema.id + '] ';
+  irPara('#/estudar/' + tema.id);
 
-  // Percorre o quiz acertando tudo.
-  for (var q = 0; q < tema.quiz.length; q++) {
+  ok(!document.getElementById('voltar').hidden, nome + 'botao voltar aparece');
+  ok(document.querySelectorAll('#tela > .secao:not(.reflexoes)').length === tema.secoes.length,
+     nome + 'as ' + tema.secoes.length + ' secoes renderizaram (todos os tipos declarados)');
+  ok(document.querySelectorAll('.reflexao').length === tema.reflexoes.length,
+     nome + 'as ' + tema.reflexoes.length + ' reflexoes aparecem');
+  ok(document.querySelectorAll('.fontes li').length === tema.fontes.length,
+     nome + 'as ' + tema.fontes.length + ' fontes declaradas');
+
+  // Cada seccao de glossario exibe todos os seus termos.
+  tema.secoes.forEach(function (s) {
+    if (s.tipo === 'glossario') {
+      ok(document.querySelectorAll('.glossario .termo').length === s.termos.length,
+         nome + 'glossario exibe os ' + s.termos.length + ' termos');
+    }
+  });
+
+  // Acerta tudo.
+  var total = tema.quiz.length;
+  for (var q = 0; q < total; q++) {
     var alts = document.querySelectorAll('.quiz .alt');
-    ok(alts.length === 4, 'questao ' + (q + 1) + ' tem 4 alternativas');
+    ok(alts.length === 4, nome + 'questao ' + (q + 1) + ' tem 4 alternativas');
     alts[tema.quiz[q].correta].click();
-    ok(!!document.querySelector('.explica.certa'), 'questao ' + (q + 1) + ' aceitou a correta');
+    ok(!!document.querySelector('.explica.certa'), nome + 'questao ' + (q + 1) + ' aceitou a correta');
     document.querySelector('.quiz .btn').click();
   }
   var score = document.querySelector('.resultado .score');
-  ok(score && score.textContent === '5/5', 'resultado mostra 5/5');
+  ok(score && score.textContent === total + '/' + total, nome + 'resultado mostra ' + total + '/' + total);
   var salvo = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
-  ok(salvo && salvo.acertos === 5, 'progresso gravado no localStorage');
+  ok(salvo && salvo.acertos === total, nome + 'progresso gravado no localStorage');
 
   // Refaz errando tudo: o melhor resultado nao pode piorar.
   document.querySelectorAll('.quiz .btn')[1].click();
-  for (var q2 = 0; q2 < tema.quiz.length; q2++) {
+  for (var q2 = 0; q2 < total; q2++) {
     var a2 = document.querySelectorAll('.quiz .alt');
-    var errada = (tema.quiz[q2].correta + 1) % 4;
-    a2[errada].click();
-    if (q2 === 0) ok(!!document.querySelector('.explica.errada'), 'resposta errada sinalizada');
+    a2[(tema.quiz[q2].correta + 1) % 4].click();
+    if (q2 === 0) ok(!!document.querySelector('.explica.errada'), nome + 'resposta errada sinalizada');
     document.querySelector('.quiz .btn').click();
   }
   var depois = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
-  ok(depois.acertos === 5, 'refazer pior nao apaga o melhor resultado (ficou ' + depois.acertos + ')');
+  ok(depois.acertos === total,
+     nome + 'refazer pior nao apaga o melhor resultado (ficou ' + depois.acertos + ')');
+}
+
+try {
+  localStorage.removeItem('vand.progresso.v1');
+  var trilha = window.VAND_CONTENT.trilha;
+  var escritos = trilha.filter(function (t) { return t.secoes.length > 0; });
+  var vazios = trilha.length - escritos.length;
+
+  irPara('#/estudar');
+  ok(document.querySelectorAll('.tema-card').length === trilha.length,
+     'trilha lista os ' + trilha.length + ' temas');
+  ok(document.querySelectorAll('.tema-card[disabled]').length === vazios,
+     'os ' + vazios + ' temas ainda sem conteudo estao desabilitados');
+  ok(escritos.length > 0, 'ha ao menos um Tema escrito para percorrer');
+
+  escritos.forEach(percorre);
 
   // Abas vazias.
-  location.hash = '#/alerta';
-  window.dispatchEvent(new HashChangeEvent('hashchange'));
+  irPara('#/alerta');
   ok(!!document.querySelector('.vazia'), 'aba Alerta mostra tela vazia assumida');
-  location.hash = '#/registro';
-  window.dispatchEvent(new HashChangeEvent('hashchange'));
+  irPara('#/registro');
   ok(!!document.querySelector('.vazia'), 'aba Registro mostra tela vazia assumida');
 
-  // Volta a trilha: o selo de progresso aparece.
-  location.hash = '#/estudar';
-  window.dispatchEvent(new HashChangeEvent('hashchange'));
-  ok(!!document.querySelector('.selo-feito'), 'trilha mostra o resultado guardado');
+  // Volta a trilha: o selo de progresso aparece em cada Tema percorrido.
+  irPara('#/estudar');
+  ok(document.querySelectorAll('.selo-feito').length === escritos.length,
+     'trilha mostra o resultado guardado dos ' + escritos.length + ' temas percorridos');
 } catch (e) {
   log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
 }

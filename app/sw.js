@@ -5,7 +5,7 @@
  * Ao mudar qualquer arquivo do app, incremente VERSAO — senão o navegador
  * continua servindo a versão velha do cache.
  */
-var VERSAO = 'vand-v1';
+var VERSAO = 'vand-v2';
 var ARQUIVOS = [
   './',
   './index.html',

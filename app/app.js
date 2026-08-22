@@ -206,6 +206,20 @@
             el('p', { text: s.texto })
           ])
         );
+      } else if (s.tipo === 'glossario') {
+        var glo = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
+        var listaG = el('div', { class: 'glossario' });
+        s.termos.forEach(function (t) {
+          listaG.appendChild(
+            el('div', { class: 'termo' }, [
+              el('span', { class: 'palavra', text: t.palavra }),
+              el('p', { text: t.definicao })
+            ])
+          );
+        });
+        glo.appendChild(listaG);
+        if (s.nota) glo.appendChild(el('p', { class: 'nota', text: s.nota }));
+        tela.appendChild(glo);
       } else if (s.tipo === 'dados') {
         var sec = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
         var grid = el('div', { class: 'dados' });
@@ -223,7 +237,7 @@
     });
 
     if (tema.reflexoes.length) {
-      var refSec = el('section', { class: 'secao' }, [el('h3', { text: 'Para pensar' })]);
+      var refSec = el('section', { class: 'secao reflexoes' }, [el('h3', { text: 'Para pensar' })]);
       tema.reflexoes.forEach(function (r) {
         refSec.appendChild(
           el('div', { class: 'reflexao' }, [
