@@ -118,12 +118,21 @@ sai do verde e passa a ser duas cores frias distintas, nenhuma delas o acento:
 
 | resposta | claro | escuro |
 | --- | --- | --- |
-| sim, está alagado | `#2f5d8a` | `#8fb4dd` |
+| sim, está alagado | `#285076` | `#9cbce1` |
 | não, está seco | `#6b3f5f` | `#e8a5cd` |
 | não sei | usa `texto secundário` | usa `texto secundário` |
 
 Azul-ardósia e ameixa: são distinguíveis entre si, distinguíveis do verde da
 interface, e — de propósito — **nenhuma das duas parece o botão certo**.
+
+Os quatro valores são **medidos, não escolhidos no olho**, e pesam igual de
+propósito: no claro, 7,79:1 do ardósia contra 7,78:1 da ameixa; no escuro,
+9,51:1 contra 9,51:1. Todos AAA, como o resto do app. O empate importa porque
+"pesar igual" aqui não é só figura de linguagem — se um dos dois tivesse mais
+contraste que o outro, ele puxaria o olho e viraria a resposta sugerida, que é
+exatamente o viés que esta escolha de cor existe para evitar. A primeira versão
+do ardósia, `#2f5d8a`, dava 6,37:1: reprovava em AAA e era visivelmente mais
+fraca que a ameixa.
 
 ---
 

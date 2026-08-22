@@ -8,10 +8,6 @@
         "@elsahafy/ux-mcp-server"
       ],
       "env": {}
-    },
-    "originkit": {
-      "type": "http",
-      "url": "https://mcp.originkit.dev"
     }
   }
 }
