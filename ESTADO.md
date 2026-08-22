@@ -1,6 +1,6 @@
 # Estado do IA_VAND
 
-Atualizado em **21/08/2026**. Uma página com onde o projeto está, o que foi
+Atualizado em **22/08/2026**. Uma página com onde o projeto está, o que foi
 medido, o que está decidido e o que continua em aberto.
 
 > **Divisão de trabalho com o `README.md`:** ele documenta como o pipeline
@@ -61,16 +61,18 @@ a medição** que as três funcionalidades consomem.
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. A política de notificação está decidida (ver abaixo). |
 | **2. Registro de alagamento pelo cidadão**                     | Nada construído. A justificativa técnica está clara: alagamento **não é chuva**, depende de drenagem e topografia, e nenhum modelo meteorológico o prevê — então isto não é o que foi refutado.       | Tudo. E a decisão da coleta do "não", que **não tem conserto retroativo** (ver "Em aberto", item 4).                    |
-| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP, já baixados em `material_estudo_vand_modulo_3/`) e cartilhas do CEMADEN Educação e da Defesa Civil. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. | Escrever os três Temas e construir o app em `app/`. |
+| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP, já baixados em `material_estudo_vand_modulo_3/`) e cartilhas do CEMADEN Educação e da Defesa Civil. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. O protótipo existe em `app/` e a Trilha tem **dois dos três Temas escritos**, com 43 verificações passando. | O Tema 3, Avançado. |
 
 A camada consultável do objetivo 1 — a nossa previsão ao lado do aviso oficial —
 também já tem os números de que precisa: corte em 30 mm dá 71% dos eventos a 30%
 de confirmação, e é essa taxa que deve aparecer junto do aviso, não escondida.
 
-**Leitura honesta do estágio:** os objetivos 1 e 3 estão prontos do lado do dado e
-parados do lado da interface. O objetivo 2 não começou, e é o único cujo atraso
-custa caro — cada dia sem a tela é um dia sem coletar registros, e o valor dele
-depende de acumular tempo.
+**Leitura honesta do estágio:** o objetivo 3 saiu do papel — tem app e dois
+Temas escritos. O objetivo 1 está pronto do lado do dado e parado do lado da
+interface. O objetivo 2 não começou, e é o único cujo atraso custa caro: cada
+dia sem a tela é um dia sem coletar registros, e o valor dele depende de
+acumular tempo. Vale reparar que o objetivo que mais andou é o que menos
+depende do relógio, e o que não andou é o que mais depende.
 
 ### Política de notificação (decidida em 21/08/2026)
 
@@ -151,10 +153,12 @@ vez de apenas descrevê-la.
 1. **Assimetria de custo com a defesa civil.** É o que escolhe entre alertar a
    20 mm (83% dos eventos, 10 avisos por estação-ano) e a 42 mm (51%, 2,4). Não
    há medição que decida isso — é conversa com quem recebe o alerta.
-2. **Colheita diária de previsões.** 2 dias acumulados, ~59 até a apresentação.
+2. **Colheita diária de previsões.** 3 dias acumulados, ~58 até a apresentação.
    Roda à mão: `./run.sh scripts/colher_previsao_diaria.py`, idealmente às
    **09:00 local (12 UTC)**, que é o enquadramento de todo o resto do projeto.
-3. **O protótipo.** Nada construído; nenhuma linha de aplicação no repositório.
+3. **O protótipo.** Existe em `app/` desde 21/08/2026 — estático, sem build e
+   sem back-end, com as três abas. A aba Estudar está percorrível; Alerta e
+   Registro são telas vazias assumidas. É aí que o trabalho continua.
 4. **Registro de alagamento:** decidir a coleta do "não" (_"está alagado aí?
    sim / não / não sei"_) **no desenho da tela**. Sem isso o dado é só de
    presença e não treina nada — e não tem conserto retroativo. Vale lembrar por
