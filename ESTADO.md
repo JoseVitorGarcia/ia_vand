@@ -53,15 +53,16 @@ linhas), depois o relatório 5, depois o 4.
 
 ## Os três objetivos da aplicação
 
-Entrega prevista: **protótipo navegável**, uma pessoa, até outubro de 2026.
-Nenhuma linha de aplicação existe no repositório — o que está pronto é o **dado e
-a medição** que as três funcionalidades consomem.
+Entrega prevista: **protótipo navegável**, uma pessoa, até outubro de 2026. O
+esqueleto do app existe em `app/` desde 21/08/2026, com as três abas; o que está
+pronto por baixo dele é o **dado e a medição** que as três funcionalidades
+consomem.
 
 | objetivo                                                       | o que já existe                                                                                                                                                                                    | o que falta                                                                                                          |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | **1. Alerta por localização**, retransmitindo o aviso do INMET | Endpoint verificado e arquivo de **5.958 avisos** colhido. `src/avisos.py` casa estação e aviso por geometria, com 18 testes. Os avisos já trazem geocódigo IBGE, polígono, riscos e instruções prontos para exibir. A medição que justifica a funcionalidade está feita (lacuna de 3,1x a 17,9x). | A tela. A política de notificação está decidida (ver abaixo). |
 | **2. Registro de alagamento pelo cidadão**                     | Nada construído. A justificativa técnica está clara: alagamento **não é chuva**, depende de drenagem e topografia, e nenhum modelo meteorológico o prevê — então isto não é o que foi refutado.       | Tudo. E a decisão da coleta do "não", que **não tem conserto retroativo** (ver "Em aberto", item 4).                    |
-| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP, já baixados em `material_estudo_vand_modulo_3/`) e cartilhas do CEMADEN Educação e da Defesa Civil. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. O protótipo existe em `app/` e a Trilha tem **dois dos três Temas escritos**, com 43 verificações passando. | O Tema 3, Avançado. |
+| **3. Conteúdo de estudo** sobre clima, geografia e meteorologia | A matéria-prima é **material oficial do governo**, não os nossos relatórios: Livros do Estudante do ENCCEJA (MEC/INEP) e a cartilha _Desastres Hidrológicos_ (Corrêa e Marques, UERJ/Prodocência, 2023 — publicação independente **hospedada** no Cemaden Educação, não emitida por ele), todos em `material_estudo_vand_modulo_3/`. Desenho fechado em 21/08/2026 — ver `CONTEXT.md` e `docs/adr/0001` a `0003`. O protótipo existe em `app/` e a Trilha tem **dois dos três Temas escritos**, com 43 verificações passando. | O Tema 3, Avançado. |
 
 A camada consultável do objetivo 1 — a nossa previsão ao lado do aviso oficial —
 também já tem os números de que precisa: corte em 30 mm dá 71% dos eventos a 30%
