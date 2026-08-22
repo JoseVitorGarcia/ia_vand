@@ -1,0 +1,9 @@
+# O repositório tem 5,5 GB. Sem este arquivo, o build enviaria tudo ao daemon.
+# Só a pasta app/ e a configuração do nginx precisam entrar no contexto.
+*
+!app/
+!docker/nginx.conf
+
+# Mesmo dentro de app/, nada de lixo local.
+app/**/.DS_Store
+app/**/*.map

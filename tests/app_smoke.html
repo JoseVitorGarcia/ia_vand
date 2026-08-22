@@ -1,0 +1,67 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>smoke</title></head><body>
+<nav class="tabbar"><button data-aba="alerta"></button><button data-aba="registro"></button><button data-aba="estudar"></button></nav>
+<header class="topbar"><button class="backbtn" id="voltar" hidden></button><h1 id="titulo"><span class="sub" id="subtitulo"></span></h1></header>
+<main class="wrap" id="tela" tabindex="-1"></main>
+<pre id="saida"></pre>
+<script src="../app/content.js"></script>
+<script src="../app/app.js"></script>
+<script>
+var log = [];
+function ok(cond, msg) { log.push((cond ? 'PASS ' : 'FALHA ') + msg); }
+try {
+  localStorage.removeItem('vand.progresso.v1');
+  var tema = window.VAND_CONTENT.trilha[0];
+
+  ok(document.querySelectorAll('.tema-card').length === 3, 'trilha lista 3 temas');
+  ok(document.querySelectorAll('.tema-card[disabled]').length === 2,
+     'os 2 temas ainda sem conteudo estao desabilitados');
+
+  location.hash = '#/estudar/' + tema.id;
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+
+  ok(!document.getElementById('voltar').hidden, 'botao voltar aparece no tema');
+  ok(document.querySelectorAll('.reflexao').length === 2, 'as 2 reflexoes aparecem');
+  ok(document.querySelectorAll('.fontes li').length === 1, 'fonte declarada');
+
+  // Percorre o quiz acertando tudo.
+  for (var q = 0; q < tema.quiz.length; q++) {
+    var alts = document.querySelectorAll('.quiz .alt');
+    ok(alts.length === 4, 'questao ' + (q + 1) + ' tem 4 alternativas');
+    alts[tema.quiz[q].correta].click();
+    ok(!!document.querySelector('.explica.certa'), 'questao ' + (q + 1) + ' aceitou a correta');
+    document.querySelector('.quiz .btn').click();
+  }
+  var score = document.querySelector('.resultado .score');
+  ok(score && score.textContent === '5/5', 'resultado mostra 5/5');
+  var salvo = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
+  ok(salvo && salvo.acertos === 5, 'progresso gravado no localStorage');
+
+  // Refaz errando tudo: o melhor resultado nao pode piorar.
+  document.querySelectorAll('.quiz .btn')[1].click();
+  for (var q2 = 0; q2 < tema.quiz.length; q2++) {
+    var a2 = document.querySelectorAll('.quiz .alt');
+    var errada = (tema.quiz[q2].correta + 1) % 4;
+    a2[errada].click();
+    if (q2 === 0) ok(!!document.querySelector('.explica.errada'), 'resposta errada sinalizada');
+    document.querySelector('.quiz .btn').click();
+  }
+  var depois = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
+  ok(depois.acertos === 5, 'refazer pior nao apaga o melhor resultado (ficou ' + depois.acertos + ')');
+
+  // Abas vazias.
+  location.hash = '#/alerta';
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+  ok(!!document.querySelector('.vazia'), 'aba Alerta mostra tela vazia assumida');
+  location.hash = '#/registro';
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+  ok(!!document.querySelector('.vazia'), 'aba Registro mostra tela vazia assumida');
+
+  // Volta a trilha: o selo de progresso aparece.
+  location.hash = '#/estudar';
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+  ok(!!document.querySelector('.selo-feito'), 'trilha mostra o resultado guardado');
+} catch (e) {
+  log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
+}
+document.getElementById('saida').textContent = 'RESULTADO\n' + log.join('\n');
+</script></body></html>

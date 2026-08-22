@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    image: vand-app
+    ports:
+      - "8781:8080"   # 8000 já está ocupada nesta máquina
+    restart: unless-stopped
