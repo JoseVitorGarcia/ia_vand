@@ -5,7 +5,7 @@
  * Ao mudar qualquer arquivo do app, incremente VERSAO — senão o navegador
  * continua servindo a versão velha do cache.
  */
-var VERSAO = 'vand-v4';
+var VERSAO = 'vand-v5';
 var ARQUIVOS = [
   './',
   './index.html',
@@ -14,7 +14,9 @@ var ARQUIVOS = [
   './app.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/logo.png',
+  './icons/logo-dark.png'
 ];
 
 self.addEventListener('install', function (e) {

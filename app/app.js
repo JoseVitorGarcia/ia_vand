@@ -78,6 +78,7 @@
     var r = rota();
     limpar();
     voltar.hidden = true;
+    document.body.classList.remove('lendo');
 
     abas.forEach(function (b) {
       if (b.dataset.aba === r.aba) b.setAttribute('aria-current', 'page');
@@ -95,7 +96,8 @@
         'Retransmissão do aviso do INMET para a sua região.',
         'Ainda não construída. O dado já existe — 5.958 avisos colhidos e o casamento ' +
           'entre estação e aviso testado —, mas a tela não. Ela aparece aqui vazia de ' +
-          'propósito: nada de simulação que pareça real.'
+          'propósito: nada de simulação que pareça real.',
+        '◈'
       );
     } else if (r.aba === 'registro') {
       renderVazia(
@@ -104,14 +106,16 @@
         'Enviar se a sua rua está alagada, ou se não está.',
         'Ainda não construída. Quando existir, ela vai perguntar ativamente — "está ' +
           'alagado aí? sim / não / não sei" —, porque o "não" é o dado mais valioso e o ' +
-          'mais fácil de esquecer de coletar.'
+          'mais fácil de esquecer de coletar.',
+        '◉'
       );
     } else {
       ir('#/estudar');
       return;
     }
 
-    window.scrollTo(0, 0);
+    try { window.scrollTo({ top: 0, behavior: 'instant' }); }
+    catch (e) { window.scrollTo(0, 0); }
     tela.focus({ preventScroll: true });
   }
 
@@ -120,7 +124,6 @@
   function cabecalho(t, s, mostrarVoltar, alvoVoltar) {
     titulo.innerHTML = '';
     titulo.appendChild(document.createTextNode(t));
-    titulo.appendChild(document.createElement('br'));
     var sub = el('span', { class: 'sub', text: s });
     sub.id = 'subtitulo';
     titulo.appendChild(sub);
@@ -129,10 +132,11 @@
     voltar.onclick = function () { ir(alvoVoltar || '#/estudar'); };
   }
 
-  function renderVazia(abaNome, h, sub, corpo) {
+  function renderVazia(abaNome, h, sub, corpo, icone) {
     cabecalho(abaNome, sub, false);
     tela.appendChild(
       el('div', { class: 'vazia' }, [
+        el('div', { class: 'emblema', 'aria-hidden': 'true', text: icone || '◇' }),
         el('h2', { text: h }),
         el('p', { text: corpo })
       ])
@@ -142,17 +146,47 @@
   function renderTrilha() {
     cabecalho('Estudar', 'Trilha de clima e água', false);
     var p = lerProgresso();
+    var prontos = TRILHA.filter(escrito);
+    var feitos = prontos.filter(function (t) { return p[t.id]; }).length;
 
+    // A marca só aparece aqui, na abertura — nunca no cabeçalho fixo.
+    // Ver docs/adr/0003 e o brief: o ponto vermelho não pode conviver com um
+    // chip de Severidade no topo de todas as telas.
     tela.appendChild(
-      el('p', {
-        class: 'intro',
-        text:
-          'Três temas, do básico ao avançado, escritos a partir de material oficial do ' +
-          'governo. Cada um termina num quiz de cinco questões. Comece por onde quiser.'
-      })
+      el('div', { class: 'hero' }, [
+        el('div', { class: 'marca', role: 'img', 'aria-label': 'VAND' }),
+        el('p', {
+          text:
+            'Três temas, do básico ao avançado, escritos a partir de material oficial do ' +
+            'governo. Cada um termina num quiz de cinco questões. Comece por onde quiser.'
+        })
+      ])
     );
 
-    TRILHA.forEach(function (tema) {
+    if (prontos.length) {
+      var pct = Math.round((feitos / prontos.length) * 100);
+      var enchimento = el('i');
+      var painel = el('div', { class: 'painel' }, [
+        el('span', { class: 'rotulo' }, [
+          el('strong', { text: feitos + ' de ' + prontos.length }),
+          document.createTextNode(feitos === 1 ? ' tema concluído' : ' temas concluídos')
+        ]),
+        el('div', {
+          class: 'barra',
+          role: 'progressbar',
+          'aria-valuenow': String(feitos),
+          'aria-valuemin': '0',
+          'aria-valuemax': String(prontos.length)
+        }, [enchimento])
+      ]);
+      tela.appendChild(painel);
+      // Num quadro seguinte, para a barra animar de zero até o valor.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { enchimento.style.setProperty('--pct', pct + '%'); });
+      });
+    }
+
+    TRILHA.forEach(function (tema, indice) {
       var pronto = escrito(tema);
       var feito = p[tema.id];
 
@@ -184,6 +218,7 @@
           meta
         ]
       );
+      card.style.setProperty('--i', indice);
       if (pronto) {
         card.onclick = function () { ir('#/estudar/' + tema.id); };
       }
@@ -193,8 +228,9 @@
 
   function renderTema(tema) {
     cabecalho(tema.titulo, tema.nivel + ' · ' + tema.minutos + ' min', true, '#/estudar');
+    document.body.classList.add('lendo');
 
-    tema.secoes.forEach(function (s) {
+    tema.secoes.forEach(function (s, indice) {
       if (s.tipo === 'texto') {
         var bloco = el('section', { class: 'secao' }, [el('h3', { text: s.titulo })]);
         s.paragrafos.forEach(function (par) { bloco.appendChild(el('p', { text: par })); });
@@ -234,6 +270,10 @@
         if (s.nota) sec.appendChild(el('p', { class: 'nota', text: s.nota }));
         tela.appendChild(sec);
       }
+    });
+
+    Array.prototype.forEach.call(tela.querySelectorAll('.secao'), function (n, i) {
+      n.style.setProperty('--i', i);
     });
 
     if (tema.reflexoes.length) {
@@ -295,11 +335,19 @@
       }
 
       var item = tema.quiz[indice];
+      var trilhoQuiz = el('i');
+      trilhoQuiz.style.setProperty('--pct', Math.round((indice / tema.quiz.length) * 100) + '%');
       raiz.appendChild(
-        el('p', {
-          class: 'quiz-prog',
-          text: 'Questão ' + (indice + 1) + ' de ' + tema.quiz.length
-        })
+        el('p', { class: 'quiz-prog' }, [
+          el('span', { text: 'Questão ' + (indice + 1) + ' de ' + tema.quiz.length }),
+          el('span', {
+            class: 'barra',
+            role: 'progressbar',
+            'aria-valuenow': String(indice),
+            'aria-valuemin': '0',
+            'aria-valuemax': String(tema.quiz.length)
+          }, [trilhoQuiz])
+        ])
       );
       raiz.appendChild(el('h3', { text: item.enunciado }));
 
@@ -310,6 +358,7 @@
           el('span', { class: 'letra', text: 'ABCD'[i] }),
           el('span', { text: texto })
         ]);
+        b.style.setProperty('--i', i);
         b.onclick = function () { responder(i, item, botoes); };
         botoes.push(b);
         alts.appendChild(b);
@@ -328,6 +377,11 @@
         if (i === item.correta) b.classList.add('certa');
         else if (i === escolha) b.classList.add('errada');
       });
+
+      var trilho = raiz.querySelector('.quiz-prog .barra i');
+      if (trilho) {
+        trilho.style.setProperty('--pct', Math.round(((indice + 1) / tema.quiz.length) * 100) + '%');
+      }
 
       raiz.appendChild(
         el('div', { class: 'explica ' + (certo ? 'certa' : 'errada') }, [
@@ -375,6 +429,16 @@
   abas.forEach(function (b) {
     b.onclick = function () { ir('#/' + b.dataset.aba); };
   });
+
+  // Sombra da topbar só depois que a página sai do topo.
+  var topbar = document.querySelector('.topbar');
+  if (topbar) {
+    var marcarRolagem = function () {
+      topbar.classList.toggle('rolado', window.scrollY > 4);
+    };
+    window.addEventListener('scroll', marcarRolagem, { passive: true });
+    marcarRolagem();
+  }
 
   window.addEventListener('hashchange', render);
   render();
