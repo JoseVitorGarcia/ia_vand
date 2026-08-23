@@ -1,4 +1,4 @@
-# app/ — protótipo navegável do VAND
+# app/ — protótipo navegável do IA_VAND
 
 Estático: HTML, CSS e JavaScript sem build, sem framework e sem back-end.
 
@@ -33,14 +33,14 @@ modelo, e sem ele o build tentaria mandar tudo isso para o daemon.
 
 ## Estrutura
 
-| arquivo | o que é |
-| --- | --- |
-| `index.html` | as três abas e o esqueleto da página |
-| `app.js` | roteamento por hash, telas, quiz e progresso |
-| `content.js` | **o conteúdo da Trilha** — é aqui que se escreve um Tema novo |
-| `styles.css` | paleta neutra, layout mobile-first, tema claro e escuro |
-| `sw.js` | cache para funcionar offline; **incremente `VERSAO` ao mudar arquivos** |
-| `manifest.webmanifest` | instalação na tela inicial do celular |
+| arquivo                | o que é                                                                 |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `index.html`           | as três abas e o esqueleto da página                                    |
+| `app.js`               | roteamento por hash, telas, quiz e progresso                            |
+| `content.js`           | **o conteúdo da Trilha** — é aqui que se escreve um Tema novo           |
+| `styles.css`           | paleta neutra, layout mobile-first, tema claro e escuro                 |
+| `sw.js`                | cache para funcionar offline; **incremente `VERSAO` ao mudar arquivos** |
+| `manifest.webmanifest` | instalação na tela inicial do celular                                   |
 
 ## Antes de mexer
 

@@ -1,6 +1,6 @@
 {
-  "name": "VAND — alerta, registro e estudo",
-  "short_name": "VAND",
+  "name": "IA_VAND — alerta, registro e estudo",
+  "short_name": "IA_VAND",
   "description": "Retransmite o aviso oficial do INMET, registra alagamento e ensina sobre clima com material oficial do governo.",
   "lang": "pt-BR",
   "start_url": "./index.html#/estudar",

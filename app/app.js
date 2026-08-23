@@ -1,5 +1,5 @@
 /*
- * Protótipo navegável do VAND. Sem back-end e sem contas: o progresso vive no
+ * Protótipo navegável do IA_VAND. Sem back-end e sem contas: o progresso vive no
  * localStorage do próprio navegador (ver ESTADO.md / desenho da aplicação).
  *
  * Vocabulário: Trilha, Tema, Nível, Item, Reflexão, Fonte. Ver CONTEXT.md.
@@ -8,7 +8,7 @@
   'use strict';
 
   var TRILHA = (window.VAND_CONTENT && window.VAND_CONTENT.trilha) || [];
-  var CHAVE = 'vand.progresso.v1';
+  var CHAVE = 'IA_VAND.progresso.v1';
 
   var tela = document.getElementById('tela');
   var conteudo = document.getElementById('conteudo');
@@ -329,7 +329,7 @@
     // chip de Severidade no topo de todas as telas.
     tela.appendChild(
       el('div', { class: 'hero' }, [
-        el('div', { class: 'marca', role: 'img', 'aria-label': 'VAND' }),
+        el('div', { class: 'marca', role: 'img', 'aria-label': 'IA_VAND' }),
         el('p', {
           text:
             'Três temas, do básico ao avançado, escritos a partir de material oficial do ' +
@@ -731,7 +731,7 @@
       var previsaoCard = el('div', { class: 'previsao-card' }, [
         el('div', { class: 'rotulo' }, [
           icone('grafico', 18),
-          el('span', { text: 'Previsão VAND' })
+          el('span', { text: 'Previsão IA_VAND' })
         ]),
         el('p', { text: 'A nossa Previsão indica risco de chuva acima de 30 mm para a sua região.' }),
         el('div', { class: 'previsao-stat' }, [
