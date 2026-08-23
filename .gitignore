@@ -19,3 +19,8 @@ skills-lock.json
 
 # Renderização do ESTADO.md — regerável, não versionada
 ESTADO.pdf
+
+# Insumo de design (protótipos do Claude Design). Fica só na máquina:
+# são 390 KB de PNG que o app não usa em tempo de execução, e o que
+# importa deles já virou app/styles.css e os planos em docs/.
+redesign/
