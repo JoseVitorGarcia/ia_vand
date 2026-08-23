@@ -445,6 +445,72 @@ body {
 
 .intro { color: var(--text-dim); font-size: .95rem; margin: 0 0 20px; }
 
+/* ---------- índice do Tema ---------- */
+.tema-indice { display: grid; gap: 8px; margin-top: 4px; }
+
+.indice-item {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  min-height: 52px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--sombra-1);
+  transition: transform .16s var(--ease), border-color .16s var(--ease);
+  animation: surge .3s var(--ease) both;
+}
+.indice-item:hover { border-color: var(--border-forte); transform: translateX(2px); }
+.indice-item:active { transform: scale(.995); }
+
+.indice-num {
+  flex: 0 0 auto;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-dim);
+  display: grid; place-items: center;
+  font-size: .8rem; font-weight: 720;
+  font-variant-numeric: tabular-nums;
+}
+.indice-titulo { flex: 1 1 auto; font-weight: 600; letter-spacing: -0.01em; }
+.indice-estado {
+  flex: 0 0 auto;
+  font-size: .72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  font-weight: 750;
+}
+
+/* Lida: marca, borda e rótulo textual. Nunca só a cor — o brief proíbe
+   depender de cor, e vale em cima de tudo numa interface de emergência. */
+.indice-item.lida { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.indice-item.lida .indice-num {
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0;              /* esconde o número que o JS emite */
+}
+.indice-item.lida .indice-num::after { content: "✓"; font-size: .85rem; }
+.indice-item.lida .indice-estado { color: var(--accent-forte); }
+
+.indice-item.extra { background: var(--surface-2); }
+.indice-item.extra .indice-titulo { font-weight: 660; }
+
+/* ---------- rodapé de encadeamento ---------- */
+.encadeia-row {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.encadeia { width: 100%; justify-content: center; }
+
 /* ---------- seções do Tema ---------- */
 .secao {
   margin: 0 0 32px;

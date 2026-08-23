@@ -54,6 +54,11 @@ function percorre(tema) {
   ok(!!document.querySelector('.tema-indice'), nome + 'indice do Tema renderiza');
   ok(document.querySelectorAll('.indice-item').length === tema.secoes.length + 3,
      nome + 'indice lista as ' + tema.secoes.length + ' secoes + pensar, fontes e quiz');
+  // Alvo de toque: o brief exige 44px mínimos, e isto é interface de emergência.
+  var itens = document.querySelectorAll('.indice-item');
+  var baixos = 0;
+  for (var k = 0; k < itens.length; k++) if (itens[k].offsetHeight < 44) baixos++;
+  ok(baixos === 0, nome + 'todo item do indice tem ao menos 44px de altura');
   ok(document.querySelectorAll('#tela .secao').length === 0,
      nome + 'indice NAO despeja o texto das secoes');
 
