@@ -34,29 +34,64 @@ function irPara(hash) {
   window.dispatchEvent(new HashChangeEvent('hashchange'));
 }
 
-// Percorre um Tema inteiro: secoes, reflexoes, fontes, quiz certo, quiz errado.
-// Vale para qualquer Tema escrito — Tema novo nao pede teste novo.
+// Um clique que NAVEGA só muda location.hash; o evento hashchange do navegador
+// é assíncrono e não teria chegado até a próxima asserção. irPara dispara o
+// evento à mão, e cliques de navegação precisam do mesmo tratamento.
+// Cliques que apenas re-renderizam no lugar (alternativas do quiz, "próxima
+// questão", "refazer") NÃO passam por aqui — eles não mexem no hash.
+function clicarNavegando(seletor) {
+  document.querySelector(seletor).click();
+  window.dispatchEvent(new HashChangeEvent('hashchange'));
+}
+
 function percorre(tema) {
   var nome = '[' + tema.id + '] ';
-  irPara('#/estudar/' + tema.id);
+  var base = '#/estudar/' + tema.id;
 
+  // --- índice ---
+  irPara(base);
   ok(!document.getElementById('voltar').hidden, nome + 'botao voltar aparece');
-  ok(document.querySelectorAll('#tela > .secao:not(.reflexoes)').length === tema.secoes.length,
-     nome + 'as ' + tema.secoes.length + ' secoes renderizaram (todos os tipos declarados)');
-  ok(document.querySelectorAll('.reflexao').length === tema.reflexoes.length,
-     nome + 'as ' + tema.reflexoes.length + ' reflexoes aparecem');
-  ok(document.querySelectorAll('.fontes li').length === tema.fontes.length,
-     nome + 'as ' + tema.fontes.length + ' fontes declaradas');
+  ok(!!document.querySelector('.tema-indice'), nome + 'indice do Tema renderiza');
+  ok(document.querySelectorAll('.indice-item').length === tema.secoes.length + 3,
+     nome + 'indice lista as ' + tema.secoes.length + ' secoes + pensar, fontes e quiz');
+  ok(document.querySelectorAll('#tela .secao').length === 0,
+     nome + 'indice NAO despeja o texto das secoes');
 
-  // Cada seccao de glossario exibe todos os seus termos.
-  tema.secoes.forEach(function (s) {
+  // --- percorre as Seções pelo encadeamento ---
+  for (var i = 0; i < tema.secoes.length; i++) {
+    irPara(base + '/s/' + (i + 1));
+    ok(document.querySelectorAll('#tela .secao').length === 1,
+       nome + 'secao ' + (i + 1) + ' renderiza uma secao por tela');
+    var s = tema.secoes[i];
     if (s.tipo === 'glossario') {
       ok(document.querySelectorAll('.glossario .termo').length === s.termos.length,
          nome + 'glossario exibe os ' + s.termos.length + ' termos');
     }
-  });
+    clicarNavegando('.encadeia');
+  }
 
-  // Acerta tudo.
+  // O encadeamento da última Seção leva a Para pensar.
+  ok(tema.reflexoes.length > 0 && document.querySelectorAll('.reflexao').length === tema.reflexoes.length,
+     nome + 'as ' + tema.reflexoes.length + ' reflexoes aparecem em Para pensar');
+
+  // --- rota inválida cai no índice, em vez de tela em branco ---
+  irPara(base + '/s/999');
+  ok(!!document.querySelector('.tema-indice'), nome + 'secao fora de faixa cai no indice');
+  irPara(base + '/inventado');
+  ok(!!document.querySelector('.tema-indice'), nome + 'palavra-chave desconhecida cai no indice');
+
+  // --- o índice agora marca tudo lido ---
+  irPara(base);
+  ok(document.querySelectorAll('.indice-item.lida').length === tema.secoes.length,
+     nome + 'indice marca as ' + tema.secoes.length + ' secoes como lidas');
+
+  // --- fontes ---
+  irPara(base + '/fontes');
+  ok(document.querySelectorAll('.fontes li').length === tema.fontes.length,
+     nome + 'as ' + tema.fontes.length + ' fontes declaradas');
+
+  // --- quiz, acertando tudo ---
+  irPara(base + '/quiz');
   var total = tema.quiz.length;
   for (var q = 0; q < total; q++) {
     var alts = document.querySelectorAll('.quiz .alt');
@@ -67,11 +102,14 @@ function percorre(tema) {
   }
   var score = document.querySelector('.resultado .score');
   ok(score && score.textContent === total + '/' + total, nome + 'resultado mostra ' + total + '/' + total);
+  ok(document.querySelectorAll('.resultado ~ .btn-row .btn').length === 3,
+     nome + 'resultado oferece voltar ao Tema, voltar a trilha e refazer');
   var salvo = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
   ok(salvo && salvo.acertos === total, nome + 'progresso gravado no localStorage');
+  ok(salvo.lidas.length === tema.secoes.length, nome + 'as secoes lidas seguem gravadas');
 
-  // Refaz errando tudo: o melhor resultado nao pode piorar.
-  document.querySelectorAll('.quiz .btn')[1].click();
+  // --- refaz errando tudo: o melhor resultado não pode piorar ---
+  document.querySelectorAll('.btn-row .btn')[2].click();
   for (var q2 = 0; q2 < total; q2++) {
     var a2 = document.querySelectorAll('.quiz .alt');
     a2[(tema.quiz[q2].correta + 1) % 4].click();

@@ -619,6 +619,44 @@ e troque a última linha da função por:
 
 A ordem importa: o teste clica em `.btn-row .btn[2]` para refazer.
 
+- [ ] **Step 8b: Consertar `registrarResultado`, que a Task 1 deixou alcançável**
+
+Dois bugs que existiam desde antes, mas eram inatingíveis porque nada gravava
+progresso antes do quiz terminar. Agora o percurso normal é ler e depois
+responder, então os dois passam a acontecer sempre:
+
+1. A guarda `!anterior` é falsa quando existe entrada só com `lidas`, e
+   `acertos > anterior.acertos` vira `acertos > undefined`, sempre falso — o
+   primeiro resultado do quiz **nunca é gravado** por quem leu antes.
+2. `p[temaId] = { acertos, total, em }` troca o objeto inteiro e **apaga
+   `lidas`** — consertar só a guarda faria o quiz zerar a leitura.
+
+Substitua a função por:
+
+```js
+  function registrarResultado(temaId, acertos, total) {
+    var p = lerProgresso();
+    var entrada = p[temaId] || {};
+    // Guarda o melhor resultado: refazer o quiz nunca piora o que já foi
+    // conquistado. A guarda testa `quizFeito`, e não a existência da entrada:
+    // desde que a leitura grava progresso, a entrada costuma já existir sem
+    // nenhum quiz, e `acertos > undefined` é falso para sempre — o primeiro
+    // resultado nunca seria gravado por quem leu antes de responder.
+    if (!quizFeito(entrada) || acertos > entrada.acertos) {
+      // Muta a entrada em vez de trocá-la: substituir o objeto apagaria `lidas`
+      // e zeraria a leitura de quem fez o quiz.
+      entrada.acertos = acertos;
+      entrada.total = total;
+      entrada.em = new Date().toISOString();
+      p[temaId] = entrada;
+      gravarProgresso(p);
+    }
+  }
+```
+
+A asserção `as secoes lidas seguem gravadas`, que o passo 1 já escreveu, é o que
+prende o segundo bug.
+
 - [ ] **Step 9: Rodar e confirmar que passa**
 
 Esperado: **0 FALHA**. O total sobe bastante (as Seções passam a ser

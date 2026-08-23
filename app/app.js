@@ -38,10 +38,19 @@
 
   function registrarResultado(temaId, acertos, total) {
     var p = lerProgresso();
-    var anterior = p[temaId];
-    // Guarda o melhor resultado: refazer o quiz nunca piora o que já foi conquistado.
-    if (!anterior || acertos > anterior.acertos) {
-      p[temaId] = { acertos: acertos, total: total, em: new Date().toISOString() };
+    var entrada = p[temaId] || {};
+    // Guarda o melhor resultado: refazer o quiz nunca piora o que já foi
+    // conquistado. A guarda testa `quizFeito`, e não a existência da entrada:
+    // desde que a leitura grava progresso, a entrada costuma já existir sem
+    // nenhum quiz, e `acertos > undefined` é falso para sempre — o primeiro
+    // resultado nunca seria gravado por quem leu antes de responder.
+    if (!quizFeito(entrada) || acertos > entrada.acertos) {
+      // Muta a entrada em vez de trocá-la: substituir o objeto apagaria `lidas`
+      // e zeraria a leitura de quem fez o quiz.
+      entrada.acertos = acertos;
+      entrada.total = total;
+      entrada.em = new Date().toISOString();
+      p[temaId] = entrada;
       gravarProgresso(p);
     }
   }
@@ -137,7 +146,35 @@
   function rota() {
     var h = (location.hash || '#/estudar').replace(/^#\/?/, '');
     var partes = h.split('/').filter(Boolean);
-    return { aba: partes[0] || 'estudar', temaId: partes[1] || null };
+    return { aba: partes[0] || 'estudar', temaId: partes[1] || null, resto: partes.slice(2) };
+  }
+
+  // O segmento `s` antes do número existe para que um Tema cujo id fosse
+  // "quiz", "pensar" ou "fontes" não colidisse com as palavras-chave.
+  // A rota conta a partir de 1; `i` é índice de array. A conversão é só aqui.
+  function passoDoTema(resto, tema) {
+    if (!resto.length) return { tipo: 'indice' };
+    if (resto[0] === 'pensar') return { tipo: 'pensar' };
+    if (resto[0] === 'fontes') return { tipo: 'fontes' };
+    if (resto[0] === 'quiz') return { tipo: 'quiz' };
+    if (resto[0] === 's') {
+      var n = parseInt(resto[1], 10);
+      if (n >= 1 && n <= tema.secoes.length) return { tipo: 'secao', i: n - 1 };
+    }
+    return { tipo: 'indice' };   // rota inválida cai no índice
+  }
+
+  function proximoPasso(tema, passo) {
+    var base = '#/estudar/' + tema.id;
+    if (passo.tipo === 'secao') {
+      if (passo.i + 1 < tema.secoes.length) {
+        return { rota: base + '/s/' + (passo.i + 2), rotulo: 'Próxima seção' };
+      }
+      if (tema.reflexoes.length) return { rota: base + '/pensar', rotulo: 'Para pensar' };
+      return { rota: base + '/quiz', rotulo: 'Fazer o quiz' };
+    }
+    if (passo.tipo === 'pensar') return { rota: base + '/quiz', rotulo: 'Fazer o quiz' };
+    return null;
   }
 
   function ir(hash) { location.hash = hash; }
@@ -169,8 +206,15 @@
 
     if (r.aba === 'estudar') {
       var tema = r.temaId && TRILHA.filter(function (t) { return t.id === r.temaId; })[0];
-      if (tema) renderTema(tema);
-      else renderTrilha();
+      if (!tema) { renderTrilha(); }
+      else {
+        var passo = passoDoTema(r.resto, tema);
+        if (passo.tipo === 'indice') renderIndiceTema(tema);
+        else if (passo.tipo === 'secao') renderSecao(tema, passo.i);
+        else if (passo.tipo === 'pensar') renderPensar(tema);
+        else if (passo.tipo === 'fontes') renderFontes(tema);
+        else renderQuizTela(tema);
+      }
     } else if (r.aba === 'alerta') {
       renderAlerta(r.temaId === 'calmo');
     } else if (r.aba === 'registro') {
@@ -227,6 +271,52 @@
     );
   }
 
+
+  // Monta UMA Seção. É o mesmo código que a tela única usava, sem alteração de
+  // marcação nem de CSS — o que muda é quem chama, e quantas vezes.
+  function montarSecao(s) {
+    if (s.tipo === 'texto') {
+      var bloco = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
+      s.paragrafos.forEach(function (par) { bloco.appendChild(el('p', { text: par })); });
+      return bloco;
+    }
+    if (s.tipo === 'destaque') {
+      return el('section', { class: 'secao destaque' }, [
+        el('h2', { text: s.titulo }),
+        el('p', { text: s.texto })
+      ]);
+    }
+    if (s.tipo === 'glossario') {
+      var glo = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
+      var listaG = el('div', { class: 'glossario' });
+      s.termos.forEach(function (t) {
+        listaG.appendChild(
+          el('div', { class: 'termo' }, [
+            el('span', { class: 'palavra', text: t.palavra }),
+            el('p', { text: t.definicao })
+          ])
+        );
+      });
+      glo.appendChild(listaG);
+      if (s.nota) glo.appendChild(el('p', { class: 'nota', text: s.nota }));
+      return glo;
+    }
+    if (s.tipo === 'dados') {
+      var sec = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
+      var grid = el('div', { class: 'dados' });
+      s.itens.forEach(function (d) {
+        var cls = 'dado' + (d.largo ? ' largo' : '');
+        var filhos = d.valor
+          ? [el('span', { class: 'valor', text: d.valor }), el('span', { class: 'rotulo', text: d.rotulo })]
+          : [el('span', { class: 'rotulo', text: d.rotulo })];
+        grid.appendChild(el('div', { class: cls }, filhos));
+      });
+      sec.appendChild(grid);
+      if (s.nota) sec.appendChild(el('p', { class: 'nota', text: s.nota }));
+      return sec;
+    }
+    return null;
+  }
 
   function renderTrilha() {
     cabecalho('Estudar', 'Trilha de clima e água', false);
@@ -319,77 +409,136 @@
     });
   }
 
-  function renderTema(tema) {
+  function renderIndiceTema(tema) {
     cabecalho(tema.titulo, tema.nivel + ' · ' + tema.minutos + ' min', true, '#/estudar');
-    document.body.classList.add('lendo');
+    var base = '#/estudar/' + tema.id;
+    var lidas = lidasDe(tema.id);
 
-    tema.secoes.forEach(function (s, indice) {
-      if (s.tipo === 'texto') {
-        var bloco = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
-        s.paragrafos.forEach(function (par) { bloco.appendChild(el('p', { text: par })); });
-        tela.appendChild(bloco);
-      } else if (s.tipo === 'destaque') {
-        tela.appendChild(
-          el('section', { class: 'secao destaque' }, [
-            el('h2', { text: s.titulo }),
-            el('p', { text: s.texto })
-          ])
-        );
-      } else if (s.tipo === 'glossario') {
-        var glo = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
-        var listaG = el('div', { class: 'glossario' });
-        s.termos.forEach(function (t) {
-          listaG.appendChild(
-            el('div', { class: 'termo' }, [
-              el('span', { class: 'palavra', text: t.palavra }),
-              el('p', { text: t.definicao })
-            ])
-          );
-        });
-        glo.appendChild(listaG);
-        if (s.nota) glo.appendChild(el('p', { class: 'nota', text: s.nota }));
-        tela.appendChild(glo);
-      } else if (s.tipo === 'dados') {
-        var sec = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
-        var grid = el('div', { class: 'dados' });
-        s.itens.forEach(function (d) {
-          var cls = 'dado' + (d.largo ? ' largo' : '');
-          var filhos = d.valor
-            ? [el('span', { class: 'valor', text: d.valor }), el('span', { class: 'rotulo', text: d.rotulo })]
-            : [el('span', { class: 'rotulo', text: d.rotulo })];
-          grid.appendChild(el('div', { class: cls }, filhos));
-        });
-        sec.appendChild(grid);
-        if (s.nota) sec.appendChild(el('p', { class: 'nota', text: s.nota }));
-        tela.appendChild(sec);
-      }
-    });
-
-    Array.prototype.forEach.call(tela.querySelectorAll('.secao'), function (n, i) {
-      n.style.setProperty('--i', i);
-    });
-
-    if (tema.reflexoes.length) {
-      var refSec = el('section', { class: 'secao reflexoes' }, [el('h2', { text: 'Para pensar' })]);
-      tema.reflexoes.forEach(function (r) {
-        refSec.appendChild(
-          el('div', { class: 'reflexao' }, [
-            el('span', { class: 'tag', text: 'Reflexão' }),
-            el('p', { text: r })
-          ])
-        );
-      });
-      refSec.appendChild(
+    var enchimento = el('i');
+    tela.appendChild(
+      el('div', { class: 'painel' }, [
+        el('h2', { text: 'Seu progresso neste tema' }),
+        el('div', { class: 'fracao' }, [
+          el('span', { text: lidas.length + '/' + tema.secoes.length }),
+          el('div', {
+            class: 'barra',
+            role: 'progressbar',
+            'aria-valuenow': String(lidas.length),
+            'aria-valuemin': '0',
+            'aria-valuemax': String(tema.secoes.length)
+          }, [enchimento])
+        ]),
         el('p', {
-          class: 'reflexao-aviso',
-          text: 'Estas não têm resposta certa e não entram no quiz.'
+          class: 'apoio',
+          text: lidas.length === tema.secoes.length
+            ? 'Leitura concluída. O quiz está logo abaixo.'
+            : 'Seções lidas. Dá para parar e voltar depois — o app lembra.'
         })
-      );
-      tela.appendChild(refSec);
-    }
+      ])
+    );
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        enchimento.style.setProperty(
+          '--pct', Math.round((lidas.length / tema.secoes.length) * 100) + '%');
+      });
+    });
 
-    tela.appendChild(montarQuiz(tema));
+    var lista = el('div', { class: 'tema-indice' });
+
+    tema.secoes.forEach(function (s, i) {
+      var lida = lidas.indexOf(i) > -1;
+      var item = el('button', {
+        class: 'indice-item' + (lida ? ' lida' : ''),
+        type: 'button'
+      }, [
+        el('span', { class: 'indice-num', text: String(i + 1) }),
+        el('span', { class: 'indice-titulo', text: s.titulo }),
+        // Estado em texto, não só em cor: interface de emergência não pode
+        // depender de cor para ser entendida.
+        el('span', { class: 'indice-estado', text: lida ? 'lida' : '' })
+      ]);
+      item.onclick = function () { ir(base + '/s/' + (i + 1)); };
+      lista.appendChild(item);
+    });
+
+    [
+      { rota: '/pensar', titulo: 'Para pensar', nota: tema.reflexoes.length + ' reflexões' },
+      { rota: '/fontes', titulo: 'Fontes', nota: tema.fontes.length + ' obras' },
+      { rota: '/quiz', titulo: 'Quiz', nota: tema.quiz.length + ' questões' }
+    ].forEach(function (extra) {
+      var item = el('button', { class: 'indice-item extra', type: 'button' }, [
+        el('span', { class: 'indice-titulo', text: extra.titulo }),
+        el('span', { class: 'indice-estado', text: extra.nota })
+      ]);
+      item.onclick = function () { ir(base + extra.rota); };
+      lista.appendChild(item);
+    });
+
+    tela.appendChild(lista);
+  }
+
+  // Rodapé de encadeamento. É o toque aqui que marca a Seção como lida —
+  // rastrear rolagem daria selo a quem só espiou, e nunca dispararia numa
+  // Seção mais curta que a tela.
+  function encadear(tema, passo) {
+    var prox = proximoPasso(tema, passo);
+    if (!prox) return null;
+    var b = el('button', { class: 'btn encadeia', type: 'button', text: prox.rotulo });
+    b.onclick = function () {
+      if (passo.tipo === 'secao') marcarLida(tema.id, passo.i);
+      ir(prox.rota);
+    };
+    return el('div', { class: 'btn-row encadeia-row' }, [b]);
+  }
+
+  function renderSecao(tema, i) {
+    var s = tema.secoes[i];
+    cabecalho(s.titulo, tema.titulo + ' · ' + (i + 1) + ' de ' + tema.secoes.length,
+              true, '#/estudar/' + tema.id);
+    document.body.classList.add('lendo');
+    var bloco = montarSecao(s);
+    if (bloco) {
+      bloco.style.setProperty('--i', 0);
+      // O título da Seção já é o título grande da tela; repetir o h2 aqui
+      // duplicaria a informação no topo do conteúdo.
+      var h2 = bloco.querySelector('h2');
+      if (h2) bloco.removeChild(h2);
+      tela.appendChild(bloco);
+    }
+    var rodape = encadear(tema, { tipo: 'secao', i: i });
+    if (rodape) tela.appendChild(rodape);
+  }
+
+  function renderPensar(tema) {
+    cabecalho('Para pensar', tema.titulo, true, '#/estudar/' + tema.id);
+    var sec = el('section', { class: 'secao reflexoes' });
+    tema.reflexoes.forEach(function (r) {
+      sec.appendChild(
+        el('div', { class: 'reflexao' }, [
+          el('span', { class: 'tag', text: 'Reflexão' }),
+          el('p', { text: r })
+        ])
+      );
+    });
+    sec.appendChild(
+      el('p', {
+        class: 'reflexao-aviso',
+        text: 'Estas não têm resposta certa e não entram no quiz.'
+      })
+    );
+    tela.appendChild(sec);
+    var rodape = encadear(tema, { tipo: 'pensar' });
+    if (rodape) tela.appendChild(rodape);
+  }
+
+  function renderFontes(tema) {
+    cabecalho('Fontes', tema.titulo, true, '#/estudar/' + tema.id);
     tela.appendChild(montarFontes(tema));
+  }
+
+  function renderQuizTela(tema) {
+    cabecalho('Quiz', tema.titulo, true, '#/estudar/' + tema.id);
+    tela.appendChild(montarQuiz(tema));
   }
 
   function montarFontes(tema) {
@@ -499,6 +648,9 @@
       var voltarTrilha = el('button', { class: 'btn', type: 'button', text: 'Voltar à trilha' });
       voltarTrilha.onclick = function () { ir('#/estudar'); };
 
+      var voltarTema = el('button', { class: 'btn', type: 'button', text: 'Voltar ao tema' });
+      voltarTema.onclick = function () { ir('#/estudar/' + tema.id); };
+
       raiz.appendChild(
         el('div', { class: 'resultado' }, [
           el('div', { class: 'score', text: acertos + '/' + tema.quiz.length }),
@@ -510,7 +662,7 @@
           })
         ])
       );
-      raiz.appendChild(el('div', { class: 'btn-row' }, [voltarTrilha, refazer]));
+      raiz.appendChild(el('div', { class: 'btn-row' }, [voltarTema, voltarTrilha, refazer]));
     }
 
     pergunta();
