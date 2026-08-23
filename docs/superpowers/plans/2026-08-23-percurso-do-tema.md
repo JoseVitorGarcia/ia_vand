@@ -36,9 +36,14 @@ antes de começar; este plano argumenta a partir dela.
   `tema.secoes[0]` e grava `0` em `lidas`. A conversão acontece só em
   `passoDoTema()`.
 - **A porta 8000 está ocupada nesta máquina.** Use 8791.
-- **Commits:** a árvore já tem trabalho não commitado, sem relação com este
-  plano (app shell). **Nunca use `git add -A` nem `git add .`** — sempre os
-  caminhos exatos que cada passo lista.
+- **Commits:** a árvore está limpa a partir de `6bdb6c6` (Task 1 commitada), e
+  precisa continuar assim entre as tarefas. Use os caminhos exatos que cada
+  passo lista; **nunca `git add -A` nem `git add .`**.
+  **Antes de commitar, rode `git status --short` e confirme que só os arquivos
+  do passo aparecem.** Se houver arquivo alheio modificado, PARE e relate — não
+  tente montar um commit parcial com cirurgia de índice. Um commit precisa ser
+  um estado que passa no teste; a Task 1 já falhou nisso uma vez, produzindo um
+  commit verde na árvore e vermelho isolado.
 - Datas absolutas. Hoje é 23/08/2026.
 
 ---
