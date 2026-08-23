@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VAND — alerta, registro e estudo</title>
 <meta name="description" content="Retransmite o aviso oficial do INMET, registra alagamento e ensina sobre clima com material oficial do governo.">
-<meta name="theme-color" content="#f4f7f4" media="(prefers-color-scheme: light)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="VAND">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f8faf8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d1410" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
@@ -13,21 +18,26 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="app">
 
-<nav class="tabbar" aria-label="Seções do aplicativo">
-  <button type="button" data-aba="alerta"><span class="ico" aria-hidden="true">◈</span>Alerta<span class="selo" id="selo-alerta" aria-hidden="true"></span></button>
-  <button type="button" data-aba="registro"><span class="ico" aria-hidden="true">◉</span>Registro</button>
-  <button type="button" data-aba="estudar"><span class="ico" aria-hidden="true">◇</span>Estudar</button>
-</nav>
+  <header class="topbar" id="topbar">
+    <button type="button" class="backbtn" id="voltar" hidden aria-label="Voltar">←</button>
+    <p class="topbar-titulo" id="topbar-titulo" aria-hidden="true"></p>
+    <div class="progresso-leitura" id="progresso-leitura" aria-hidden="true"></div>
+  </header>
 
-<header class="topbar">
-  <button type="button" class="backbtn" id="voltar" hidden aria-label="Voltar">←</button>
-  <h1 id="titulo">Estudar<span class="sub" id="subtitulo">Trilha de clima e água</span></h1>
-  <div class="progresso-leitura" aria-hidden="true"></div>
-</header>
+  <main class="conteudo" id="conteudo" tabindex="-1">
+    <div class="wrap" id="tela"></div>
+  </main>
 
-<main class="wrap" id="tela" tabindex="-1"></main>
+  <nav class="tabbar" aria-label="Seções do aplicativo">
+    <button type="button" data-aba="alerta"><span class="ico-slot"></span>Alerta<span class="selo" id="selo-alerta" aria-hidden="true"></span></button>
+    <button type="button" data-aba="registro"><span class="ico-slot"></span>Registro</button>
+    <button type="button" data-aba="estudar"><span class="ico-slot"></span>Estudar</button>
+  </nav>
 
+</div>
+<script src="dados.js"></script>
 <script src="content.js"></script>
 <script src="app.js"></script>
 </body>

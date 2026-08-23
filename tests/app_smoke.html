@@ -1,9 +1,29 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>smoke</title></head><body>
-<nav class="tabbar"><button data-aba="alerta"></button><button data-aba="registro"></button><button data-aba="estudar"></button></nav>
-<header class="topbar"><button class="backbtn" id="voltar" hidden></button><h1 id="titulo"><span class="sub" id="subtitulo"></span></h1></header>
-<main class="wrap" id="tela" tabindex="-1"></main>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>smoke</title>
+<link rel="stylesheet" href="../app/styles.css">
+<style>#saida { position: relative; z-index: 99; background: #fff; }</style>
+</head><body>
+<div class="app">
+
+  <header class="topbar" id="topbar">
+    <button type="button" class="backbtn" id="voltar" hidden aria-label="Voltar">←</button>
+    <p class="topbar-titulo" id="topbar-titulo" aria-hidden="true"></p>
+    <div class="progresso-leitura" id="progresso-leitura" aria-hidden="true"></div>
+  </header>
+
+  <main class="conteudo" id="conteudo" tabindex="-1">
+    <div class="wrap" id="tela"></div>
+  </main>
+
+  <nav class="tabbar" aria-label="Seções do aplicativo">
+    <button type="button" data-aba="alerta"><span class="ico-slot"></span>Alerta<span class="selo" id="selo-alerta" aria-hidden="true"></span></button>
+    <button type="button" data-aba="registro"><span class="ico-slot"></span>Registro</button>
+    <button type="button" data-aba="estudar"><span class="ico-slot"></span>Estudar</button>
+  </nav>
+
+</div>
 <pre id="saida"></pre>
 <script src="../app/content.js"></script>
+<script src="../app/dados.js"></script>
 <script src="../app/app.js"></script>
 <script>
 var log = [];
@@ -65,6 +85,11 @@ function percorre(tema) {
 
 try {
   localStorage.removeItem('vand.progresso.v1');
+
+  // Shell: quem rola é #conteudo, nunca o documento.
+  var conteudoEl = document.getElementById('conteudo');
+  ok(getComputedStyle(conteudoEl).overflowY === 'auto', '#conteudo e o elemento rolavel (overflow-y: auto)');
+
   var trilha = window.VAND_CONTENT.trilha;
   var escritos = trilha.filter(function (t) { return t.secoes.length > 0; });
   var vazios = trilha.length - escritos.length;
@@ -76,13 +101,35 @@ try {
      'os ' + vazios + ' temas ainda sem conteudo estao desabilitados');
   ok(escritos.length > 0, 'ha ao menos um Tema escrito para percorrer');
 
+
   escritos.forEach(percorre);
 
-  // Abas vazias.
+  // Aba Alerta com aviso vigente.
   irPara('#/alerta');
-  ok(!!document.querySelector('.vazia'), 'aba Alerta mostra tela vazia assumida');
+  ok(!!document.querySelector('.aviso-card'), 'aba Alerta renderiza .aviso-card');
+  ok(!!document.querySelector('.sev-chip'), 'chip de severidade existe');
+  ok(document.querySelector('.sev-chip').textContent.indexOf('Grande Perigo') > -1, 'chip mostra "Grande Perigo"');
+  ok(document.querySelectorAll('.aviso-bloco')[0].querySelectorAll('li').length === 5, 'existem 5 itens de instrução');
+  ok(document.querySelectorAll('.aviso-bloco')[1].querySelectorAll('li').length === 1, 'existe 1 item de risco');
+  ok(!!document.querySelector('a[href^="tel:"]'), 'telefone da Defesa Civil vira link tel:');
+
+  // Aba Alerta sem aviso (calmo).
+  irPara('#/alerta/calmo');
+  ok(!!document.querySelector('.card-calmo'), 'aba Alerta calmo renderiza .card-calmo');
+  ok(!document.querySelector('.aviso-card'), 'aba Alerta calmo não renderiza .aviso-card');
+
+  // Aba Registro com pergunta.
   irPara('#/registro');
-  ok(!!document.querySelector('.vazia'), 'aba Registro mostra tela vazia assumida');
+  var botoes = document.querySelectorAll('.resp');
+  ok(botoes.length === 3, 'aba Registro renderiza exatamente 3 botões .resp');
+  var altura1 = botoes[0].offsetHeight;
+  var altura2 = botoes[1].offsetHeight;
+  var altura3 = botoes[2].offsetHeight;
+  ok(altura1 === altura2 && altura2 === altura3, 'os 3 botões têm a mesma offsetHeight (peso visual igual)');
+
+  // Aba Registro enviado (confirmação).
+  irPara('#/registro/enviado');
+  ok(!!document.querySelector('.registro-recibo'), 'aba Registro enviado renderiza .registro-recibo');
 
   // Volta a trilha: o selo de progresso aparece em cada Tema percorrido.
   irPara('#/estudar');
