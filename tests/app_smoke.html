@@ -101,6 +101,24 @@ try {
      'os ' + vazios + ' temas ainda sem conteudo estao desabilitados');
   ok(escritos.length > 0, 'ha ao menos um Tema escrito para percorrer');
 
+  // Uma entrada só de leitura (sem quiz) não pode contar como Tema concluído,
+  // nem produzir "quiz: undefined de undefined" no cartão.
+  (function () {
+    var alvo = escritos[0].id;
+    localStorage.setItem('vand.progresso.v1', JSON.stringify(
+      (function () { var o = {}; o[alvo] = { lidas: [0] }; return o; })()
+    ));
+    irPara('#/estudar');
+    var card = document.querySelectorAll('.tema-card')[0];
+    ok(card.textContent.indexOf('undefined') === -1,
+       'cartao de Tema so lido nao mostra "undefined"');
+    ok(card.textContent.indexOf('1 de ' + escritos[0].secoes.length + ' seções') > -1,
+       'cartao de Tema so lido mostra o progresso de leitura');
+    var painel = document.querySelector('.painel .fracao span');
+    ok(painel && painel.textContent.indexOf('0/') === 0,
+       'barra da Trilha nao conta Tema so lido como concluido');
+    localStorage.removeItem('vand.progresso.v1');
+  })();
 
   escritos.forEach(percorre);
 

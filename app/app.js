@@ -46,6 +46,30 @@
     }
   }
 
+  // Uma entrada de progresso nasce ao ler a primeira Seção, então "tem entrada"
+  // deixou de significar "fez o quiz". Toda leitura de conclusão passa por aqui.
+  function quizFeito(entrada) {
+    return !!(entrada && entrada.total > 0);
+  }
+
+  function lidasDe(temaId) {
+    var e = lerProgresso()[temaId];
+    return (e && e.lidas) || [];
+  }
+
+  function marcarLida(temaId, i) {
+    var p = lerProgresso();
+    var e = p[temaId] || {};
+    var l = e.lidas || [];
+    if (l.indexOf(i) === -1) {
+      l.push(i);
+      l.sort(function (a, b) { return a - b; });
+    }
+    e.lidas = l;
+    p[temaId] = e;
+    gravarProgresso(p);
+  }
+
   // ---------- utilidades ----------
 
   function el(tag, attrs, filhos) {
@@ -208,7 +232,7 @@
     cabecalho('Estudar', 'Trilha de clima e água', false);
     var p = lerProgresso();
     var prontos = TRILHA.filter(escrito);
-    var feitos = prontos.filter(function (t) { return p[t.id]; }).length;
+    var feitos = prontos.filter(function (t) { return quizFeito(p[t.id]); }).length;
 
     // A marca só aparece aqui, na abertura — nunca no cabeçalho fixo.
     // Ver docs/adr/0003 e o brief: o ponto vermelho não pode conviver com um
@@ -248,18 +272,23 @@
     TRILHA.forEach(function (tema, indice) {
       var pronto = escrito(tema);
       var feito = p[tema.id];
+      var lidas = lidasDe(tema.id);
 
       var meta = el('div', { class: 'meta' }, [
         el('span', { text: tema.minutos + ' min de leitura' })
       ]);
       if (!pronto) {
         meta.appendChild(el('span', { class: 'selo-vazio', text: 'conteúdo em redação' }));
-      } else if (feito) {
+      } else if (quizFeito(feito)) {
         meta.appendChild(
           el('span', {
             class: 'selo-feito',
             text: 'quiz: ' + feito.acertos + ' de ' + feito.total
           })
+        );
+      } else if (lidas.length) {
+        meta.appendChild(
+          el('span', { text: lidas.length + ' de ' + tema.secoes.length + ' seções' })
         );
       } else {
         meta.appendChild(el('span', { text: tema.quiz.length + ' questões' }));
