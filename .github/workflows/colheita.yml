@@ -1,0 +1,80 @@
+name: Colheita diária de previsões
+
+# 12:00 UTC = 09:00 em Porto Alegre, o enquadramento operacional do projeto.
+# O GitHub atrasa jobs agendados em horário de pico; o horário real fica gravado
+# em `emitida_em` dentro de cada linha, então o atraso é medido, não escondido.
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Dois disparos ao mesmo tempo gravariam no mesmo branch.
+concurrency:
+  group: colheita
+  cancel-in-progress: false
+
+jobs:
+  colher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Só o que a colheita importa. O requirements.txt instala LightGBM, Optuna
+      # e matplotlib, que aqui seriam minutos de instalação sem uso.
+      - name: Instalar dependências da colheita
+        run: pip install pandas==2.2.2 numpy==1.26.4 pyarrow==16.1.0 requests==2.32.3
+
+      # Diagnóstico, não requisito: responde se o INMET aceita requisições vindas
+      # dos servidores do GitHub. Nunca derruba o job. O recorte de Porto Alegre
+      # é por busca do geocódigo IBGE (4314902) no texto, que não depende do
+      # formato do JSON.
+      - name: Testar alcance da API de avisos do INMET
+        continue-on-error: true
+        run: |
+          curl -sS -m 30 -A "ia-vand-pesquisa-academica" \
+            -o /tmp/avisos.json -w "INMET avisos/ativos: HTTP %{http_code}, %{size_download} bytes\n" \
+            https://apiprevmet3.inmet.gov.br/avisos/ativos || echo "INMET inalcançável a partir do runner"
+          echo "Ocorrências do geocódigo de Porto Alegre (4314902): $(grep -o 4314902 /tmp/avisos.json | wc -l)"
+
+      # Os dados vivem num branch próprio para que um commit por dia não dispare
+      # o deploy do site, que escuta a `main`.
+      - name: Preparar branch de dados
+        run: |
+          URL="https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code --heads "$URL" dados >/dev/null 2>&1; then
+            git clone --quiet --branch dados --single-branch "$URL" dados-branch
+          else
+            mkdir dados-branch
+            git -C dados-branch init --quiet -b dados
+            git -C dados-branch remote add origin "$URL"
+          fi
+          mkdir -p cache/openmeteo/colheita
+          cp colheita/estacoes.parquet cache/openmeteo/colheita/
+          # Os dias já colhidos voltam para a pasta que o guarda de idempotência olha.
+          cp dados-branch/*.parquet cache/openmeteo/colheita/ 2>/dev/null || true
+
+      - name: Colher previsões
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python scripts/colher_previsao_diaria.py
+
+      - name: Publicar no branch de dados
+        run: |
+          cp cache/openmeteo/colheita/20*.parquet dados-branch/
+          cd dados-branch
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nada novo para publicar"
+            exit 0
+          fi
+          git -c user.name="colheita-bot" -c user.email="colheita-bot@users.noreply.github.com" \
+            commit --quiet -m "colheita: $(date -u +%Y-%m-%d)"
+          git push --quiet origin dados
