@@ -143,10 +143,32 @@
   // ---------- roteamento ----------
   // Hash: #/estudar | #/estudar/<temaId> | #/alerta | #/registro
 
-  function rota() {
-    var h = (location.hash || '#/estudar').replace(/^#\/?/, '');
+  function rotaDe(hash) {
+    var h = (hash || '#/estudar').replace(/^#\/?/, '');
     var partes = h.split('/').filter(Boolean);
     return { aba: partes[0] || 'estudar', temaId: partes[1] || null, resto: partes.slice(2) };
+  }
+
+  function rota() { return rotaDe(location.hash); }
+
+  // Direção da transição entre telas: 1 = avança (desliza da direita),
+  // -1 = volta (desliza da esquerda). Profundidade de rota manda — um
+  // Tema é mais fundo que a Trilha, uma Seção mais funda que o índice do
+  // Tema — e só empata na ordem das abas (Alerta/Registro/Estudar).
+  var ORDEM_ABA = ['alerta', 'registro', 'estudar'];
+  function profundidade(hash) {
+    var h = (hash || '').replace(/^#\/?/, '');
+    return h.split('/').filter(Boolean).length;
+  }
+  function direcao(hashAntiga, hashNova) {
+    if (!hashAntiga || hashAntiga === hashNova) return 0;
+    var pa = profundidade(hashAntiga), pn = profundidade(hashNova);
+    if (pa !== pn) return pn > pa ? 1 : -1;
+    var ra = rotaDe(hashAntiga), rn = rotaDe(hashNova);
+    if (ra.aba !== rn.aba) {
+      return ORDEM_ABA.indexOf(rn.aba) > ORDEM_ABA.indexOf(ra.aba) ? 1 : -1;
+    }
+    return 0;
   }
 
   // O segmento `s` antes do número existe para que um Tema cujo id fosse
@@ -189,8 +211,28 @@
 
   var posicoes = {};
   var rotaAnterior = null;
+  var SEM_MOVIMENTO = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+  // A troca de tela é sempre síncrona — o smoke test (tests/app_smoke.html)
+  // dispara hashchange à mão e verifica o DOM na sequência, sem esperar
+  // nenhum quadro. A View Transitions API foi tentada aqui e descartada:
+  // seu callback não conclui antes do próximo ponto do script, e isso
+  // quebrava a asserção seguinte. A entrada de tela usa só classe + CSS,
+  // puramente decorativa, sem adiar nada.
   function render() {
+    var hashAntiga = rotaAnterior;
+    renderMiolo();
+    if (!SEM_MOVIMENTO && hashAntiga) {
+      var dir = direcao(hashAntiga, location.hash);
+      tela.classList.remove('tela-entra-dir', 'tela-entra-esq');
+      if (dir !== 0) {
+        void tela.offsetWidth; // força reflow pra reiniciar a animação
+        tela.classList.add(dir > 0 ? 'tela-entra-dir' : 'tela-entra-esq');
+      }
+    }
+  }
+
+  function renderMiolo() {
     var r = rota();
 
     if (rotaAnterior && !ehTema(rotaAnterior)) posicoes[rotaAnterior] = conteudo.scrollTop;
@@ -205,6 +247,7 @@
     });
 
     if (r.aba === 'estudar') {
+      if (r.temaId === 'sobre') { renderSobre(); return finalizarRota(); }
       var tema = r.temaId && TRILHA.filter(function (t) { return t.id === r.temaId; })[0];
       if (!tema) { renderTrilha(); }
       else {
@@ -224,6 +267,10 @@
       return;
     }
 
+    finalizarRota();
+  }
+
+  function finalizarRota() {
     var tg = tela.querySelector('.tela-titulo');
     // O -12 faz o título do cabeçalho aparecer um instante antes de o grande
     // sumir por completo, senão há um quadro em que nenhum dos dois aparece.
@@ -407,6 +454,31 @@
       }
       tela.appendChild(card);
     });
+
+    tela.appendChild(
+      el('div', { class: 'sobre-link-row' }, [
+        el('a', { href: '#/estudar/sobre', class: 'sobre-link' }, [
+          el('div', { class: 'sobre-link-marca', 'aria-hidden': 'true' }),
+          el('span', { text: 'Sobre o VAND' })
+        ])
+      ])
+    );
+  }
+
+  // Fora da tela de Aviso: a marca completa (com ponto) pode aparecer.
+  function renderSobre() {
+    cabecalho('Sobre o VAND', null, true, '#/estudar');
+    tela.appendChild(
+      el('div', { class: 'hero' }, [
+        el('div', { class: 'marca', role: 'img', 'aria-label': 'IA_VAND' }),
+        el('p', {
+          text:
+            'Retransmite o aviso oficial do INMET, registra alagamento e ensina sobre clima ' +
+            'com material oficial do governo. Protótipo de pesquisa, sem back-end e sem contas — ' +
+            'apresentado no Salão de Iniciação Científica 2026.'
+        })
+      ])
+    );
   }
 
   function renderIndiceTema(tema) {
@@ -916,6 +988,89 @@
     }
     b.onclick = function () { ir('#/' + b.dataset.aba); };
   });
+
+  // ---------- splash de abertura ----------
+
+  var splash = document.getElementById('splash');
+  if (splash) {
+    setTimeout(function () {
+      splash.classList.add('saiu');
+      setTimeout(function () {
+        if (splash.parentNode) splash.parentNode.removeChild(splash);
+      }, SEM_MOVIMENTO ? 0 : 340);
+    }, SEM_MOVIMENTO ? 40 : 420);
+  }
+
+  // ---------- gestos: swipe entre abas, swipe-back no Tema ----------
+  // Só toque de um dedo, e só quando dominante horizontal — rolagem vertical
+  // normal do conteúdo nunca é interceptada. Sem suporte a toque (desktop),
+  // os listeners simplesmente nunca disparam.
+
+  var LIMIAR_ARRASTO = 70;
+  var toqueX0 = null, toqueY0 = null, ultimoDx = 0, arrastando = false, borda = false;
+
+  // Topo das abas: tudo que não é um Tema aberto (inclui os estados calmo/
+  // enviado/sobre, que são variantes de tela de topo, não um drill-down).
+  function podeArrastarTopo(r) {
+    return !(r.aba === 'estudar' && r.temaId);
+  }
+
+  conteudo.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    var t = e.touches[0];
+    toqueX0 = t.clientX;
+    toqueY0 = t.clientY;
+    ultimoDx = 0;
+    arrastando = false;
+    var r = rota();
+    borda = r.aba === 'estudar' && !!r.temaId && !voltar.hidden && t.clientX < 24;
+  }, { passive: true });
+
+  conteudo.addEventListener('touchmove', function (e) {
+    if (toqueX0 === null) return;
+    var r = rota();
+    if (!borda && !podeArrastarTopo(r)) return;
+    var t = e.touches[0];
+    var dx = t.clientX - toqueX0;
+    var dy = t.clientY - toqueY0;
+    if (!arrastando) {
+      if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+      // Borda só arrasta pra direita (gesto de voltar); a esquerda fica livre pro scroll.
+      if (borda && dx < 0) { borda = false; return; }
+      arrastando = true;
+      app.classList.add('arrastando');
+    }
+    ultimoDx = dx;
+    e.preventDefault();
+    if (!SEM_MOVIMENTO) {
+      var limite = conteudo.clientWidth * .6;
+      var pos = Math.max(-limite, Math.min(limite, dx));
+      tela.style.transform = 'translateX(' + pos + 'px)';
+    }
+  }, { passive: false });
+
+  function soltarArrasto() {
+    if (toqueX0 === null) return;
+    toqueX0 = null;
+    if (!arrastando) return;
+    arrastando = false;
+    app.classList.remove('arrastando');
+    tela.style.transform = '';
+
+    if (borda && ultimoDx > LIMIAR_ARRASTO) {
+      voltar.click();
+      return;
+    }
+    if (!borda && Math.abs(ultimoDx) > LIMIAR_ARRASTO) {
+      var r = rota();
+      var i = ORDEM_ABA.indexOf(r.aba);
+      if (ultimoDx < 0 && i < ORDEM_ABA.length - 1) ir('#/' + ORDEM_ABA[i + 1]);
+      else if (ultimoDx > 0 && i > 0) ir('#/' + ORDEM_ABA[i - 1]);
+    }
+  }
+
+  conteudo.addEventListener('touchend', soltarArrasto, { passive: true });
+  conteudo.addEventListener('touchcancel', soltarArrasto, { passive: true });
 
   window.addEventListener('hashchange', render);
   render();

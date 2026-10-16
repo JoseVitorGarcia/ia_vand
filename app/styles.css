@@ -52,6 +52,13 @@
   --dur: .34s;
 
   --marca: url('icons/logo.png');
+  /* Monograma sem o ponto — para fora da "tela de Aviso" com Severidade e
+     fora do cabeçalho fixo, mas em superfícies que SÃO tela de Aviso (ex.:
+     Alerta calmo) ou decorativas persistentes (tabbar). Ver ADR 0003. */
+  --marca-mono: url('icons/mark-mono.png');
+  /* Monograma COM ponto, só para selos fora da tela de Aviso (ex.: recibo
+     de Registro enviado). */
+  --marca-selo: url('icons/mark.png');
 }
 
 @media (prefers-color-scheme: dark) {
@@ -82,6 +89,8 @@
     --sombra-3: 0 14px 40px -12px rgba(0, 0, 0, .7);
 
     --marca: url('icons/logo-dark.png');
+    --marca-mono: url('icons/mark-mono-dark.png');
+    --marca-selo: url('icons/mark-dark.png');
   }
 }
 
@@ -161,6 +170,27 @@ body {
 }
 
 .ico { display: block; flex: 0 0 auto; }
+
+/* ---------- splash de abertura ---------- */
+/* Instante isolado, fora da tela de Aviso e do cabeçalho fixo — a marca
+   completa (com ponto) pode aparecer aqui sem colidir com Severidade. */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  opacity: 1;
+  transition: opacity .32s var(--ease);
+}
+.splash-marca {
+  width: clamp(130px, 38vw, 170px);
+  aspect-ratio: 551 / 198;
+  background: var(--marca) center/contain no-repeat;
+}
+.splash.saiu { opacity: 0; pointer-events: none; }
 
 .wrap {
   max-width: 760px;
@@ -445,6 +475,26 @@ body {
 
 .intro { color: var(--text-dim); font-size: .95rem; margin: 0 0 20px; }
 
+/* ---------- rodapé "Sobre o VAND" ---------- */
+.sobre-link-row { margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--border); }
+.sobre-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-dim);
+  font-size: .88rem;
+  text-decoration: none;
+  padding: 6px 2px;
+  transition: color .16s var(--ease);
+}
+.sobre-link:hover { color: var(--text); }
+.sobre-link-marca {
+  flex: 0 0 auto;
+  width: 20px; height: 22px;
+  background: var(--marca-mono) center/contain no-repeat;
+  opacity: .7;
+}
+
 /* ---------- índice do Tema ---------- */
 .tema-indice { display: grid; gap: 8px; margin-top: 4px; }
 
@@ -719,11 +769,23 @@ body {
 .ico-duvida-fraca { color: var(--text-dim); }
 
 .card-calmo {
+  position: relative;
+  overflow: hidden;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--sombra-1);
+}
+/* Marca d'água discreta, sem ponto — esta é a tela de Aviso (ADR 0003). */
+.card-calmo::after {
+  content: "";
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 34px; height: 37px;
+  background: var(--marca-mono) center/contain no-repeat;
+  opacity: .13;
+  pointer-events: none;
 }
 .card-calmo h2 {
   margin: 0 0 10px 0;
@@ -1061,10 +1123,20 @@ body {
   box-shadow: var(--sombra-1);
 }
 .registro-recibo h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 16px 0;
   font-size: 1.25rem;
   font-weight: 660;
   letter-spacing: -0.02em;
+}
+/* Selo da marca no recibo — não é a tela de Aviso, o ponto pode aparecer. */
+.registro-recibo h2::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 22px; height: 24px;
+  background: var(--marca-selo) center/contain no-repeat;
 }
 .registro-recibo .pares {
   display: grid;
@@ -1163,6 +1235,19 @@ body {
 }
 .tabbar button[aria-current="page"]::after { transform: scaleX(1); }
 
+/* Marca d'água decorativa, sem ponto, atrás dos botões — presença de marca
+   sem reabrir a questão de cor do ADR 0003. */
+.tabbar::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 42px; height: 46px;
+  transform: translate(-50%, -50%);
+  background: var(--marca-mono) center/contain no-repeat;
+  opacity: .055;
+  pointer-events: none;
+}
+
 /* Selo de presença, nunca contagem — ver ESTADO.md, política de notificação. */
 .tabbar .selo {
   position: absolute;
@@ -1174,6 +1259,20 @@ body {
   display: none;
 }
 .tabbar .selo.on { display: block; }
+
+/* ---------- transição entre telas ---------- */
+/* Só entrada, nunca saída: o conteúdo antigo já foi removido do DOM antes
+   desta classe entrar (render() é síncrono — ver app.js), então não há o
+   que animar saindo. É decorativo puro, por cima de um DOM já correto. */
+#tela.tela-entra-dir { animation: tela-entra-dir var(--dur) var(--ease) both; }
+#tela.tela-entra-esq { animation: tela-entra-esq var(--dur) var(--ease) both; }
+@keyframes tela-entra-dir { from { transform: translateX(26px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
+@keyframes tela-entra-esq { from { transform: translateX(-26px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
+
+/* ---------- arrasto (swipe entre abas / voltar de borda) ---------- */
+/* app.js aplica o transform direto no estilo durante o arrasto; esta
+   classe só desliga a transição de scroll normal pra não brigar com o dedo. */
+.app.arrastando #tela { transition: none; }
 
 /* ---------- foco visível, em tudo ---------- */
 :where(button, a, [tabindex]):focus-visible {
