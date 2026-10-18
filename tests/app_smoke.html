@@ -197,6 +197,10 @@ try {
   irPara('#/alerta/exemplo');
   ok(document.body.textContent.indexOf('EXEMPLO HISTÓRICO') > -1, 'exemplo traz o rótulo EXEMPLO HISTÓRICO');
   ok(!!document.querySelector('.lacuna-card'), 'exemplo mostra o card de lacuna');
+  var cartaoPrevisao = document.querySelector('.previsao-card');
+  ok(cartaoPrevisao && cartaoPrevisao.textContent.indexOf('indica risco') === -1 &&
+     cartaoPrevisao.textContent.indexOf('não calcula a Previsão de hoje') > -1,
+     'card de Previsão não afirma risco de hoje: apresenta a regra histórica');
   ok(!!document.querySelector('.aviso-card'), 'aba Alerta renderiza .aviso-card');
   ok(!!document.querySelector('.sev-chip'), 'chip de severidade existe');
   ok(document.querySelector('.sev-chip').textContent.indexOf('Grande Perigo') > -1, 'chip mostra "Grande Perigo"');
@@ -208,6 +212,10 @@ try {
   irPara('#/alerta/calmo');
   ok(!!document.querySelector('.card-calmo'), 'aba Alerta calmo renderiza .card-calmo');
   ok(!document.querySelector('.aviso-card'), 'aba Alerta calmo não renderiza .aviso-card');
+  // O card calmo não garante a ausência do aviso "agora": ancora na última consulta.
+  var textoCalmo = document.querySelector('.card-calmo').textContent;
+  ok(textoCalmo.indexOf('neste momento') === -1 && textoCalmo.indexOf('última consulta') > -1,
+     'card calmo fala da última consulta, não de "neste momento"');
 
   // Aba Registro com pergunta.
   irPara('#/registro');

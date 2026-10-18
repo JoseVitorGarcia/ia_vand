@@ -781,7 +781,7 @@
       var cardCalmo = el('div', { class: 'card-calmo' }, [
         el('div', { class: 'card-calmo-icone' }, [icone('calmo', 24, true)]),
         el('h2', { text: 'Nenhum Aviso vigente' }),
-        el('p', { text: 'Não há Aviso do INMET em vigor para a sua região agora. Isto não é previsão de tempo bom — é a ausência de aviso, conferida neste momento.' }),
+        el('p', { text: 'Não havia Aviso do INMET em vigor para a sua região na última consulta. Isto não é previsão de tempo bom — é a ausência de aviso naquela consulta, e um Aviso pode ter sido emitido depois dela.' }),
         el('a', { href: '#/alerta/exemplo', class: 'link-exemplo', text: 'Ver um exemplo de Aviso vigente' })
       ]);
       tela.appendChild(cardCalmo);
@@ -817,7 +817,7 @@
           icone('grafico', 18),
           el('span', { text: 'Previsão IA_VAND' })
         ]),
-        el('p', { text: 'A nossa Previsão indica risco de chuva acima de 30 mm para a sua região.' }),
+        el('p', { text: 'A regra da nossa Previsão é "' + dados.previsao.regra + '". Esta tela não calcula a Previsão de hoje: mostra como essa regra se saiu até agora.' }),
         el('div', { class: 'previsao-stat' }, [
           el('div', { class: 'previsao-linha' }, [
             el('span', { class: 'label', text: 'Taxa de confirmação' }),
