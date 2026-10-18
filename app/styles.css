@@ -322,8 +322,9 @@ body {
   padding: 0;
 }
 
-/* ---------- abertura da trilha ---------- */
-/* Único lugar onde a marca aparece — ver ADR 0003 e o brief. */
+/* ---------- abertura da trilha e tela Sobre ---------- */
+/* A logo grande (com o ponto) só aparece na tela Sobre; a Trilha usa só o texto
+   e deixa a logo para o cabeçalho fixo. Ver ADR 0003. */
 .hero {
   display: grid;
   gap: 14px;

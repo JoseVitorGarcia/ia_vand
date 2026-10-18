@@ -248,6 +248,14 @@ try {
     ok(!!marca && getComputedStyle(marca).backgroundImage.indexOf('logo-sem-ponto') > -1,
        'logo do cabeçalho é a variante sem ponto em ' + rota);
   });
+
+  // Estudar não repete a logo no corpo da tela (o cabeçalho já a mostra); só a
+  // tela "Sobre o VAND" guarda a logo grande, com o ponto.
+  irPara('#/estudar');
+  ok(!document.querySelector('#tela .marca'), 'Trilha não tem logo grande no corpo');
+  ok(!!document.querySelector('#tela .hero p'), 'Trilha mantém o texto de apresentação');
+  irPara('#/estudar/sobre');
+  ok(!!document.querySelector('#tela .hero .marca'), 'Sobre o VAND mantém a logo grande');
 } catch (e) {
   log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
 }

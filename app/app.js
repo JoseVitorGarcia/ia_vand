@@ -371,12 +371,10 @@
     var prontos = TRILHA.filter(escrito);
     var feitos = prontos.filter(function (t) { return quizFeito(p[t.id]); }).length;
 
-    // A marca só aparece aqui, na abertura — nunca no cabeçalho fixo.
-    // Ver docs/adr/0003 e o brief: o ponto vermelho não pode conviver com um
-    // chip de Severidade no topo de todas as telas.
+    // Sem logo no corpo: o cabeçalho fixo já a mostra (sem o ponto, ADR 0003).
+    // A logo grande, com o ponto, fica só na tela Sobre.
     tela.appendChild(
       el('div', { class: 'hero' }, [
-        el('div', { class: 'marca', role: 'img', 'aria-label': 'IA_VAND' }),
         el('p', {
           text:
             'Três temas, do básico ao avançado, escritos a partir de material oficial do ' +
