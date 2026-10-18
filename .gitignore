@@ -24,3 +24,5 @@ ESTADO.pdf
 # são 390 KB de PNG que o app não usa em tempo de execução, e o que
 # importa deles já virou app/styles.css e os planos em docs/.
 redesign/
+
+vand_past/
