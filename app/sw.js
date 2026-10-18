@@ -2,10 +2,12 @@
  * Service worker do protótipo: cache-first sobre um conjunto fixo de arquivos,
  * para o app abrir sem rede. O público alvo é quem tem plano de dados curto.
  *
+ * Exceção: dados.js é rede-primeiro (ver o handler de fetch).
+ *
  * Ao mudar qualquer arquivo do app, incremente VERSAO — senão o navegador
  * continua servindo a versão velha do cache.
  */
-var VERSAO = 'IA_VAND-v9';
+var VERSAO = 'IA_VAND-v10';
 var ARQUIVOS = [
   './',
   './index.html',
@@ -44,6 +46,19 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
+  // dados.js é regerado todo dia pela colheita do aviso (avisos.yml). Cache-first
+  // com VERSAO fixa o congelaria no aparelho de quem já abriu o app: aqui a rede
+  // vem primeiro e o cache só vale offline.
+  if (new URL(e.request.url).pathname.slice(-9) === '/dados.js') {
+    e.respondWith(
+      fetch(e.request, { cache: 'no-cache' }).then(function (r) {
+        var copia = r.clone();
+        caches.open(VERSAO).then(function (c) { c.put(e.request, copia); });
+        return r;
+      }).catch(function () { return caches.match(e.request); })
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(function (hit) {
       return hit || fetch(e.request).catch(function () { return caches.match('./index.html'); });

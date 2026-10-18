@@ -259,7 +259,7 @@
         else renderQuizTela(tema);
       }
     } else if (r.aba === 'alerta') {
-      renderAlerta(r.temaId === 'calmo');
+      renderAlerta(r.temaId);
     } else if (r.aba === 'registro') {
       renderRegistro(r.temaId === 'enviado');
     } else {
@@ -743,38 +743,50 @@
 
   // ---------- aba Alerta ----------
 
-  function renderAlerta(calmo) {
+  function renderAlerta(sub) {
     cabecalho('Alerta', 'Aviso oficial do INMET', false);
 
     var dados = window.VAND_DADOS;
     if (!dados) return;
 
+    // Quem decide o estado é o DADO, não a rota: num dia sem Aviso vigente a
+    // rota padrão mostra o card calmo. 'calmo' força o card calmo; 'exemplo'
+    // mostra o Aviso histórico fixo (`aviso_exemplo`), que a colheita nunca toca.
+    var exemplo = sub === 'exemplo' && !!dados.aviso_exemplo;
+    var aviso = exemplo ? dados.aviso_exemplo : (sub === 'calmo' ? null : dados.aviso);
+    var lac = exemplo ? dados.lacuna_exemplo : dados.lacuna;
+
     // O dado já traz "Porto Alegre - RS"; formata com vírgula e não anexa nada.
-    var municipio = (dados.aviso.municipio_exemplo || 'Porto Alegre, RS').replace(' - ', ', ');
+    var base = aviso || dados.aviso || dados.aviso_exemplo || {};
+    var municipio = (base.municipio_exemplo || 'Porto Alegre, RS').replace(' - ', ', ');
 
     // Município e consulta, como subtítulo de contexto logo abaixo do título
     // grande "Alerta" (que cabecalho() já inseriu no topo do #tela).
     var cabecAlerta = el('div', { class: 'alerta-cabec' }, [
       el('h2', { class: 't-h2', text: municipio }),
-      el('div', { class: 'alerta-consulta' }, [
-        el('span', { class: 't-caps alerta-consulta-rotulo', text: 'ÚLTIMA CONSULTA: AGORA MESMO' }),
+      el('div', { class: 'alerta-consulta' }, exemplo ? [
+        el('span', { class: 't-caps alerta-consulta-rotulo', text: 'EXEMPLO HISTÓRICO — NÃO É O AVISO DE HOJE' })
+      ] : [
+        el('span', {
+          class: 't-caps alerta-consulta-rotulo',
+          text: dados.colhido_em ? 'ÚLTIMA CONSULTA: ' + formatData(dados.colhido_em) : 'ÚLTIMA CONSULTA: INDISPONÍVEL'
+        }),
         el('button', { type: 'button', class: 'btn-circular', 'aria-label': 'Consultar de novo' }, [icone('recarregar', 20)])
       ])
     ]);
     tela.appendChild(cabecAlerta);
 
-    if (calmo) {
+    if (!aviso) {
       // Estado sem Aviso.
       var cardCalmo = el('div', { class: 'card-calmo' }, [
         el('div', { class: 'card-calmo-icone' }, [icone('calmo', 24, true)]),
         el('h2', { text: 'Nenhum Aviso vigente' }),
         el('p', { text: 'Não há Aviso do INMET em vigor para a sua região agora. Isto não é previsão de tempo bom — é a ausência de aviso, conferida neste momento.' }),
-        el('a', { href: '#/alerta', class: 'link-exemplo', text: 'Ver um exemplo de Aviso vigente' })
+        el('a', { href: '#/alerta/exemplo', class: 'link-exemplo', text: 'Ver um exemplo de Aviso vigente' })
       ]);
       tela.appendChild(cardCalmo);
     } else {
-      // Estado com Aviso vigente.
-      var aviso = dados.aviso;
+      // Estado com Aviso vigente (ou o exemplo histórico).
       var avisoCard = el('div', { class: 'aviso-card', style: '--sev: ' + aviso.aviso_cor + ';' }, [
         el('div', { class: 'aviso-corpo' }, [
           el('div', { class: 'sev-chip', style: '--sev: ' + aviso.aviso_cor + ';' }, [
@@ -821,8 +833,7 @@
 
       // Card de Lacuna. Os números saem todos de VAND_DADOS.lacuna — nenhum é
       // literal aqui, senão o texto para de acompanhar a medição quando ela mudar.
-      var lac = dados.lacuna;
-      var lacunaCard = el('div', { class: 'lacuna-card' }, [
+      if (lac) tela.appendChild(el('div', { class: 'lacuna-card' }, [
         el('span', { class: 'rotulo', text: 'Por que "para a sua região"' }),
         el('p', {
           text:
@@ -832,8 +843,7 @@
             'avisado — uma razão de ' + fmtNum(lac.razao, 0) + ' vezes. O Aviso é produto de área ' +
             'recebido num ponto; a diferença é de granularidade, não de qualidade de quem prevê.'
         })
-      ]);
-      tela.appendChild(lacunaCard);
+      ]));
     }
   }
 

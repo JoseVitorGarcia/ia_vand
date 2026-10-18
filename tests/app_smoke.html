@@ -109,7 +109,7 @@ function percorre(tema) {
   ok(score && score.textContent === total + '/' + total, nome + 'resultado mostra ' + total + '/' + total);
   ok(document.querySelectorAll('.resultado ~ .btn-row .btn').length === 3,
      nome + 'resultado oferece voltar ao Tema, voltar a trilha e refazer');
-  var salvo = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
+  var salvo = JSON.parse(localStorage.getItem('IA_VAND.progresso.v1'))[tema.id];
   ok(salvo && salvo.acertos === total, nome + 'progresso gravado no localStorage');
   ok(salvo.lidas.length === tema.secoes.length, nome + 'as secoes lidas seguem gravadas');
 
@@ -121,13 +121,13 @@ function percorre(tema) {
     if (q2 === 0) ok(!!document.querySelector('.explica.errada'), nome + 'resposta errada sinalizada');
     document.querySelector('.quiz .btn').click();
   }
-  var depois = JSON.parse(localStorage.getItem('vand.progresso.v1'))[tema.id];
+  var depois = JSON.parse(localStorage.getItem('IA_VAND.progresso.v1'))[tema.id];
   ok(depois.acertos === total,
      nome + 'refazer pior nao apaga o melhor resultado (ficou ' + depois.acertos + ')');
 }
 
 try {
-  localStorage.removeItem('vand.progresso.v1');
+  localStorage.removeItem('IA_VAND.progresso.v1');
 
   // Shell: quem rola é #conteudo, nunca o documento.
   var conteudoEl = document.getElementById('conteudo');
@@ -148,7 +148,7 @@ try {
   // nem produzir "quiz: undefined de undefined" no cartão.
   (function () {
     var alvo = escritos[0].id;
-    localStorage.setItem('vand.progresso.v1', JSON.stringify(
+    localStorage.setItem('IA_VAND.progresso.v1', JSON.stringify(
       (function () { var o = {}; o[alvo] = { lidas: [0] }; return o; })()
     ));
     irPara('#/estudar');
@@ -160,13 +160,43 @@ try {
     var painel = document.querySelector('.painel .fracao span');
     ok(painel && painel.textContent.indexOf('0/') === 0,
        'barra da Trilha nao conta Tema so lido como concluido');
-    localStorage.removeItem('vand.progresso.v1');
+    localStorage.removeItem('IA_VAND.progresso.v1');
   })();
 
   escritos.forEach(percorre);
 
-  // Aba Alerta com aviso vigente.
+  // Aba Alerta: a rota padrão segue o DADO (colheita diária), então as asserções
+  // detalhadas do aviso usam #/alerta/exemplo, que é fixo.
   irPara('#/alerta');
+  var haAviso = !!(window.VAND_DADOS && window.VAND_DADOS.aviso);
+  ok(!!document.querySelector(haAviso ? '.aviso-card' : '.card-calmo'),
+     'aba Alerta segue o dado: ' + (haAviso ? 'aviso vigente' : 'card calmo'));
+
+  // Sem aviso no dado, a rota padrão mostra o card calmo (e o link de exemplo funciona).
+  var avisoReal = window.VAND_DADOS.aviso, lacunaReal = window.VAND_DADOS.lacuna;
+  window.VAND_DADOS.aviso = null;
+  irPara('#/alerta/calmo');
+  irPara('#/alerta');
+  ok(!!document.querySelector('.card-calmo'), 'dado sem aviso: rota padrão mostra .card-calmo');
+  ok(document.querySelector('.link-exemplo').getAttribute('href') === '#/alerta/exemplo',
+     'link do card calmo aponta para #/alerta/exemplo');
+  window.VAND_DADOS.aviso = avisoReal;
+
+  // Aviso vigente com severidade fora da tabela de lacuna: sem card de lacuna, sem exceção.
+  // (Num dia sem aviso no dado, o exemplo faz as vezes dele para o ramo rodar sempre.)
+  window.VAND_DADOS.aviso = avisoReal || window.VAND_DADOS.aviso_exemplo;
+  window.VAND_DADOS.lacuna = null;
+  irPara('#/alerta/calmo');
+  irPara('#/alerta');
+  ok(!!document.querySelector('.aviso-card') && !document.querySelector('.lacuna-card'),
+     'lacuna null: aviso aparece sem card de lacuna');
+  window.VAND_DADOS.aviso = avisoReal;
+  window.VAND_DADOS.lacuna = lacunaReal;
+
+  // Aviso de exemplo (55157), fixo.
+  irPara('#/alerta/exemplo');
+  ok(document.body.textContent.indexOf('EXEMPLO HISTÓRICO') > -1, 'exemplo traz o rótulo EXEMPLO HISTÓRICO');
+  ok(!!document.querySelector('.lacuna-card'), 'exemplo mostra o card de lacuna');
   ok(!!document.querySelector('.aviso-card'), 'aba Alerta renderiza .aviso-card');
   ok(!!document.querySelector('.sev-chip'), 'chip de severidade existe');
   ok(document.querySelector('.sev-chip').textContent.indexOf('Grande Perigo') > -1, 'chip mostra "Grande Perigo"');
