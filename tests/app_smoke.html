@@ -256,6 +256,22 @@ try {
   ok(!!document.querySelector('#tela .hero p'), 'Trilha mantém o texto de apresentação');
   irPara('#/estudar/sobre');
   ok(!!document.querySelector('#tela .hero .marca'), 'Sobre o VAND mantém a logo grande');
+  var titulosSobre = [].map.call(document.querySelectorAll('#tela .secao h2'), function (h) { return h.textContent; });
+  ok(titulosSobre.join('|') === 'O que é o VAND|De onde viemos|Onde estamos|Aonde queremos chegar',
+     'Sobre tem as 4 seções, na ordem: ' + titulosSobre.join('|'));
+  var textoSobre = document.getElementById('tela').textContent;
+  ['Instituto Nacional de Meteorologia', 'Centro Europeu de Previsão do Tempo a Médio Prazo',
+   'Salão de Iniciação Científica'].forEach(function (nome) {
+    ok(textoSobre.indexOf(nome) > -1, 'Sobre dá o nome por extenso: ' + nome);
+  });
+  ok(textoSobre.indexOf('retransmitir os avisos que o próprio INMET emite') > -1,
+     'Sobre explica a mudança: retransmite os avisos do INMET');
+  ok(textoSobre.indexOf('As análises feitas por conta própria não foram suficientes') > -1,
+     'Sobre conta que as análises próprias não bastaram');
+  ok(textoSobre.indexOf('O protótipo ainda não envia notificações') > -1,
+     'Sobre não promete notificação que o protótipo não faz');
+  ok(!!document.querySelector('#tela a[href="tel:199"]') && !!document.querySelector('#tela a[href="tel:193"]'),
+     'Sobre traz os telefones da Defesa Civil e dos Bombeiros como link');
 } catch (e) {
   log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
 }

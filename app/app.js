@@ -463,6 +463,64 @@
     );
   }
 
+  // Texto da tela Sobre. Regras editoriais: sigla por extenso na primeira vez;
+  // nada de F1 nem de ganho sobre persistência (a régua é o ECMWF); nunca
+  // atribuir falha ao INMET; e o que o protótipo AINDA NÃO faz diz que não faz.
+  var SOBRE = [
+    {
+      tipo: 'texto',
+      titulo: 'O que é o VAND',
+      paragrafos: [
+        'O VAND mostra o aviso oficial do INMET (Instituto Nacional de Meteorologia) para Porto Alegre, ' +
+        'pergunta a quem está lá se a rua alagou e reúne material de estudo sobre clima e água, tirado de ' +
+        'fontes oficiais do governo. Nasceu como projeto de iniciação científica e foi apresentado no Salão ' +
+        'de Iniciação Científica (SIC) da UFRGS em 2026.'
+      ]
+    },
+    {
+      tipo: 'texto',
+      titulo: 'De onde viemos',
+      paragrafos: [
+        'A ideia inicial, em 2025, era prever enchentes com inteligência artificial, combinando várias ' +
+        'fontes de dados. Primeiro treinamos um modelo nosso, com os dados das estações do INMET no Rio ' +
+        'Grande do Sul, e o comparamos com a previsão de chuva do ECMWF (Centro Europeu de Previsão do ' +
+        'Tempo a Médio Prazo), que é gratuita: ela teve desempenho mais de três vezes melhor que o nosso. ' +
+        'Depois tentamos o caminho oposto, corrigir a previsão europeia com as observações locais das ' +
+        'estações, e a correção piorou o resultado em todos os cenários testados. As análises feitas por ' +
+        'conta própria não foram suficientes.'
+      ]
+    },
+    {
+      tipo: 'texto',
+      titulo: 'Onde estamos',
+      paragrafos: [
+        'Por isso mudamos o sistema: em vez de emitir alertas próprios, o VAND passou a retransmitir os ' +
+        'avisos que o próprio INMET emite, que são os que têm mandato oficial. O Alerta consulta o INMET ' +
+        'todos os dias e mostra o aviso de chuva em vigor para Porto Alegre, ou diz que não há nenhum. O ' +
+        'Registro pergunta se alagou, mas ainda não guarda as respostas. O Estudar tem três temas, cada ' +
+        'um com quiz.',
+        'Desde 14 de outubro de 2026 também guardamos todo dia a previsão do ECMWF, para medir com o ' +
+        'tempo como ela se comporta. A nossa própria regra não vira notificação: cerca de 3 em cada 10 ' +
+        'alertas dela se confirmam, e avisar o público com tanto alarme falso só cansa. O protótipo ainda ' +
+        'não envia notificações.'
+      ]
+    },
+    {
+      tipo: 'texto',
+      titulo: 'Aonde queremos chegar',
+      paragrafos: [
+        'O plano é levar ao celular o que o INMET dispara: o aviso de Grande Perigo interrompe, com som e ' +
+        'vibração, e o de Perigo aparece em silêncio, sempre como "aviso para a sua região", nunca para a ' +
+        'sua rua. Queremos também ser apoio à decisão para a defesa civil municipal, com a previsão e a ' +
+        'taxa de confirmação declarada junto.',
+        'E queremos aprender o que nenhum modelo meteorológico prevê: onde a chuva vira alagamento, que ' +
+        'depende de drenagem, relevo e bueiros. Para isso o Registro precisa funcionar de verdade, ' +
+        'guardando onde, quando e se alagou, inclusive os "não", e ligando cada resposta à previsão ' +
+        'daquele dia. Isso é meta para o próximo ano, não algo que o protótipo já faz.'
+      ]
+    }
+  ];
+
   // Fora da tela de Aviso: a marca completa (com ponto) pode aparecer.
   function renderSobre() {
     cabecalho('Sobre o VAND', null, true, '#/estudar');
@@ -471,10 +529,18 @@
         el('div', { class: 'marca', role: 'img', 'aria-label': 'IA_VAND' }),
         el('p', {
           text:
-            'Retransmite o aviso oficial do INMET, registra alagamento e ensina sobre clima ' +
-            'com material oficial do governo. Protótipo de pesquisa, sem back-end e sem contas — ' +
-            'apresentado no Salão de Iniciação Científica 2026.'
+            'Um protótipo de pesquisa para ajudar a decidir o que fazer quando vem chuva forte: mostra ' +
+            'o aviso oficial, pergunta se alagou e ensina o básico de clima e água.'
         })
+      ])
+    );
+    SOBRE.forEach(function (secao) { tela.appendChild(montarSecao(secao)); });
+    tela.appendChild(
+      el('section', { class: 'secao destaque' }, [
+        el('p', {}, textoComTelefones(
+          'O VAND não emite alertas oficiais. Em caso de risco, siga a Defesa Civil (telefone 199) e o ' +
+          'Corpo de Bombeiros (telefone 193).'
+        ))
       ])
     );
   }
