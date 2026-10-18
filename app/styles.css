@@ -52,6 +52,10 @@
   --dur: .34s;
 
   --marca: url('icons/logo.png');
+  /* Logo completa SEM o ponto: a única que pode morar no cabeçalho fixo, que
+     fica no topo da tela de Aviso. Gerada por scripts/gerar_logo_sem_ponto.py
+     e vigiada por tests/test_logo_sem_ponto.py. Ver ADR 0003. */
+  --marca-topo: url('icons/logo-sem-ponto.png');
   /* Monograma sem o ponto — para fora da "tela de Aviso" com Severidade e
      fora do cabeçalho fixo, mas em superfícies que SÃO tela de Aviso (ex.:
      Alerta calmo) ou decorativas persistentes (tabbar). Ver ADR 0003. */
@@ -89,6 +93,7 @@
     --sombra-3: 0 14px 40px -12px rgba(0, 0, 0, .7);
 
     --marca: url('icons/logo-dark.png');
+    --marca-topo: url('icons/logo-sem-ponto-dark.png');
     --marca-mono: url('icons/mark-mono-dark.png');
     --marca-selo: url('icons/mark-dark.png');
   }
@@ -241,6 +246,15 @@ body {
   margin: 6px 0 0;
   color: var(--text-dim);
   font-size: .92rem;
+}
+
+/* Logo do cabeçalho: sempre visível, em toda tela, antes mesmo de rolar. A
+   proporção é a do PNG (551x198); `flex: none` impede o título de espremê-la. */
+.topbar-marca {
+  flex: none;
+  height: 28px;
+  aspect-ratio: 551 / 198;
+  background: var(--marca-topo) left center/contain no-repeat;
 }
 
 /* Título do cabeçalho, que só entra quando o grande sai de vista. */

@@ -7,7 +7,7 @@
  * Ao mudar qualquer arquivo do app, incremente VERSAO — senão o navegador
  * continua servindo a versão velha do cache.
  */
-var VERSAO = 'IA_VAND-v10';
+var VERSAO = 'IA_VAND-v11';
 var ARQUIVOS = [
   './',
   './index.html',
@@ -20,6 +20,8 @@ var ARQUIVOS = [
   './icons/icon-512.png',
   './icons/logo.png',
   './icons/logo-dark.png',
+  './icons/logo-sem-ponto.png',
+  './icons/logo-sem-ponto-dark.png',
   './icons/mark.png',
   './icons/mark-dark.png',
   './icons/mark-mono.png',

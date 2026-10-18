@@ -29,3 +29,17 @@ superfícies, o código de cor continua raro onde precisa ser.
 
 Se um dia a marca precisar entrar no cabeçalho fixo, esta exceção cai junto: aí
 sim a saída é recolorir o ponto, não afrouxar a reserva.
+
+## Atualização de 18/10/2026: a marca no cabeçalho fixo, sem o ponto
+
+O cabeçalho fixo passou a mostrar a logo completa em toda tela (pedido do
+usuário: o app não tinha nenhum elemento que remetesse ao VAND). A exceção do
+ponto vermelho **não cai**, porque o que sobe é a variante **sem o ponto**
+(`logo-sem-ponto.png` e `logo-sem-ponto-dark.png`, geradas por
+`scripts/gerar_logo_sem_ponto.py`). Nada vermelho entra no cabeçalho, então a
+marca continua sem dividir superfície com a Severidade.
+
+A regra é vigiada por `tests/test_logo_sem_ponto.py`: os dois PNGs não podem ter
+pixel de dominância vermelha. O ponto segue restrito à splash, ao recibo de
+Registro e à tela Sobre. Se alguém quiser o ponto no cabeçalho, a saída continua
+sendo a de cima: recolorir o ponto, não afrouxar a reserva.

@@ -6,6 +6,7 @@
 
   <header class="topbar" id="topbar">
     <button type="button" class="backbtn" id="voltar" hidden aria-label="Voltar">←</button>
+    <div class="topbar-marca" role="img" aria-label="IA_VAND"></div>
     <p class="topbar-titulo" id="topbar-titulo" aria-hidden="true"></p>
     <div class="progresso-leitura" id="progresso-leitura" aria-hidden="true"></div>
   </header>
@@ -234,6 +235,19 @@ try {
   irPara('#/estudar');
   ok(document.querySelectorAll('.selo-feito').length === escritos.length,
      'trilha mostra o resultado guardado dos ' + escritos.length + ' temas percorridos');
+
+  // A logo (sem o ponto vermelho, ADR 0003) mora no cabeçalho fixo de TODA tela.
+  ['#/alerta', '#/alerta/exemplo', '#/registro', '#/estudar', '#/estudar/sobre',
+   '#/estudar/' + escritos[0].id].forEach(function (rota) {
+    irPara(rota);
+    var marca = document.querySelector('#topbar .topbar-marca');
+    ok(!!marca && marca.getAttribute('aria-label') === 'IA_VAND',
+       'cabeçalho tem a logo em ' + rota);
+    ok(!!marca && marca.offsetHeight > 0 && marca.offsetWidth > 0,
+       'logo visível (com tamanho) em ' + rota);
+    ok(!!marca && getComputedStyle(marca).backgroundImage.indexOf('logo-sem-ponto') > -1,
+       'logo do cabeçalho é a variante sem ponto em ' + rota);
+  });
 } catch (e) {
   log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
 }
