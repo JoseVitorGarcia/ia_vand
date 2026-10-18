@@ -1,0 +1,57 @@
+name: Colheita do aviso do INMET
+
+# 12:00 UTC = 09:00 em Porto Alegre, mesmo horário da colheita de previsões.
+# O GitHub pode atrasar jobs agendados em horário de pico; `colhido_em` no
+# dados.js grava a hora real, e a tela mostra essa hora.
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+# contents: o bot commita na main (decisão explícita: sem PR nem revisão).
+# actions: o bot aciona o deploy, que a GITHUB_TOKEN não dispara sozinha.
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: avisos
+  cancel-in-progress: false
+
+jobs:
+  colher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências da colheita
+        run: pip install pandas==2.2.2 numpy==1.26.4 pyarrow==16.1.0 requests==2.32.3
+
+      # Falha segura: se o script sair com erro, o job falha aqui e o dados.js
+      # do dia anterior continua no ar.
+      - name: Colher o aviso
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python scripts/colher_aviso_poa.py
+
+      - name: Publicar na main e acionar o deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- app/dados.js; then
+            echo "nada novo para publicar"
+            exit 0
+          fi
+          git config user.name "avisos-bot"
+          git config user.email "avisos-bot@users.noreply.github.com"
+          git add app/dados.js
+          git commit --quiet -m "avisos: dados de $(date -u +%Y-%m-%d)"
+          git push --quiet origin HEAD:main
+          gh workflow run deploy.yml --ref main

@@ -2,6 +2,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+  # Acionado também pelo avisos.yml: pushes feitos com a GITHUB_TOKEN não
+  # disparam o evento `push`, então o commit do bot não publicaria sozinho.
+  workflow_dispatch:
 
 permissions:
   contents: read
