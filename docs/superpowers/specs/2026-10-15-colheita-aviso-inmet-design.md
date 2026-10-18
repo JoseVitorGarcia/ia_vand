@@ -219,3 +219,20 @@ asserção existente.
 - **Deploy automático sem revisão** — ver nota no Componente 4.
 - **Schema da API mudar silenciosamente**: campos ausentes fazem o script
   falhar seguro (sai com erro, não publica), não gerar dado incorreto.
+
+## Correções feitas no plano (18/10/2026)
+
+Descobertas ao ler o código e a API real ao escrever
+`docs/superpowers/plans/2026-10-18-colheita-aviso-inmet.md`. Onde divergem do
+texto acima, **vale esta seção**.
+
+- `avisos/ativos` devolve `{"hoje": [...], "futuro": [...]}`; vigente = `hoje`.
+- `riscos`/`instrucoes` já são listas (a pendência "verificar" do Componente 2
+  está resolvida); `municipios` é string, o total sai de `geocodes`.
+- Só avisos de chuva (`Chuvas Intensas`, `Tempestade`, `Acumulado de Chuva`):
+  o texto da tela e a tabela de lacuna são de chuva.
+- `lacuna_exemplo` entra no dado (o exemplo 55157 precisa da própria linha).
+- O push do bot (`GITHUB_TOKEN`) **não dispara** o `deploy.yml`, ao contrário do
+  que o Escopo afirma; o `avisos.yml` aciona o deploy por `workflow_dispatch`.
+- O service worker passa a buscar `dados.js` primeiro na rede.
+- O `dados.js` muda todo dia (`colhido_em`), então há um commit diário.
