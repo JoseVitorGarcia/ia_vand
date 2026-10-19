@@ -272,6 +272,60 @@ try {
   ok(document.querySelectorAll('.selo-feito').length === escritos.length,
      'trilha mostra o resultado guardado dos ' + escritos.length + ' temas percorridos');
 
+  // --- blocos de Seção: renderização, com um Tema de fixture ---
+  var temaFixture = {
+    id: 'fixture-blocos', titulo: 'Fixture', nivel: 'Básico', minutos: 1, resumo: 'x',
+    secoes: [{
+      tipo: 'blocos', titulo: 'Seção de teste',
+      blocos: [
+        { tipo: 'p', texto: 'Um parágrafo curto.' },
+        { tipo: 'lista', itens: ['um', 'dois', 'três'] },
+        { tipo: 'lista', ordenada: true, itens: ['a', 'b'] },
+        { tipo: 'passos', itens: [
+          { rotulo: '1', titulo: 'Primeiro', texto: 'Texto do primeiro.' },
+          { rotulo: 'Minuto zero', texto: 'Rótulo longo, sem título.' } ] },
+        { tipo: 'comparacao', lados: [
+          { titulo: 'Lado A', itens: ['a1', 'a2'] }, { titulo: 'Lado B', itens: ['b1'] } ] },
+        { tipo: 'pergunta', pergunta: 'Por quê?', resposta: 'Porque sim.' },
+        { tipo: 'numeros', itens: [{ valor: '97%', rotulo: 'salgada' }, { rotulo: 'largo', largo: true }], nota: 'Nota.' },
+        { tipo: 'destaque', texto: 'Destaque sem título.' },
+        { tipo: 'destaque', titulo: 'Com título', texto: 'Destaque com título.' },
+        { tipo: 'glossario', termos: [{ palavra: 'Termo', definicao: 'Definição.' }], nota: 'Nota do glossário.' },
+        { tipo: 'inexistente', texto: 'bloco que o app não conhece' },
+        { tipo: 'p', texto: 'Último parágrafo, depois do bloco desconhecido.' }
+      ]
+    }],
+    reflexoes: [], quiz: [{ pergunta: 'q', alternativas: ['a', 'b', 'c', 'd'], correta: 0, explicacao: 'e' }], fontes: []
+  };
+  window.VAND_CONTENT.trilha.push(temaFixture);
+  irPara('#/estudar/fixture-blocos/s/1');
+  var secFx = document.querySelector('#tela .secao');
+  ok(!!secFx, 'blocos: a Seção renderiza');
+  secFx = secFx || document.createElement('div');
+  ok(secFx.querySelectorAll('.bloco-p').length === 2, 'blocos: p renderiza (e segue depois do bloco desconhecido)');
+  ok(!!secFx.querySelector('ul.bloco-lista') && secFx.querySelectorAll('ul.bloco-lista li').length === 3, 'blocos: lista com 3 itens');
+  ok(secFx.querySelectorAll('ol.bloco-lista li').length === 2, 'blocos: lista ordenada usa <ol>');
+  ok(secFx.querySelectorAll('ol.bloco-passos > li').length === 2, 'blocos: passos renderiza 2 passos');
+  ok(!!secFx.querySelector('.bloco-passos .passo-marca') && secFx.querySelector('.bloco-passos .passo-marca').textContent === '1',
+     'blocos: rótulo curto vai no círculo do passo');
+  ok(secFx.textContent.indexOf('Minuto zero') > -1 && secFx.querySelectorAll('.passo-marca.ponto').length === 1,
+     'blocos: rótulo longo vira texto com marcador de ponto');
+  ok(secFx.querySelectorAll('.bloco-comparacao .comp-lado').length === 2 && !!secFx.querySelector('.comp-x'),
+     'blocos: comparacao tem 2 lados e o separador');
+  var detFx = secFx.querySelector('details.bloco-pergunta');
+  ok(!!detFx && detFx.open === false, 'blocos: pergunta começa fechada');
+  ok(!!detFx && detFx.querySelector('summary').offsetHeight >= 44, 'blocos: o summary da pergunta tem alvo de toque de 44px');
+  if (detFx) detFx.querySelector('summary').click();
+  ok(!!detFx && detFx.open === true, 'blocos: tocar no summary abre a resposta');
+  ok(secFx.querySelectorAll('.bloco-numeros .dado').length === 2 && !!secFx.querySelector('.bloco-numeros .nota'),
+     'blocos: numeros renderiza os itens e a nota');
+  ok(secFx.querySelectorAll('.destaque').length === 2 && secFx.querySelectorAll('.destaque h3').length === 1,
+     'blocos: destaque aceita ter ou não ter título');
+  ok(secFx.querySelectorAll('.bloco-glossario .termo').length === 1 && !!secFx.querySelector('.bloco-glossario .nota'),
+     'blocos: glossario renderiza termo e nota');
+  ok(secFx.textContent.indexOf('bloco que o app não conhece') === -1, 'blocos: bloco desconhecido é ignorado, sem derrubar a Seção');
+  window.VAND_CONTENT.trilha.pop();
+
   // Texto de interface sem travessão. As telas que só mostram certas frases com dado
   // presente (card de lacuna, Registro com aviso) são exercitadas com o exemplo.
   var avisoOriginal = window.VAND_DADOS.aviso;

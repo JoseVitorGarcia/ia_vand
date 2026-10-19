@@ -319,9 +319,93 @@
   }
 
 
-  // Monta UMA Seção. É o mesmo código que a tela única usava, sem alteração de
-  // marcação nem de CSS — o que muda é quem chama, e quantas vezes.
+  // Blocos de uma Seção do tipo `blocos` (spec 2026-10-18). Cada um devolve UM nó;
+  // todo texto entra por textContent, nunca como HTML. O mapa também serve aos
+  // tipos antigos `dados` e `glossario`, que são "título + um bloco".
+  var BLOCOS = {
+    p: function (b) { return el('p', { class: 'bloco-p', text: b.texto }); },
+    lista: function (b) {
+      return el(b.ordenada ? 'ol' : 'ul', { class: 'bloco-lista' },
+        (b.itens || []).map(function (t) { return el('li', { text: t }); }));
+    },
+    passos: function (b) {
+      return el('ol', { class: 'bloco-passos' }, (b.itens || []).map(function (it) {
+        // Rótulo curto ("1", "2") vai dentro do círculo; rótulo longo ("Alerta",
+        // "Minuto zero") não cabe nele e vira texto acima do corpo, com um ponto.
+        var curto = String(it.rotulo).length <= 3;
+        return el('li', {}, [
+          el('span', { class: curto ? 'passo-marca' : 'passo-marca ponto', text: curto ? String(it.rotulo) : '' }),
+          el('div', { class: 'passo-corpo' }, [
+            curto ? null : el('span', { class: 'passo-rotulo-longo', text: String(it.rotulo) }),
+            it.titulo ? el('strong', { text: it.titulo }) : null,
+            el('p', { text: it.texto })
+          ])
+        ]);
+      }));
+    },
+    comparacao: function (b) {
+      var lados = (b.lados || []).map(function (l) {
+        return el('div', { class: 'comp-lado' }, [
+          el('h3', { text: l.titulo }),
+          el('ul', {}, (l.itens || []).map(function (t) { return el('li', { text: t }); }))
+        ]);
+      });
+      if (lados.length === 2) lados.splice(1, 0, el('span', { class: 'comp-x', 'aria-hidden': 'true', text: '×' }));
+      return el('div', { class: 'bloco-comparacao' }, lados);
+    },
+    // "Pare e pense": <details> nativo, acessível e sem JavaScript. Não grava
+    // progresso e não é a Reflexão (essa continua em `tema.reflexoes`).
+    pergunta: function (b) {
+      return el('details', { class: 'bloco-pergunta' }, [
+        el('summary', {}, [
+          el('span', { class: 'pergunta-rotulo t-caps', text: 'Pare e pense' }),
+          el('span', { class: 'pergunta-texto', text: b.pergunta }),
+          el('span', { class: 'pergunta-ver', text: 'Ver a resposta' })
+        ]),
+        el('p', { class: 'pergunta-resposta', text: b.resposta })
+      ]);
+    },
+    numeros: function (b) {
+      var grid = el('div', { class: 'dados' });
+      (b.itens || []).forEach(function (d) {
+        var cls = 'dado' + (d.largo ? ' largo' : '');
+        var filhos = d.valor
+          ? [el('span', { class: 'valor', text: d.valor }), el('span', { class: 'rotulo', text: d.rotulo })]
+          : [el('span', { class: 'rotulo', text: d.rotulo })];
+        grid.appendChild(el('div', { class: cls }, filhos));
+      });
+      return el('div', { class: 'bloco-numeros' }, [grid, b.nota ? el('p', { class: 'nota', text: b.nota }) : null]);
+    },
+    destaque: function (b) {
+      return el('div', { class: 'destaque' }, [
+        b.titulo ? el('h3', { text: b.titulo }) : null,
+        el('p', { text: b.texto })
+      ]);
+    },
+    glossario: function (b) {
+      var lista = el('div', { class: 'glossario' });
+      (b.termos || []).forEach(function (t) {
+        lista.appendChild(el('div', { class: 'termo' }, [
+          el('span', { class: 'palavra', text: t.palavra }),
+          el('p', { text: t.definicao })
+        ]));
+      });
+      return el('div', { class: 'bloco-glossario' }, [lista, b.nota ? el('p', { class: 'nota', text: b.nota }) : null]);
+    }
+  };
+
+  // Monta UMA Seção. O `h2` do título é sempre o primeiro filho: renderSecao o
+  // remove na tela de Seção, onde o título já é o grande da tela.
   function montarSecao(s) {
+    if (s.tipo === 'blocos') {
+      var sb = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
+      (s.blocos || []).forEach(function (b) {
+        var fazer = BLOCOS[b.tipo];
+        var no = fazer ? fazer(b) : null;   // tipo desconhecido: ignora, não derruba a Seção
+        if (no) sb.appendChild(no);
+      });
+      return sb;
+    }
     if (s.tipo === 'texto') {
       var bloco = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
       s.paragrafos.forEach(function (par) { bloco.appendChild(el('p', { text: par })); });
@@ -334,33 +418,10 @@
       ]);
     }
     if (s.tipo === 'glossario') {
-      var glo = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
-      var listaG = el('div', { class: 'glossario' });
-      s.termos.forEach(function (t) {
-        listaG.appendChild(
-          el('div', { class: 'termo' }, [
-            el('span', { class: 'palavra', text: t.palavra }),
-            el('p', { text: t.definicao })
-          ])
-        );
-      });
-      glo.appendChild(listaG);
-      if (s.nota) glo.appendChild(el('p', { class: 'nota', text: s.nota }));
-      return glo;
+      return el('section', { class: 'secao' }, [el('h2', { text: s.titulo }), BLOCOS.glossario(s)]);
     }
     if (s.tipo === 'dados') {
-      var sec = el('section', { class: 'secao' }, [el('h2', { text: s.titulo })]);
-      var grid = el('div', { class: 'dados' });
-      s.itens.forEach(function (d) {
-        var cls = 'dado' + (d.largo ? ' largo' : '');
-        var filhos = d.valor
-          ? [el('span', { class: 'valor', text: d.valor }), el('span', { class: 'rotulo', text: d.rotulo })]
-          : [el('span', { class: 'rotulo', text: d.rotulo })];
-        grid.appendChild(el('div', { class: cls }, filhos));
-      });
-      sec.appendChild(grid);
-      if (s.nota) sec.appendChild(el('p', { class: 'nota', text: s.nota }));
-      return sec;
+      return el('section', { class: 'secao' }, [el('h2', { text: s.titulo }), BLOCOS.numeros(s)]);
     }
     return null;
   }

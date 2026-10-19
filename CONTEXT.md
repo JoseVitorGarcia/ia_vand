@@ -39,6 +39,17 @@ resultado. É a unidade de escrita e a unidade de escopo.
 _Avoid_: módulo (já designa as três funcionalidades do app), capítulo (amarraria
 a uma fonte só), lição, aula
 
+**Seção**:
+Uma tela de leitura de um Tema, com rota própria. É um título mais uma sequência de
+Blocos.
+_Avoid_: página, capítulo, card
+
+**Bloco**:
+Uma peça de uma Seção: parágrafo curto, lista, passos, comparação, "Pare e pense",
+números, destaque ou glossário. O "Pare e pense" é um Bloco e não é uma Reflexão:
+não vai para a tela de Para pensar e não guarda progresso.
+_Avoid_: componente, widget, card
+
 **Nível**:
 O rótulo Básico, Intermediário ou Avançado de um Tema. É ordenação e sinalização,
 não uma trilha separada nem uma trava.

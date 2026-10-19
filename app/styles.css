@@ -648,6 +648,96 @@ body {
 }
 .termo p { margin: 0; font-size: .94rem; }
 
+/* ---------- blocos de Seção (spec 2026-10-18) ---------- */
+/* Paleta do app (verde/neutro). ADR 0003: nenhum destes usa a cor de severidade. */
+.secao .bloco-p { margin: 0 0 12px; }
+
+.bloco-lista { margin: 0 0 14px; padding: 0; list-style: none; display: grid; gap: 10px; }
+.bloco-lista li { position: relative; padding-left: 26px; }
+ul.bloco-lista li::before {
+  content: ""; position: absolute; left: 6px; top: .62em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+}
+ol.bloco-lista { counter-reset: item; }
+ol.bloco-lista li { counter-increment: item; }
+ol.bloco-lista li::before {
+  content: counter(item); position: absolute; left: 0; top: .12em;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent-forte);
+  font-size: .75rem; font-weight: 720; display: grid; place-items: center;
+}
+
+/* Passos: coluna de 34px com o marcador, linha fina ligando um ao próximo. */
+.bloco-passos { margin: 0 0 16px; padding: 0; list-style: none; }
+.bloco-passos > li {
+  position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr);
+  column-gap: 12px; padding-bottom: 14px;
+}
+.bloco-passos > li:last-child { padding-bottom: 0; }
+.bloco-passos > li::before {  /* a linha passa por trás do marcador (z-index) */
+  content: ""; position: absolute; left: 16px; top: 17px; bottom: -17px;
+  width: 2px; background: var(--border-forte);
+}
+.bloco-passos > li:last-child::before { display: none; }
+.passo-marca {
+  position: relative; z-index: 1; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-text);
+  display: grid; place-items: center; font-weight: 720; font-size: .9rem;
+}
+.passo-marca.ponto { width: 14px; height: 14px; margin: 10px 10px 0; }
+.passo-corpo { min-width: 0; padding-top: 5px; }
+.passo-corpo strong { display: block; margin-bottom: 2px; }
+.passo-corpo p { margin: 0; }
+.passo-rotulo-longo {
+  display: block; font-size: .72rem; font-weight: 720; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--text-dim); margin-bottom: 2px;
+}
+
+/* Comparação: empilhada no celular, lado a lado a partir de 520px. */
+.bloco-comparacao { display: grid; gap: 8px; margin: 0 0 16px; }
+.comp-lado {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--sombra-1);
+}
+.comp-lado h3 {
+  margin: 0 0 8px; font-size: .82rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--accent-forte);
+}
+.comp-lado ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: .95rem; }
+.comp-lado li { position: relative; padding-left: 16px; }
+.comp-lado li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2);
+}
+.comp-x { justify-self: center; font-weight: 720; line-height: 1; color: var(--text-dim); }
+@media (min-width: 520px) {
+  .bloco-comparacao { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; }
+  .comp-x { align-self: center; }
+}
+
+/* "Pare e pense": a resposta fica atrás do toque. Nada anima, então nada a
+   desligar sob prefers-reduced-motion. */
+.bloco-pergunta {
+  margin: 0 0 16px; background: var(--accent-soft);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.bloco-pergunta summary {
+  list-style: none; cursor: pointer; display: grid; gap: 6px;
+  padding: 14px 16px; min-height: 44px; border-radius: var(--radius);
+}
+.bloco-pergunta summary::-webkit-details-marker { display: none; }
+.bloco-pergunta summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pergunta-rotulo { color: var(--accent-forte); }
+.pergunta-texto { font-weight: 660; }
+.pergunta-ver { color: var(--accent-forte); font-weight: 660; font-size: .9rem; }
+.bloco-pergunta[open] .pergunta-ver { display: none; }
+.pergunta-resposta { margin: 0; padding: 0 16px 16px; }
+
+/* Destaque e números como bloco dentro de uma Seção. */
+.secao .destaque { margin: 0 0 16px; }
+.destaque h3 { font-size: 1.02rem; margin: 0 0 8px; color: var(--accent-forte); }
+.bloco-numeros, .bloco-glossario { margin: 0 0 14px; }
+
 .reflexao {
   background: var(--surface-2);
   border: 1px dashed var(--border-forte);
