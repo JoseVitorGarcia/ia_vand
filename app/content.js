@@ -19,79 +19,78 @@ window.VAND_CONTENT = {
         'Entender esse caminho é o que permite prever quando ela volta.',
       secoes: [
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'Água que ninguém fabrica',
-          paragrafos: [
-            'A água que sai da sua torneira hoje não foi criada em lugar nenhum. Ela ' +
-              'já foi chuva, já foi rio, já esteve dentro de uma planta e já evaporou de um ' +
-              'oceano — muitas vezes. O ciclo da água é o exemplo mais antigo de reciclagem ' +
-              'que existe, e ele funciona sem que ninguém precise organizá-lo.',
-            'O que muda é o estado e o lugar. O calor do Sol evapora a água da superfície; ' +
-              'no alto, mais frio, o vapor se condensa em gotas minúsculas e forma nuvens; ' +
-              'quando essas gotas crescem o bastante para o ar não as sustentar mais, elas ' +
-              'caem. Parte escorre para rios, parte infiltra no solo e alimenta reservatórios ' +
-              'subterrâneos, parte evapora de novo. Nada se perde no caminho — só troca de ' +
-              'endereço.',
-            'Por isso o problema da água quase nunca é de quantidade total. É de estar na ' +
-              'hora certa, no lugar certo e limpa o suficiente para usar.'
+          blocos: [
+            { tipo: 'p', texto: 'A água que sai da sua torneira hoje não foi criada em lugar nenhum. Ela já foi chuva, já foi rio, já esteve dentro de uma planta e já evaporou de um oceano, muitas vezes.' },
+            { tipo: 'p', texto: 'O ciclo da água é o exemplo mais antigo de reciclagem que existe, e ele funciona sem que ninguém precise organizá-lo.' },
+            { tipo: 'p', texto: 'O que muda é o estado e o lugar.' },
+            { tipo: 'passos', itens: [
+              { rotulo: '1', titulo: 'Evapora', texto: 'O calor do Sol evapora a água da superfície.' },
+              { rotulo: '2', titulo: 'Condensa', texto: 'No alto, mais frio, o vapor se condensa em gotas minúsculas e forma nuvens.' },
+              { rotulo: '3', titulo: 'Cai', texto: 'Quando essas gotas crescem o bastante para o ar não as sustentar mais, elas caem.' },
+              { rotulo: '4', titulo: 'Segue o caminho', texto: 'Parte escorre para rios, parte infiltra no solo e alimenta reservatórios subterrâneos, parte evapora de novo.' }
+            ] },
+            { tipo: 'p', texto: 'Nada se perde no caminho, só troca de endereço.' },
+            { tipo: 'destaque', titulo: 'Por isso', texto: 'O problema da água quase nunca é de quantidade total. É de estar na hora certa, no lugar certo e limpa o suficiente para usar.' }
           ]
         },
         {
-          tipo: 'dados',
+          tipo: 'blocos',
           titulo: 'Quanta água existe, de verdade',
-          itens: [
-            { rotulo: 'Da água do planeta, é salgada', valor: '97%' },
-            { rotulo: 'É doce', valor: '3%' },
-            {
-              rotulo: 'E da parte doce, a maior fatia está congelada em geleiras e calotas polares, ou sob o solo, como água subterrânea',
-              valor: '',
-              largo: true
-            }
-          ],
-          nota:
-            'Rios e lagos — de onde a água é retirada com mais facilidade — são uma ' +
-            'fração pequena desses 3%. É o que torna o desperdício e a poluição tão caros: ' +
-            'estraga-se justamente a parte acessível.'
-        },
-        {
-          tipo: 'destaque',
-          titulo: 'Um poeta gaúcho já tinha dito',
-          texto:
-            'O livro oficial do ENCCEJA abre a discussão sobre água com um poema de Raul ' +
-            'Bopp, nascido no Rio Grande do Sul em 1898, sobre um rio imenso e sem margens ' +
-            'que, de tanto correr, um dia secou. O material comenta que essa é a cara do ' +
-            'problema da água no Brasil: ora inunda tudo como se os rios não tivessem ' +
-            'margem, ora seca o fundo. Cheia e estiagem não são dois problemas — são o ' +
-            'mesmo ciclo, visto em dois momentos.'
-        },
-        {
-          tipo: 'texto',
-          titulo: 'Como alguém sabe que vai chover',
-          paragrafos: [
-            'Prever o tempo sempre foi observar a natureza. Durante a maior parte da ' +
-              'história isso significou reparar em bichos e plantas — ditados como "cigarra ' +
-              'cantou, calor chegou" são exatamente isso. Quando o ser humano passou a ' +
-              'plantar e criar animais, acertar a previsão virou questão de sobrevivência.',
-            'O método continua sendo observação; o que mudou foi o instrumento. A ' +
-              'meteorologia, ciência que estuda a atmosfera, precisa de milhares de pontos ' +
-              'de observação espalhados pelo mundo. Esses pontos são as estações ' +
-              'meteorológicas, e elas não ficam só no chão: existem estações terrestres, ' +
-              'marítimas (em navios e boias) e aéreas (em balões e satélites).',
-            'Cada estação mede continuamente coisas como temperatura, umidade, pressão, ' +
-              'vento e chuva, e envia esses números para centros meteorológicos. Lá, ' +
-              'computadores reúnem tudo e calculam como a atmosfera deve se comportar nas ' +
-              'próximas horas e dias. É daí que sai a previsão que você vê no jornal.'
+          blocos: [
+            { tipo: 'numeros', itens: [
+              { valor: '97%', rotulo: 'Da água do planeta, é salgada' },
+              { valor: '3%', rotulo: 'É doce' },
+              { valor: '', rotulo: 'E da parte doce, a maior fatia está congelada em geleiras e calotas polares, ou sob o solo, como água subterrânea', largo: true }
+            ] },
+            { tipo: 'p', texto: 'Rios e lagos, de onde a água é retirada com mais facilidade, são uma fração pequena desses 3%. É o que torna o desperdício e a poluição tão caros: estraga-se justamente a parte acessível.' }
           ]
         },
         {
-          tipo: 'destaque',
+          tipo: 'blocos',
+          titulo: 'Um poeta gaúcho já tinha dito',
+          blocos: [
+            { tipo: 'p', texto: 'O livro oficial do ENCCEJA abre a discussão sobre água com um poema de Raul Bopp, nascido no Rio Grande do Sul em 1898.' },
+            { tipo: 'p', texto: 'O poema fala de um rio imenso e sem margens que, de tanto correr, um dia secou.' },
+            { tipo: 'p', texto: 'O material comenta que essa é a cara do problema da água no Brasil:' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'Ora cheia', itens: ['Inunda tudo, como se os rios não tivessem margem.'] },
+              { titulo: 'Ora estiagem', itens: ['Seca o fundo.'] }
+            ] },
+            { tipo: 'destaque', titulo: 'O mesmo ciclo', texto: 'Cheia e estiagem não são dois problemas. São o mesmo ciclo, visto em dois momentos.' }
+          ]
+        },
+        {
+          tipo: 'blocos',
+          titulo: 'Como alguém sabe que vai chover',
+          blocos: [
+            { tipo: 'p', texto: 'Prever o tempo sempre foi observar a natureza. Durante a maior parte da história, isso significou reparar em bichos e plantas: ditados como "cigarra cantou, calor chegou" são exatamente isso.' },
+            { tipo: 'p', texto: 'Quando o ser humano passou a plantar e criar animais, acertar a previsão virou questão de sobrevivência.' },
+            { tipo: 'p', texto: 'O método continua sendo observação; o que mudou foi o instrumento. A meteorologia, ciência que estuda a atmosfera, precisa de milhares de pontos de observação espalhados pelo mundo.' },
+            { tipo: 'p', texto: 'Esses pontos são as estações meteorológicas, e elas não ficam só no chão. Existem estações:' },
+            { tipo: 'lista', itens: [
+              'Terrestres.',
+              'Marítimas, em navios e boias.',
+              'Aéreas, em balões e satélites.'
+            ] },
+            { tipo: 'pergunta', pergunta: 'Por que a meteorologia usa estações em navios, boias, balões e satélites, e não só no chão?', resposta: 'Porque ela precisa de milhares de pontos de observação espalhados pelo mundo, e as estações não ficam só no chão: existem as terrestres, as marítimas e as aéreas.' },
+            { tipo: 'passos', itens: [
+              { rotulo: '1', titulo: 'Medem', texto: 'Cada estação mede continuamente coisas como temperatura, umidade, pressão, vento e chuva.' },
+              { rotulo: '2', titulo: 'Enviam', texto: 'Os números seguem para centros meteorológicos.' },
+              { rotulo: '3', titulo: 'Calculam', texto: 'Lá, computadores reúnem tudo e calculam como a atmosfera deve se comportar nas próximas horas e dias.' },
+              { rotulo: '4', titulo: 'Previsão', texto: 'É daí que sai a previsão que você vê no jornal.' }
+            ] }
+          ]
+        },
+        {
+          tipo: 'blocos',
           titulo: 'Onde este aplicativo entra',
-          texto:
-            'As estações meteorológicas descritas acima não são um conceito distante: o ' +
-            'Instituto Nacional de Meteorologia (INMET) opera uma rede delas no Rio Grande ' +
-            'do Sul, e é dessa rede que sai o dado que este projeto estuda. Quando você ' +
-            'recebe um aviso na aba Alerta, ele nasceu de medições feitas por estações como ' +
-            'as que você acabou de conhecer.'
+          blocos: [
+            { tipo: 'p', texto: 'As estações meteorológicas descritas acima não são um conceito distante.' },
+            { tipo: 'p', texto: 'O Instituto Nacional de Meteorologia (INMET) opera uma rede delas no Rio Grande do Sul, e é dessa rede que sai o dado que este projeto estuda.' },
+            { tipo: 'destaque', titulo: 'No aplicativo', texto: 'Quando você recebe um aviso na aba Alerta, ele nasceu de medições feitas por estações como as que você acabou de conhecer.' }
+          ]
         }
       ],
       reflexoes: [
@@ -119,7 +118,7 @@ window.VAND_CONTENT = {
           explicacao:
             'A maior parte da água doce está congelada em geleiras e calotas polares ou ' +
             'sob o solo, como água subterrânea. Rios e lagos, de onde é mais fácil retirar, ' +
-            'são uma fração pequena — por isso poluí-los custa tão caro.'
+            'são uma fração pequena. Por isso poluí-los custa tão caro.'
         },
         {
           enunciado: 'O que a meteorologia estuda?',
@@ -159,15 +158,15 @@ window.VAND_CONTENT = {
           ],
           correta: 1,
           explicacao:
-            'A água evapora, condensa, precipita, escoa e infiltra — muda de estado e de ' +
+            'A água evapora, condensa, precipita, escoa e infiltra: muda de estado e de ' +
             'reservatório continuamente, mas a quantidade total não é criada nem destruída ' +
             'no processo. É a mesma água circulando.'
         }
       ],
       fontes: [
         {
-          obra: 'Ciências — Livro do Estudante, Ensino Fundamental',
-          orgao: 'MEC/INEP — ENCCEJA',
+          obra: 'Ciências: Livro do Estudante, Ensino Fundamental',
+          orgao: 'MEC/INEP (ENCCEJA)',
           ano: 2006,
           detalhe: 'Cap. VII (previsão do tempo, meteorologia e estações) e Cap. IX (ciclo da água e disponibilidade de água doce)'
         }

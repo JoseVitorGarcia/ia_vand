@@ -4,6 +4,133 @@ Gerado por `scripts/gerar_revisao_textos.js`. Texto antigo tirado de `47c5ae1`.
 Regra da reescrita: nenhum fato, número, nome, data ou ressalva novo, e nenhuma ressalva removida;
 só reordenar, dividir, cortar repetição e trocar a pontuação. **Confira, Seção a Seção, se o "Depois" diz o mesmo que o "Antes".**
 
+## De onde vem a chuva
+
+### Seção 1: Água que ninguém fabrica
+
+**Antes**
+
+A água que sai da sua torneira hoje não foi criada em lugar nenhum. Ela já foi chuva, já foi rio, já esteve dentro de uma planta e já evaporou de um oceano — muitas vezes. O ciclo da água é o exemplo mais antigo de reciclagem que existe, e ele funciona sem que ninguém precise organizá-lo.
+
+O que muda é o estado e o lugar. O calor do Sol evapora a água da superfície; no alto, mais frio, o vapor se condensa em gotas minúsculas e forma nuvens; quando essas gotas crescem o bastante para o ar não as sustentar mais, elas caem. Parte escorre para rios, parte infiltra no solo e alimenta reservatórios subterrâneos, parte evapora de novo. Nada se perde no caminho — só troca de endereço.
+
+Por isso o problema da água quase nunca é de quantidade total. É de estar na hora certa, no lugar certo e limpa o suficiente para usar.
+
+**Depois**
+
+A água que sai da sua torneira hoje não foi criada em lugar nenhum. Ela já foi chuva, já foi rio, já esteve dentro de uma planta e já evaporou de um oceano, muitas vezes.
+
+O ciclo da água é o exemplo mais antigo de reciclagem que existe, e ele funciona sem que ninguém precise organizá-lo.
+
+O que muda é o estado e o lugar.
+
+- **1 · Evapora**: O calor do Sol evapora a água da superfície.
+- **2 · Condensa**: No alto, mais frio, o vapor se condensa em gotas minúsculas e forma nuvens.
+- **3 · Cai**: Quando essas gotas crescem o bastante para o ar não as sustentar mais, elas caem.
+- **4 · Segue o caminho**: Parte escorre para rios, parte infiltra no solo e alimenta reservatórios subterrâneos, parte evapora de novo.
+
+Nada se perde no caminho, só troca de endereço.
+
+> **Por isso.** O problema da água quase nunca é de quantidade total. É de estar na hora certa, no lugar certo e limpa o suficiente para usar.
+
+---
+
+### Seção 2: Quanta água existe, de verdade
+
+**Antes**
+
+- 97%: Da água do planeta, é salgada
+- 3%: É doce
+- E da parte doce, a maior fatia está congelada em geleiras e calotas polares, ou sob o solo, como água subterrânea
+
+Rios e lagos — de onde a água é retirada com mais facilidade — são uma fração pequena desses 3%. É o que torna o desperdício e a poluição tão caros: estraga-se justamente a parte acessível.
+
+**Depois**
+
+- 97%: Da água do planeta, é salgada
+- 3%: É doce
+- E da parte doce, a maior fatia está congelada em geleiras e calotas polares, ou sob o solo, como água subterrânea
+
+Rios e lagos, de onde a água é retirada com mais facilidade, são uma fração pequena desses 3%. É o que torna o desperdício e a poluição tão caros: estraga-se justamente a parte acessível.
+
+---
+
+### Seção 3: Um poeta gaúcho já tinha dito
+
+**Antes**
+
+O livro oficial do ENCCEJA abre a discussão sobre água com um poema de Raul Bopp, nascido no Rio Grande do Sul em 1898, sobre um rio imenso e sem margens que, de tanto correr, um dia secou. O material comenta que essa é a cara do problema da água no Brasil: ora inunda tudo como se os rios não tivessem margem, ora seca o fundo. Cheia e estiagem não são dois problemas — são o mesmo ciclo, visto em dois momentos.
+
+**Depois**
+
+O livro oficial do ENCCEJA abre a discussão sobre água com um poema de Raul Bopp, nascido no Rio Grande do Sul em 1898.
+
+O poema fala de um rio imenso e sem margens que, de tanto correr, um dia secou.
+
+O material comenta que essa é a cara do problema da água no Brasil:
+
+**Ora cheia**
+- Inunda tudo, como se os rios não tivessem margem.
+
+× 
+
+**Ora estiagem**
+- Seca o fundo.
+
+> **O mesmo ciclo.** Cheia e estiagem não são dois problemas. São o mesmo ciclo, visto em dois momentos.
+
+---
+
+### Seção 4: Como alguém sabe que vai chover
+
+**Antes**
+
+Prever o tempo sempre foi observar a natureza. Durante a maior parte da história isso significou reparar em bichos e plantas — ditados como "cigarra cantou, calor chegou" são exatamente isso. Quando o ser humano passou a plantar e criar animais, acertar a previsão virou questão de sobrevivência.
+
+O método continua sendo observação; o que mudou foi o instrumento. A meteorologia, ciência que estuda a atmosfera, precisa de milhares de pontos de observação espalhados pelo mundo. Esses pontos são as estações meteorológicas, e elas não ficam só no chão: existem estações terrestres, marítimas (em navios e boias) e aéreas (em balões e satélites).
+
+Cada estação mede continuamente coisas como temperatura, umidade, pressão, vento e chuva, e envia esses números para centros meteorológicos. Lá, computadores reúnem tudo e calculam como a atmosfera deve se comportar nas próximas horas e dias. É daí que sai a previsão que você vê no jornal.
+
+**Depois**
+
+Prever o tempo sempre foi observar a natureza. Durante a maior parte da história, isso significou reparar em bichos e plantas: ditados como "cigarra cantou, calor chegou" são exatamente isso.
+
+Quando o ser humano passou a plantar e criar animais, acertar a previsão virou questão de sobrevivência.
+
+O método continua sendo observação; o que mudou foi o instrumento. A meteorologia, ciência que estuda a atmosfera, precisa de milhares de pontos de observação espalhados pelo mundo.
+
+Esses pontos são as estações meteorológicas, e elas não ficam só no chão. Existem estações:
+
+- Terrestres.
+- Marítimas, em navios e boias.
+- Aéreas, em balões e satélites.
+
+> **Pare e pense:** Por que a meteorologia usa estações em navios, boias, balões e satélites, e não só no chão?
+> *Resposta:* Porque ela precisa de milhares de pontos de observação espalhados pelo mundo, e as estações não ficam só no chão: existem as terrestres, as marítimas e as aéreas.
+
+- **1 · Medem**: Cada estação mede continuamente coisas como temperatura, umidade, pressão, vento e chuva.
+- **2 · Enviam**: Os números seguem para centros meteorológicos.
+- **3 · Calculam**: Lá, computadores reúnem tudo e calculam como a atmosfera deve se comportar nas próximas horas e dias.
+- **4 · Previsão**: É daí que sai a previsão que você vê no jornal.
+
+---
+
+### Seção 5: Onde este aplicativo entra
+
+**Antes**
+
+As estações meteorológicas descritas acima não são um conceito distante: o Instituto Nacional de Meteorologia (INMET) opera uma rede delas no Rio Grande do Sul, e é dessa rede que sai o dado que este projeto estuda. Quando você recebe um aviso na aba Alerta, ele nasceu de medições feitas por estações como as que você acabou de conhecer.
+
+**Depois**
+
+As estações meteorológicas descritas acima não são um conceito distante.
+
+O Instituto Nacional de Meteorologia (INMET) opera uma rede delas no Rio Grande do Sul, e é dessa rede que sai o dado que este projeto estuda.
+
+> **No aplicativo.** Quando você recebe um aviso na aba Alerta, ele nasceu de medições feitas por estações como as que você acabou de conhecer.
+
+---
+
 ## Quando a chuva vira enchente
 
 ### Seção 1: A mesma chuva, dois destinos
