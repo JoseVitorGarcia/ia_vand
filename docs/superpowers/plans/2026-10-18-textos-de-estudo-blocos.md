@@ -22,7 +22,7 @@
 - Comandos de teste desta máquina (não usar `python` direto; `./run.sh`):
   - suíte Python: `./run.sh -m pytest tests -q` (baseline: 89 passed)
   - smoke: `google-chrome --headless=new --no-sandbox --disable-gpu --virtual-time-budget=20000 --dump-dom "file://$PWD/tests/app_smoke.html" | grep "^FALHA"` (baseline: 0 falhas, 154 PASS)
-  - largura: veja o cabeçalho de `tests/app_largura.html` (baseline: 0 falhas, 185 medições; vai crescer com as rotas novas? não, as rotas são as mesmas, 37)
+  - largura: veja o cabeçalho de `tests/app_largura.html` (baseline: 0 falhas, 185 medições, 37 rotas x 5 larguras; as rotas não mudam, então o número fica igual)
 - `app/sw.js`: **incrementar `VERSAO` a cada commit que mexe em `app.js`, `styles.css` ou `content.js`** (hoje `IA_VAND-v13`). Esquecer isso já custou caro: o celular continua com o arquivo antigo.
 - Commits com o trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. **Pedir confirmação ao usuário antes de qualquer `git push`.**
 - A revisão científica é do usuário: nenhuma Seção é dada como revisada sem o OK dele sobre `reports/revisao_textos_estudo_2026_10_18.md`.
