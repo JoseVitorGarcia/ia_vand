@@ -129,6 +129,12 @@ html, body {
 .app {
   position: relative;      /* âncora do brilho de fundo; ver abaixo */
   display: grid;
+  /* Coluna declarada de propósito. Sem ela a coluna é `auto` e cresce até o
+     max-content do item mais largo: o título `nowrap` do cabeçalho chegava a
+     644px num celular de 390 e arrastava o texto da Seção, cortado à direita.
+     `minmax(0, 1fr)` trava a coluna na largura da tela; o título corta com
+     reticências, como o `.topbar-titulo` já previa. tests/app_largura.html vigia. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
   height: 100vh;           /* fallback */
   height: 100dvh;          /* desconta a barra do navegador quando ela aparece */
@@ -136,6 +142,7 @@ html, body {
   isolation: isolate;
 }
 
+.topbar, .conteudo, .tabbar { min-width: 0; }  /* itens de grid: sem isto o conteúdo impõe a largura */
 .conteudo {
   min-height: 0;           /* sem isto o filho de grid não encolhe e nada rola */
   overflow-y: auto;

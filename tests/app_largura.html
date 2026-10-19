@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>largura</title></head>
+<body>
+<!--
+  Nenhuma tela do app pode passar da largura do aparelho.
+
+  Por que existe separado de app_smoke.html: o smoke roda síncrono numa página só;
+  medir largura exige carregar o app de verdade em iframes de cada tamanho, e isso
+  é assíncrono. Nasceu de um defeito que o smoke não pegava: o `.app` é um grid sem
+  coluna declarada, e o título `nowrap` do cabeçalho esticava a coluna até 644px,
+  cortando o texto das Seções à direita em qualquer celular.
+
+  Como rodar (o iframe sobre file:// só é legível com a flag):
+    google-chrome --headless=new --no-sandbox --disable-gpu \
+      --allow-file-access-from-files --virtual-time-budget=240000 \
+      --dump-dom "file://$PWD/tests/app_largura.html" | grep "^FALHA"
+  Sem linha FALHA = tudo cabe. Procure também "FIM" no resultado: sem ele o teste
+  não terminou e o silêncio não prova nada.
+-->
+<pre id="saida">RESULTADO (rodando...)</pre>
+<div id="caixa"></div>
+<script src="../app/content.js"></script>
+<script>
+var LARGURAS = [320, 360, 390, 430, 768];
+var TRILHA = (window.VAND_CONTENT && window.VAND_CONTENT.trilha) || [];
+var log = [], medidas = 0;
+
+function rotas() {
+  var r = ['#/alerta', '#/alerta/calmo', '#/alerta/exemplo', '#/registro',
+           '#/registro/enviado', '#/estudar', '#/estudar/sobre'];
+  TRILHA.forEach(function (t) {
+    if (!t.secoes.length) return;
+    var base = '#/estudar/' + t.id;
+    r.push(base);
+    t.secoes.forEach(function (s, i) { r.push(base + '/s/' + (i + 1)); });
+    r.push(base + '/pensar', base + '/fontes', base + '/quiz');
+  });
+  return r;
+}
+
+function medir(largura, lista, k, pronto) {
+  if (k >= lista.length) return pronto();
+  var f = document.createElement('iframe');
+  f.width = largura; f.height = 800; f.style.cssText = 'border:0;display:block';
+  f.src = '../app/index.html' + lista[k];
+  var caixa = document.getElementById('caixa');
+  caixa.innerHTML = '';
+  caixa.appendChild(f);
+  f.onload = function () {
+    setTimeout(function () {
+      var d = f.contentDocument;
+      var app = d.querySelector('.app');
+      var pior = 0, onde = '';
+      [].forEach.call(d.querySelectorAll('#tela *, #topbar, .tabbar'), function (e) {
+        var dir = e.getBoundingClientRect().right;
+        if (dir > pior) { pior = dir; onde = e.tagName.toLowerCase() + '.' + e.className; }
+      });
+      medidas++;
+      if (pior > largura + 1 || app.scrollWidth > largura + 1) {
+        log.push('FALHA ' + largura + 'px ' + lista[k] + ': conteúdo vai até ' + Math.round(pior) +
+                 'px (app.scrollWidth ' + app.scrollWidth + '), culpado: ' + onde);
+      }
+      medir(largura, lista, k + 1, pronto);
+    }, 120);
+  };
+}
+
+function porLargura(i, lista) {
+  if (i >= LARGURAS.length) {
+    log.push('FIM: ' + medidas + ' medições (' + lista.length + ' rotas x ' + LARGURAS.length + ' larguras)');
+    document.getElementById('saida').textContent = 'RESULTADO\n' + log.join('\n');
+    return;
+  }
+  medir(LARGURAS[i], lista, 0, function () { porLargura(i + 1, lista); });
+}
+
+porLargura(0, rotas());
+</script>
+</body></html>
