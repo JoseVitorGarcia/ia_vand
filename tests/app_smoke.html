@@ -330,6 +330,30 @@ try {
   checarTemaMigrado('quando-a-chuva-vira-enchente');
   checarTemaMigrado('de-onde-vem-a-chuva');
 
+  // Fidelidade ao texto original (revisão final de 18/10/2026): três pontos em que a
+  // reescrita podia ter mudado o sentido sem ninguém ver.
+  (function () {
+    var porId = {};
+    window.VAND_CONTENT.trilha.forEach(function (t) { porId[t.id] = t; });
+    var t1 = JSON.stringify(porId['de-onde-vem-a-chuva']);
+    var t3 = JSON.stringify(porId['clima-em-mudanca-e-risco-na-cidade']);
+    // 1. O original não diz POR QUE existem estações marítimas e aéreas; a pergunta
+    //    não pode inventar esse "porque". A recapitulação pergunta o que o texto afirma.
+    ok(t1.indexOf('Por que a meteorologia usa') === -1,
+       'Tema 1: o Pare e pense não inventa um "porque" sobre as estações');
+    ok(t1.indexOf('De onde sai a previsão que você vê no jornal?') > -1,
+       'Tema 1: o Pare e pense recapitula de onde sai a previsão');
+    // 2. "as áreas de risco" se refere aos QUATRO lugares; com vírgula virava aposto de "encostas".
+    ok(t3.indexOf('margens de rio e encostas: as áreas de risco') > -1,
+       'Tema 3: "as áreas de risco" continua valendo para os quatro lugares');
+    // 3. "de onde vêm" se refere às seções, não a "drenagem urbana".
+    ok(t3.indexOf('drenagem urbana (de onde vêm a Lei') > -1 && t3.indexOf('simplifica demais o problema)') > -1,
+       'Tema 3: a Fonte atribui "de onde vêm" às seções, entre parênteses');
+    // 4. Os eixos do aplicativo não são uma sequência: nada de passos numa lista de eixos.
+    var tiposS7 = porId['clima-em-mudanca-e-risco-na-cidade'].secoes[6].blocos.map(function (b) { return b.tipo; });
+    ok(tiposS7.indexOf('passos') === -1, 'Tema 3, Seção 7: os eixos não viram uma sequência de passos');
+  })();
+
   // Texto de interface sem travessão. As telas que só mostram certas frases com dado
   // presente (card de lacuna, Registro com aviso) são exercitadas com o exemplo.
   var avisoOriginal = window.VAND_DADOS.aviso;

@@ -74,13 +74,13 @@ window.VAND_CONTENT = {
               'Marítimas, em navios e boias.',
               'Aéreas, em balões e satélites.'
             ] },
-            { tipo: 'pergunta', pergunta: 'Por que a meteorologia usa estações em navios, boias, balões e satélites, e não só no chão?', resposta: 'Porque ela precisa de milhares de pontos de observação espalhados pelo mundo, e as estações não ficam só no chão: existem as terrestres, as marítimas e as aéreas.' },
             { tipo: 'passos', itens: [
               { rotulo: '1', titulo: 'Medem', texto: 'Cada estação mede continuamente coisas como temperatura, umidade, pressão, vento e chuva.' },
               { rotulo: '2', titulo: 'Enviam', texto: 'Os números seguem para centros meteorológicos.' },
               { rotulo: '3', titulo: 'Calculam', texto: 'Lá, computadores reúnem tudo e calculam como a atmosfera deve se comportar nas próximas horas e dias.' },
               { rotulo: '4', titulo: 'Previsão', texto: 'É daí que sai a previsão que você vê no jornal.' }
-            ] }
+            ] },
+            { tipo: 'pergunta', pergunta: 'De onde sai a previsão que você vê no jornal?', resposta: 'Das medições contínuas das estações, que seguem para centros meteorológicos, onde computadores calculam como a atmosfera deve se comportar nas próximas horas e dias.' }
           ]
         },
         {
@@ -476,7 +476,7 @@ window.VAND_CONTENT = {
           blocos: [
             { tipo: 'p', texto: 'O material do Cemaden Educação faz uma correção de vocabulário que muda o sentido da frase inteira: as populações mais atingidas não são vulneráveis por si sós. Elas foram vulnerabilizadas.' },
             { tipo: 'destaque', titulo: 'A diferença entre as duas palavras', texto: 'A segunda tem agente. Alguém decidiu onde passaria o asfalto, onde iria a escola, qual bairro receberia rede pluvial primeiro.' },
-            { tipo: 'p', texto: 'Os efeitos do clima em mudança não se distribuem por igual. Comunidades negras, indígenas e de minorias étnicas vivem os impactos de forma desproporcional, porque estão com mais frequência em periferias, favelas, margens de rio e encostas, as áreas de risco.' },
+            { tipo: 'p', texto: 'Os efeitos do clima em mudança não se distribuem por igual. Comunidades negras, indígenas e de minorias étnicas vivem os impactos de forma desproporcional, porque estão com mais frequência em periferias, favelas, margens de rio e encostas: as áreas de risco.' },
             { tipo: 'p', texto: 'Nesses lugares o Estado costuma estar menos presente, e a mesma chuva encontra menos infraestrutura para atravessar. É a isso que se dá o nome de racismo ambiental.' },
             { tipo: 'p', texto: 'Dentro dessas comunidades, a exposição também não é uniforme. Estas pessoas são as que menos conseguem sair a tempo e as que mais demoram a se recompor depois:' },
             { tipo: 'lista', itens: [
@@ -515,10 +515,10 @@ window.VAND_CONTENT = {
               'Preparação.'
             ] },
             { tipo: 'p', texto: 'Vale reparar onde este aplicativo cai.' },
-            { tipo: 'passos', itens: [
-              { rotulo: 'Alerta', texto: 'É comunicação: ela não monitora nada, retransmite o aviso de quem monitora, o INMET.' },
-              { rotulo: 'Estudar', texto: 'Este Tema que você está lendo é o eixo da educação.' },
-              { rotulo: 'Registro', texto: 'É conhecimento do risco vindo de baixo, e há estudos mostrando que a resposta funciona melhor quando a defesa civil leva em conta o que quem mora ali já sabe.' }
+            { tipo: 'lista', itens: [
+              'A aba Alerta é comunicação: ela não monitora nada, retransmite o aviso de quem monitora, o INMET.',
+              'Este Tema que você está lendo é o eixo da educação.',
+              'A aba Registro é conhecimento do risco vindo de baixo, e há estudos mostrando que a resposta funciona melhor quando a defesa civil leva em conta o que quem mora ali já sabe.'
             ] },
             { tipo: 'destaque', titulo: 'Nenhum eixo basta sozinho', texto: 'Nenhum dos quatro eixos é dispensável, e nenhum deles é o aplicativo sozinho: um aviso que chega não substitui uma cidade que drena, e nenhum dos dois substitui a decisão sobre quem pode morar onde.' }
           ]
@@ -611,10 +611,10 @@ window.VAND_CONTENT = {
           orgao: 'MEC/INEP (ENCCEJA)',
           ano: 2006,
           detalhe:
-            'Cap. II, seções sobre prevenção, vazão e drenagem urbana, de onde vêm a Lei nº ' +
+            'Cap. II, seções sobre prevenção, vazão e drenagem urbana (de onde vêm a Lei nº ' +
             '13.276 de São Paulo ("Lei das Piscininhas"), a impermeabilização do solo urbano e a ' +
             'afirmação de que responsabilizar apenas as chuvas pelas enchentes simplifica demais ' +
-            'o problema'
+            'o problema)'
         },
         {
           obra: 'Nós no Clima da Mudança: caminhos de Educação e Justiça Climática (Ensino Médio)',
