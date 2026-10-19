@@ -184,137 +184,102 @@ window.VAND_CONTENT = {
         'asfalto fazem com essa chuva explica o resto.',
       secoes: [
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'A mesma chuva, dois destinos',
-          paragrafos: [
-            'Ninguém consegue impedir a chuva — e ainda bem. É dela que vêm os açudes, os ' +
-              'poços e os reservatórios que abastecem cidades inteiras. O Tema anterior mostrou ' +
-              'que a água não é fabricada por ninguém: ela só circula. A chuva é a etapa desse ' +
-              'ciclo em que a água volta para o chão.',
-            'O que muda tudo é o que ela encontra quando chega lá. Água que cai sobre solo ' +
-              'coberto de vegetação infiltra devagar, alimenta o lençol subterrâneo e demora a ' +
-              'chegar ao rio. A mesma água caindo sobre asfalto não infiltra: escorre na hora, ' +
-              'inteira, para o ponto mais baixo do bairro — e chega ao bueiro toda de uma vez.',
-            'É por isso que duas ruas da mesma cidade, debaixo da mesma nuvem, podem terminar ' +
-              'a tarde de formas completamente diferentes. A chuva foi igual. O que o chão fez ' +
-              'com ela, não.'
+          blocos: [
+            { tipo: 'p', texto: 'Ninguém consegue impedir a chuva, e ainda bem. É dela que vêm os açudes, os poços e os reservatórios que abastecem cidades inteiras.' },
+            { tipo: 'p', texto: 'O Tema anterior mostrou que a água não é fabricada por ninguém: ela só circula. A chuva é a etapa desse ciclo em que a água volta para o chão.' },
+            { tipo: 'p', texto: 'O que muda tudo é o que ela encontra quando chega lá.' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'Solo com vegetação', itens: ['A água infiltra devagar.', 'Alimenta o lençol subterrâneo.', 'Demora a chegar ao rio.'] },
+              { titulo: 'Asfalto', itens: ['A água não infiltra.', 'Escorre na hora, inteira, para o ponto mais baixo do bairro.', 'Chega ao bueiro toda de uma vez.'] }
+            ] },
+            { tipo: 'destaque', titulo: 'Mesma nuvem, tardes diferentes', texto: 'É por isso que duas ruas da mesma cidade, debaixo da mesma nuvem, podem terminar a tarde de formas completamente diferentes. A chuva foi igual. O que o chão fez com ela, não.' }
           ]
         },
         {
-          tipo: 'dados',
+          tipo: 'blocos',
           titulo: 'Quarenta minutos',
-          itens: [
-            { rotulo: 'de chuva forte, em São Paulo, em 28 de novembro de 2001', valor: '40 min' },
-            { rotulo: 'pontos de alagamento na cidade', valor: '20' },
-            {
-              rotulo: 'Carros arrastados pelas ruas, um rio transbordado e o trânsito parado — tudo dentro desses quarenta minutos',
-              valor: '',
-              largo: true
-            }
-          ],
-          nota:
-            'O episódio é o exemplo que o livro oficial do ENCCEJA usa para abrir a discussão. ' +
-            'Ele desfaz a intuição de que enchente exige um temporal de dias: quando o solo já ' +
-            'não absorve e a drenagem já está no limite, quarenta minutos bastam.'
+          blocos: [
+            { tipo: 'numeros', itens: [
+              { valor: '40 min', rotulo: 'de chuva forte, em São Paulo, em 28 de novembro de 2001' },
+              { valor: '20', rotulo: 'pontos de alagamento na cidade' },
+              { valor: '', rotulo: 'Carros arrastados pelas ruas, um rio transbordado e o trânsito parado: tudo dentro desses quarenta minutos', largo: true }
+            ] },
+            { tipo: 'p', texto: 'O episódio é o exemplo que o livro oficial do ENCCEJA usa para abrir a discussão.' },
+            { tipo: 'p', texto: 'Ele desfaz a intuição de que enchente exige um temporal de dias: quando o solo já não absorve e a drenagem já está no limite, quarenta minutos bastam.' }
+          ]
         },
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'O que a cidade faz com a água',
-          paragrafos: [
-            'As alterações que agravam uma enchente quase nunca foram feitas para agravar ' +
-              'nada. Foram feitas para facilitar a vida — e o efeito colateral só aparece no dia ' +
-              'da chuva. O livro do ENCCEJA lista as principais: córregos canalizados de forma ' +
-              'malfeita, cursos de pequenos rios alterados, barragens mal construídas e, acima ' +
-              'de tudo, a impermeabilização do solo pelo asfaltamento das ruas e pela ' +
-              'pavimentação dos quintais.',
-            'Some a isso o que acontece nas margens. Desmatar a beira de um rio para plantar ou ' +
-              'criar gado deixa o solo exposto; sem raiz que o segure, ele é levado pela erosão e ' +
-              'vai parar no fundo do rio. O leito sobe, a passagem estreita, e o mesmo volume de ' +
-              'água que antes cabia passa a transbordar.',
-            'O lixo fecha a conta. Jogado na rua ou no córrego, ele é levado pela água até o ' +
-              'bueiro e o entope justamente quando o bueiro mais precisa funcionar. É a única ' +
-              'peça dessa lista que não depende de obra pública nenhuma para mudar.',
-            'E há uma injustiça embutida em tudo isso: quem mora mais perto do rio e da encosta ' +
-              'costuma ser quem teve menos escolha sobre onde morar. O risco não se distribui por ' +
-              'sorteio — ele se concentra em quem já tinha menos.'
+          blocos: [
+            { tipo: 'p', texto: 'As alterações que agravam uma enchente quase nunca foram feitas para agravar nada. Foram feitas para facilitar a vida, e o efeito colateral só aparece no dia da chuva.' },
+            { tipo: 'p', texto: 'O livro do ENCCEJA lista as principais:' },
+            { tipo: 'lista', itens: [
+              'Córregos canalizados de forma malfeita.',
+              'Cursos de pequenos rios alterados.',
+              'Barragens mal construídas.',
+              'Acima de tudo, a impermeabilização do solo, pelo asfaltamento das ruas e pela pavimentação dos quintais.'
+            ] },
+            { tipo: 'p', texto: 'Some a isso o que acontece nas margens.' },
+            { tipo: 'passos', itens: [
+              { rotulo: '1', titulo: 'Desmata-se', texto: 'A beira do rio é desmatada para plantar ou criar gado, e o solo fica exposto.' },
+              { rotulo: '2', titulo: 'Erosão', texto: 'Sem raiz que o segure, o solo é levado pela erosão e vai parar no fundo do rio.' },
+              { rotulo: '3', titulo: 'O leito sobe', texto: 'O leito sobe e a passagem estreita.' },
+              { rotulo: '4', titulo: 'Transborda', texto: 'O mesmo volume de água que antes cabia passa a transbordar.' }
+            ] },
+            { tipo: 'p', texto: 'O lixo fecha a conta. Jogado na rua ou no córrego, ele é levado pela água até o bueiro e o entope justamente quando o bueiro mais precisa funcionar. É a única peça dessa lista que não depende de obra pública nenhuma para mudar.' },
+            { tipo: 'destaque', titulo: 'Uma injustiça embutida', texto: 'Quem mora mais perto do rio e da encosta costuma ser quem teve menos escolha sobre onde morar. O risco não se distribui por sorteio: ele se concentra em quem já tinha menos.' }
           ]
         },
         {
-          tipo: 'glossario',
+          tipo: 'blocos',
           titulo: 'Quatro palavras que não são sinônimos',
-          termos: [
-            {
-              palavra: 'Enchente',
-              definicao:
-                'O nível da água sobe acima do normal por causa do aumento da vazão, mas a ' +
-                'água ainda corre dentro do leito do rio. É a palavra mais usada no dia a dia ' +
-                '— e a única das quatro que a classificação oficial de desastres não lista.'
-            },
-            {
-              palavra: 'Inundação — COBRADE 1.2.1.0.0',
-              definicao:
-                'A água submerge áreas fora dos limites normais do curso d’água, que ' +
-                'normalmente não ficam submersas. O transbordamento é gradual, e costuma vir ' +
-                'de chuva prolongada em área de planície.'
-            },
-            {
-              palavra: 'Enxurrada — COBRADE 1.2.2.0.0',
-              definicao:
-                'Escoamento superficial de alta velocidade e energia, provocado por chuva ' +
-                'intensa e concentrada, normalmente em bacias pequenas de relevo acidentado. A ' +
-                'vazão sobe de repente e a calha do rio transborda de forma brusca. É a de ' +
-                'maior poder destrutivo.'
-            },
-            {
-              palavra: 'Alagamento — COBRADE 1.2.3.0.0',
-              definicao:
-                'Acúmulo de água em ruas, calçadas e outras estruturas urbanas porque a ' +
-                'capacidade de escoamento da drenagem foi excedida por chuva intensa. É um ' +
-                'problema de bueiro e de galeria, não de rio.'
-            }
-          ],
-          nota:
-            'Repare no contraste entre as duas do meio, porque ele é a diferença entre ter ' +
-            'tempo e não ter: a inundação sobe devagar, em terreno plano, depois de dias de ' +
-            'chuva — dá para avisar, dá para sair. A enxurrada desce de uma vez, em terreno ' +
-            'inclinado, durante a chuva — e é justamente por isso que mata mais. As três com ' +
-            'código são tipos oficiais da Classificação e Codificação Brasileira de Desastres ' +
-            '(COBRADE), que a defesa civil usa para registrar cada ocorrência do país. As ' +
-            'palavras acima são nossas; os códigos permitem conferir cada uma na fonte.'
-        },
-        {
-          tipo: 'texto',
-          titulo: 'Por que nenhuma previsão do tempo prevê alagamento',
-          paragrafos: [
-            'Repare no que a definição de alagamento diz: capacidade de escoamento do sistema de ' +
-              'drenagem. Não há uma palavra sobre atmosfera. Um modelo meteorológico calcula como ' +
-              'o ar se comporta — para onde vai a umidade, onde ela condensa, quanta chuva cai em ' +
-              'cada pedaço do mapa. Ele não sabe onde ficam os bueiros da sua rua, se estão ' +
-              'entupidos, nem que o terreno da esquina é o ponto mais baixo do quarteirão.',
-            'Prever chuva e prever alagamento são, portanto, dois problemas diferentes. O ' +
-              'primeiro a meteorologia resolve razoavelmente bem. O segundo depende de drenagem, ' +
-              'topografia e manutenção — informação que não está em satélite nenhum, e que ' +
-              'costuma existir apenas na cabeça de quem mora ali.',
-            'É a diferença entre a ameaça e o dano. A previsão descreve a ameaça que vem do céu; ' +
-              'o estrago que ela causa depende de vulnerabilidade — quem está exposto, onde, e ' +
-              'com que capacidade de se recuperar depois.'
+          blocos: [
+            { tipo: 'glossario', termos: [
+              { palavra: 'Enchente', definicao: 'O nível da água sobe acima do normal por causa do aumento da vazão, mas a água ainda corre dentro do leito do rio. É a palavra mais usada no dia a dia, e a única das quatro que a classificação oficial de desastres não lista.' },
+              { palavra: 'Inundação (COBRADE 1.2.1.0.0)', definicao: 'A água submerge áreas fora dos limites normais do curso d’água, que normalmente não ficam submersas. O transbordamento é gradual, e costuma vir de chuva prolongada em área de planície.' },
+              { palavra: 'Enxurrada (COBRADE 1.2.2.0.0)', definicao: 'Escoamento superficial de alta velocidade e energia, provocado por chuva intensa e concentrada, normalmente em bacias pequenas de relevo acidentado. A vazão sobe de repente e a calha do rio transborda de forma brusca. É a de maior poder destrutivo.' },
+              { palavra: 'Alagamento (COBRADE 1.2.3.0.0)', definicao: 'Acúmulo de água em ruas, calçadas e outras estruturas urbanas porque a capacidade de escoamento da drenagem foi excedida por chuva intensa. É um problema de bueiro e de galeria, não de rio.' }
+            ] },
+            { tipo: 'p', texto: 'Repare no contraste entre as duas do meio, porque ele é a diferença entre ter tempo e não ter.' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'Inundação', itens: ['Sobe devagar.', 'Em terreno plano.', 'Depois de dias de chuva.', 'Dá para avisar, dá para sair.'] },
+              { titulo: 'Enxurrada', itens: ['Desce de uma vez.', 'Em terreno inclinado.', 'Durante a chuva.', 'É justamente por isso que mata mais.'] }
+            ] },
+            { tipo: 'p', texto: 'As três com código são tipos oficiais da Classificação e Codificação Brasileira de Desastres (COBRADE), que a defesa civil usa para registrar cada ocorrência do país. As palavras acima são nossas; os códigos permitem conferir cada uma na fonte.' }
           ]
         },
         {
-          tipo: 'destaque',
+          tipo: 'blocos',
+          titulo: 'Por que nenhuma previsão do tempo prevê alagamento',
+          blocos: [
+            { tipo: 'p', texto: 'Repare no que a definição de alagamento diz: capacidade de escoamento do sistema de drenagem. Não há uma palavra sobre atmosfera.' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'O que um modelo meteorológico calcula', itens: ['Como o ar se comporta.', 'Para onde vai a umidade.', 'Onde ela condensa.', 'Quanta chuva cai em cada pedaço do mapa.'] },
+              { titulo: 'O que ele não sabe', itens: ['Onde ficam os bueiros da sua rua.', 'Se estão entupidos.', 'Que o terreno da esquina é o ponto mais baixo do quarteirão.'] }
+            ] },
+            { tipo: 'p', texto: 'Prever chuva e prever alagamento são, portanto, dois problemas diferentes. O primeiro a meteorologia resolve razoavelmente bem.' },
+            { tipo: 'p', texto: 'O segundo depende de drenagem, topografia e manutenção: informação que não está em satélite nenhum, e que costuma existir apenas na cabeça de quem mora ali.' },
+            { tipo: 'pergunta', pergunta: 'Por que a previsão do tempo não diz se a sua rua vai alagar?', resposta: 'Porque o alagamento depende de drenagem, topografia e manutenção, e essa informação não está em satélite nenhum.' },
+            { tipo: 'destaque', titulo: 'Ameaça e dano', texto: 'É a diferença entre a ameaça e o dano. A previsão descreve a ameaça que vem do céu; o estrago que ela causa depende de vulnerabilidade: quem está exposto, onde, e com que capacidade de se recuperar depois.' }
+          ]
+        },
+        {
+          tipo: 'blocos',
           titulo: 'Onde este aplicativo entra',
-          texto:
-            'É exatamente por isso que a aba Registro existe. Nenhum modelo nos diria que a sua ' +
-            'esquina alagou — só você pode. E o registro mais valioso não é o "sim, alagou": é o ' +
-            '"não, aqui está seco", enviado no meio de uma chuva forte. Sem os dois, existe apenas ' +
-            'uma lista de lugares que alagaram, e não dá para aprender onde não alaga a partir de ' +
-            'uma lista dessas. O aviso do INMET, que você vê na aba Alerta, cobre uma região ' +
-            'inteira; o que acontece na sua rua, dentro dessa região, só o seu registro conta.'
+          blocos: [
+            { tipo: 'p', texto: 'É exatamente por isso que a aba Registro existe. Nenhum modelo nos diria que a sua esquina alagou: só você pode.' },
+            { tipo: 'destaque', titulo: 'O registro mais valioso', texto: 'O registro mais valioso não é o "sim, alagou". É o "não, aqui está seco", enviado no meio de uma chuva forte.' },
+            { tipo: 'p', texto: 'Sem os dois, existe apenas uma lista de lugares que alagaram, e não dá para aprender onde não alaga a partir de uma lista dessas.' },
+            { tipo: 'p', texto: 'O aviso do INMET, que você vê na aba Alerta, cobre uma região inteira; o que acontece na sua rua, dentro dessa região, só o seu registro conta.' }
+          ]
         }
       ],
       reflexoes: [
         'Existe um ponto na sua cidade que alaga toda vez que chove forte? Olhando para ele, o que você vê: asfalto até a guia, um córrego canalizado, terreno mais baixo que a vizinhança, bueiro entupido?',
-        'Depois de uma chuva forte onde você mora, quanto tempo a água leva para escoar? E quem você acha que deveria resolver isso — o morador, a prefeitura, os dois?'
+        'Depois de uma chuva forte onde você mora, quanto tempo a água leva para escoar? E quem você acha que deveria resolver isso: o morador, a prefeitura, os dois?'
       ],
       quiz: [
         {
@@ -344,7 +309,7 @@ window.VAND_CONTENT = {
           explicacao:
             'Asfalto e pavimento impermeabilizam o solo: a água que antes infiltrava passa a ' +
             'escorrer inteira para a drenagem, de uma vez. As outras três opções vão na direção ' +
-            'contrária — todas aumentam a capacidade de absorver ou de escoar.'
+            'contrária: todas aumentam a capacidade de absorver ou de escoar.'
         },
         {
           enunciado: 'Por que desmatar a margem de um rio aumenta o risco de enchente?',
@@ -381,15 +346,15 @@ window.VAND_CONTENT = {
           correta: 1,
           explicacao:
             'Um modelo meteorológico calcula o comportamento da atmosfera. Bueiro entupido, ' +
-            'terreno baixo e galeria subdimensionada não são atmosfera — são a cidade. Por isso a ' +
+            'terreno baixo e galeria subdimensionada não são atmosfera, são a cidade. Por isso a ' +
             'previsão descreve a ameaça que vem do céu, mas não o estrago que ela vai causar em ' +
             'cada ponto.'
         }
       ],
       fontes: [
         {
-          obra: 'Ciências — Livro do Estudante, Ensino Fundamental',
-          orgao: 'MEC/INEP — ENCCEJA',
+          obra: 'Ciências: Livro do Estudante, Ensino Fundamental',
+          orgao: 'MEC/INEP (ENCCEJA)',
           ano: 2006,
           detalhe:
             'Cap. VIII, seção "Chuva de menos: seca. Chuva demais: enchente" (alterações humanas ' +
@@ -398,7 +363,7 @@ window.VAND_CONTENT = {
         },
         {
           obra: 'Classificação e Codificação Brasileira de Desastres (COBRADE), Anexo V da Instrução Normativa nº 36',
-          orgao: 'Ministério do Desenvolvimento Regional — hoje Ministério da Integração e do Desenvolvimento Regional, Secretaria Nacional de Proteção e Defesa Civil',
+          orgao: 'Ministério do Desenvolvimento Regional (hoje Ministério da Integração e do Desenvolvimento Regional), Secretaria Nacional de Proteção e Defesa Civil',
           ano: 2020,
           detalhe:
             'Grupo Hidrológico: Inundações (1.2.1.0.0), Enxurradas (1.2.2.0.0) e Alagamentos ' +
@@ -410,7 +375,7 @@ window.VAND_CONTENT = {
             'Desastres Hidrológicos: uma cartilha com informações e orientações sobre como agir ' +
             'em situações de risco (Gustavo Gaião Corrêa e Vitória Paula Freitas Marques; org. ' +
             'Cássia Barreto Brandão)',
-          orgao: 'UERJ — grupo Prodocência; publicação independente dos autores, hospedada na midiateca do Cemaden Educação',
+          orgao: 'UERJ, grupo Prodocência; publicação independente dos autores, hospedada na midiateca do Cemaden Educação',
           ano: 2023,
           detalhe:
             'Os conceitos de risco, vulnerabilidade e resiliência, que sustentam a distinção ' +

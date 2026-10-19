@@ -4,6 +4,194 @@ Gerado por `scripts/gerar_revisao_textos.js`. Texto antigo tirado de `47c5ae1`.
 Regra da reescrita: nenhum fato, número, nome, data ou ressalva novo, e nenhuma ressalva removida;
 só reordenar, dividir, cortar repetição e trocar a pontuação. **Confira, Seção a Seção, se o "Depois" diz o mesmo que o "Antes".**
 
+## Quando a chuva vira enchente
+
+### Seção 1: A mesma chuva, dois destinos
+
+**Antes**
+
+Ninguém consegue impedir a chuva — e ainda bem. É dela que vêm os açudes, os poços e os reservatórios que abastecem cidades inteiras. O Tema anterior mostrou que a água não é fabricada por ninguém: ela só circula. A chuva é a etapa desse ciclo em que a água volta para o chão.
+
+O que muda tudo é o que ela encontra quando chega lá. Água que cai sobre solo coberto de vegetação infiltra devagar, alimenta o lençol subterrâneo e demora a chegar ao rio. A mesma água caindo sobre asfalto não infiltra: escorre na hora, inteira, para o ponto mais baixo do bairro — e chega ao bueiro toda de uma vez.
+
+É por isso que duas ruas da mesma cidade, debaixo da mesma nuvem, podem terminar a tarde de formas completamente diferentes. A chuva foi igual. O que o chão fez com ela, não.
+
+**Depois**
+
+Ninguém consegue impedir a chuva, e ainda bem. É dela que vêm os açudes, os poços e os reservatórios que abastecem cidades inteiras.
+
+O Tema anterior mostrou que a água não é fabricada por ninguém: ela só circula. A chuva é a etapa desse ciclo em que a água volta para o chão.
+
+O que muda tudo é o que ela encontra quando chega lá.
+
+**Solo com vegetação**
+- A água infiltra devagar.
+- Alimenta o lençol subterrâneo.
+- Demora a chegar ao rio.
+
+× 
+
+**Asfalto**
+- A água não infiltra.
+- Escorre na hora, inteira, para o ponto mais baixo do bairro.
+- Chega ao bueiro toda de uma vez.
+
+> **Mesma nuvem, tardes diferentes.** É por isso que duas ruas da mesma cidade, debaixo da mesma nuvem, podem terminar a tarde de formas completamente diferentes. A chuva foi igual. O que o chão fez com ela, não.
+
+---
+
+### Seção 2: Quarenta minutos
+
+**Antes**
+
+- 40 min: de chuva forte, em São Paulo, em 28 de novembro de 2001
+- 20: pontos de alagamento na cidade
+- Carros arrastados pelas ruas, um rio transbordado e o trânsito parado — tudo dentro desses quarenta minutos
+
+O episódio é o exemplo que o livro oficial do ENCCEJA usa para abrir a discussão. Ele desfaz a intuição de que enchente exige um temporal de dias: quando o solo já não absorve e a drenagem já está no limite, quarenta minutos bastam.
+
+**Depois**
+
+- 40 min: de chuva forte, em São Paulo, em 28 de novembro de 2001
+- 20: pontos de alagamento na cidade
+- Carros arrastados pelas ruas, um rio transbordado e o trânsito parado: tudo dentro desses quarenta minutos
+
+O episódio é o exemplo que o livro oficial do ENCCEJA usa para abrir a discussão.
+
+Ele desfaz a intuição de que enchente exige um temporal de dias: quando o solo já não absorve e a drenagem já está no limite, quarenta minutos bastam.
+
+---
+
+### Seção 3: O que a cidade faz com a água
+
+**Antes**
+
+As alterações que agravam uma enchente quase nunca foram feitas para agravar nada. Foram feitas para facilitar a vida — e o efeito colateral só aparece no dia da chuva. O livro do ENCCEJA lista as principais: córregos canalizados de forma malfeita, cursos de pequenos rios alterados, barragens mal construídas e, acima de tudo, a impermeabilização do solo pelo asfaltamento das ruas e pela pavimentação dos quintais.
+
+Some a isso o que acontece nas margens. Desmatar a beira de um rio para plantar ou criar gado deixa o solo exposto; sem raiz que o segure, ele é levado pela erosão e vai parar no fundo do rio. O leito sobe, a passagem estreita, e o mesmo volume de água que antes cabia passa a transbordar.
+
+O lixo fecha a conta. Jogado na rua ou no córrego, ele é levado pela água até o bueiro e o entope justamente quando o bueiro mais precisa funcionar. É a única peça dessa lista que não depende de obra pública nenhuma para mudar.
+
+E há uma injustiça embutida em tudo isso: quem mora mais perto do rio e da encosta costuma ser quem teve menos escolha sobre onde morar. O risco não se distribui por sorteio — ele se concentra em quem já tinha menos.
+
+**Depois**
+
+As alterações que agravam uma enchente quase nunca foram feitas para agravar nada. Foram feitas para facilitar a vida, e o efeito colateral só aparece no dia da chuva.
+
+O livro do ENCCEJA lista as principais:
+
+- Córregos canalizados de forma malfeita.
+- Cursos de pequenos rios alterados.
+- Barragens mal construídas.
+- Acima de tudo, a impermeabilização do solo, pelo asfaltamento das ruas e pela pavimentação dos quintais.
+
+Some a isso o que acontece nas margens.
+
+- **1 · Desmata-se**: A beira do rio é desmatada para plantar ou criar gado, e o solo fica exposto.
+- **2 · Erosão**: Sem raiz que o segure, o solo é levado pela erosão e vai parar no fundo do rio.
+- **3 · O leito sobe**: O leito sobe e a passagem estreita.
+- **4 · Transborda**: O mesmo volume de água que antes cabia passa a transbordar.
+
+O lixo fecha a conta. Jogado na rua ou no córrego, ele é levado pela água até o bueiro e o entope justamente quando o bueiro mais precisa funcionar. É a única peça dessa lista que não depende de obra pública nenhuma para mudar.
+
+> **Uma injustiça embutida.** Quem mora mais perto do rio e da encosta costuma ser quem teve menos escolha sobre onde morar. O risco não se distribui por sorteio: ele se concentra em quem já tinha menos.
+
+---
+
+### Seção 4: Quatro palavras que não são sinônimos
+
+**Antes**
+
+- **Enchente**: O nível da água sobe acima do normal por causa do aumento da vazão, mas a água ainda corre dentro do leito do rio. É a palavra mais usada no dia a dia — e a única das quatro que a classificação oficial de desastres não lista.
+- **Inundação — COBRADE 1.2.1.0.0**: A água submerge áreas fora dos limites normais do curso d’água, que normalmente não ficam submersas. O transbordamento é gradual, e costuma vir de chuva prolongada em área de planície.
+- **Enxurrada — COBRADE 1.2.2.0.0**: Escoamento superficial de alta velocidade e energia, provocado por chuva intensa e concentrada, normalmente em bacias pequenas de relevo acidentado. A vazão sobe de repente e a calha do rio transborda de forma brusca. É a de maior poder destrutivo.
+- **Alagamento — COBRADE 1.2.3.0.0**: Acúmulo de água em ruas, calçadas e outras estruturas urbanas porque a capacidade de escoamento da drenagem foi excedida por chuva intensa. É um problema de bueiro e de galeria, não de rio.
+
+Repare no contraste entre as duas do meio, porque ele é a diferença entre ter tempo e não ter: a inundação sobe devagar, em terreno plano, depois de dias de chuva — dá para avisar, dá para sair. A enxurrada desce de uma vez, em terreno inclinado, durante a chuva — e é justamente por isso que mata mais. As três com código são tipos oficiais da Classificação e Codificação Brasileira de Desastres (COBRADE), que a defesa civil usa para registrar cada ocorrência do país. As palavras acima são nossas; os códigos permitem conferir cada uma na fonte.
+
+**Depois**
+
+- **Enchente**: O nível da água sobe acima do normal por causa do aumento da vazão, mas a água ainda corre dentro do leito do rio. É a palavra mais usada no dia a dia, e a única das quatro que a classificação oficial de desastres não lista.
+- **Inundação (COBRADE 1.2.1.0.0)**: A água submerge áreas fora dos limites normais do curso d’água, que normalmente não ficam submersas. O transbordamento é gradual, e costuma vir de chuva prolongada em área de planície.
+- **Enxurrada (COBRADE 1.2.2.0.0)**: Escoamento superficial de alta velocidade e energia, provocado por chuva intensa e concentrada, normalmente em bacias pequenas de relevo acidentado. A vazão sobe de repente e a calha do rio transborda de forma brusca. É a de maior poder destrutivo.
+- **Alagamento (COBRADE 1.2.3.0.0)**: Acúmulo de água em ruas, calçadas e outras estruturas urbanas porque a capacidade de escoamento da drenagem foi excedida por chuva intensa. É um problema de bueiro e de galeria, não de rio.
+
+Repare no contraste entre as duas do meio, porque ele é a diferença entre ter tempo e não ter.
+
+**Inundação**
+- Sobe devagar.
+- Em terreno plano.
+- Depois de dias de chuva.
+- Dá para avisar, dá para sair.
+
+× 
+
+**Enxurrada**
+- Desce de uma vez.
+- Em terreno inclinado.
+- Durante a chuva.
+- É justamente por isso que mata mais.
+
+As três com código são tipos oficiais da Classificação e Codificação Brasileira de Desastres (COBRADE), que a defesa civil usa para registrar cada ocorrência do país. As palavras acima são nossas; os códigos permitem conferir cada uma na fonte.
+
+---
+
+### Seção 5: Por que nenhuma previsão do tempo prevê alagamento
+
+**Antes**
+
+Repare no que a definição de alagamento diz: capacidade de escoamento do sistema de drenagem. Não há uma palavra sobre atmosfera. Um modelo meteorológico calcula como o ar se comporta — para onde vai a umidade, onde ela condensa, quanta chuva cai em cada pedaço do mapa. Ele não sabe onde ficam os bueiros da sua rua, se estão entupidos, nem que o terreno da esquina é o ponto mais baixo do quarteirão.
+
+Prever chuva e prever alagamento são, portanto, dois problemas diferentes. O primeiro a meteorologia resolve razoavelmente bem. O segundo depende de drenagem, topografia e manutenção — informação que não está em satélite nenhum, e que costuma existir apenas na cabeça de quem mora ali.
+
+É a diferença entre a ameaça e o dano. A previsão descreve a ameaça que vem do céu; o estrago que ela causa depende de vulnerabilidade — quem está exposto, onde, e com que capacidade de se recuperar depois.
+
+**Depois**
+
+Repare no que a definição de alagamento diz: capacidade de escoamento do sistema de drenagem. Não há uma palavra sobre atmosfera.
+
+**O que um modelo meteorológico calcula**
+- Como o ar se comporta.
+- Para onde vai a umidade.
+- Onde ela condensa.
+- Quanta chuva cai em cada pedaço do mapa.
+
+× 
+
+**O que ele não sabe**
+- Onde ficam os bueiros da sua rua.
+- Se estão entupidos.
+- Que o terreno da esquina é o ponto mais baixo do quarteirão.
+
+Prever chuva e prever alagamento são, portanto, dois problemas diferentes. O primeiro a meteorologia resolve razoavelmente bem.
+
+O segundo depende de drenagem, topografia e manutenção: informação que não está em satélite nenhum, e que costuma existir apenas na cabeça de quem mora ali.
+
+> **Pare e pense:** Por que a previsão do tempo não diz se a sua rua vai alagar?
+> *Resposta:* Porque o alagamento depende de drenagem, topografia e manutenção, e essa informação não está em satélite nenhum.
+
+> **Ameaça e dano.** É a diferença entre a ameaça e o dano. A previsão descreve a ameaça que vem do céu; o estrago que ela causa depende de vulnerabilidade: quem está exposto, onde, e com que capacidade de se recuperar depois.
+
+---
+
+### Seção 6: Onde este aplicativo entra
+
+**Antes**
+
+É exatamente por isso que a aba Registro existe. Nenhum modelo nos diria que a sua esquina alagou — só você pode. E o registro mais valioso não é o "sim, alagou": é o "não, aqui está seco", enviado no meio de uma chuva forte. Sem os dois, existe apenas uma lista de lugares que alagaram, e não dá para aprender onde não alaga a partir de uma lista dessas. O aviso do INMET, que você vê na aba Alerta, cobre uma região inteira; o que acontece na sua rua, dentro dessa região, só o seu registro conta.
+
+**Depois**
+
+É exatamente por isso que a aba Registro existe. Nenhum modelo nos diria que a sua esquina alagou: só você pode.
+
+> **O registro mais valioso.** O registro mais valioso não é o "sim, alagou". É o "não, aqui está seco", enviado no meio de uma chuva forte.
+
+Sem os dois, existe apenas uma lista de lugares que alagaram, e não dá para aprender onde não alaga a partir de uma lista dessas.
+
+O aviso do INMET, que você vê na aba Alerta, cobre uma região inteira; o que acontece na sua rua, dentro dessa região, só o seu registro conta.
+
+---
+
 ## Clima em mudança e risco na cidade
 
 ### Seção 1: O mesmo volume, estragos diferentes
