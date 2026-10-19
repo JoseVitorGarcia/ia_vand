@@ -568,7 +568,7 @@
           class: 'apoio',
           text: lidas.length === tema.secoes.length
             ? 'Leitura concluída. O quiz está logo abaixo.'
-            : 'Seções lidas. Dá para parar e voltar depois — o app lembra.'
+            : 'Seções lidas. Dá para parar e voltar depois: o app lembra.'
         })
       ])
     );
@@ -794,7 +794,7 @@
             text:
               acertos === tema.quiz.length
                 ? 'Todas certas. Pode seguir para o próximo tema.'
-                : 'Refazer é livre — nada aqui trava o próximo tema.'
+                : 'Refazer é livre. Nada aqui trava o próximo tema.'
           })
         ])
       );
@@ -829,7 +829,7 @@
     var cabecAlerta = el('div', { class: 'alerta-cabec' }, [
       el('h2', { class: 't-h2', text: municipio }),
       el('div', { class: 'alerta-consulta' }, exemplo ? [
-        el('span', { class: 't-caps alerta-consulta-rotulo', text: 'EXEMPLO HISTÓRICO — NÃO É O AVISO DE HOJE' })
+        el('span', { class: 't-caps alerta-consulta-rotulo', text: 'EXEMPLO HISTÓRICO: NÃO É O AVISO DE HOJE' })
       ] : [
         el('span', {
           class: 't-caps alerta-consulta-rotulo',
@@ -845,7 +845,7 @@
       var cardCalmo = el('div', { class: 'card-calmo' }, [
         el('div', { class: 'card-calmo-icone' }, [icone('calmo', 24, true)]),
         el('h2', { text: 'Nenhum Aviso vigente' }),
-        el('p', { text: 'Não havia Aviso do INMET em vigor para a sua região na última consulta. Isto não é previsão de tempo bom — é a ausência de aviso naquela consulta, e um Aviso pode ter sido emitido depois dela.' }),
+        el('p', { text: 'Não havia Aviso do INMET em vigor para a sua região na última consulta. Isto não é previsão de tempo bom: é a ausência de aviso naquela consulta, e um Aviso pode ter sido emitido depois dela.' }),
         el('a', { href: '#/alerta/exemplo', class: 'link-exemplo', text: 'Ver um exemplo de Aviso vigente' })
       ]);
       tela.appendChild(cardCalmo);
@@ -904,7 +904,7 @@
             'Este Aviso cobre ' + aviso.municipios_total + ' municípios. Entre os Avisos de ' +
             lac.severidade + ', ' + fmtPct(lac.taxa_area, 0) + ' se confirmam em algum ponto da ' +
             'área coberta e ' + fmtPct(lac.taxa_ponto, 1) + ' se confirmam na estação de quem foi ' +
-            'avisado — uma razão de ' + fmtNum(lac.razao, 0) + ' vezes. O Aviso é produto de área ' +
+            'avisado: uma razão de ' + fmtNum(lac.razao, 0) + ' vezes. O Aviso é produto de área ' +
             'recebido num ponto; a diferença é de granularidade, não de qualidade de quem prevê.'
         })
       ]));
@@ -993,7 +993,7 @@
           ]),
           dados && dados.aviso ? el('div', { class: 'par' }, [
             el('span', { class: 'label', text: 'Aviso vigente' }),
-            el('span', { class: 'valor', text: (dados.aviso.descricao || 'Acumulado de Chuva') + ' — ' + (dados.aviso.severidade || 'Grande Perigo') })
+            el('span', { class: 'valor', text: (dados.aviso.descricao || 'Acumulado de Chuva') + ' · ' + (dados.aviso.severidade || 'Grande Perigo') })
           ]) : null
         ]),
         el('p', { class: 'nota', text: 'É a amarração com o Aviso vigente que torna o seu registro útil depois. O "não está alagado" vale tanto quanto o "sim": sem ele, só se aprende onde alaga, nunca onde não alaga.' }),
@@ -1040,7 +1040,7 @@
       var justificativa = el('div', { class: 'justificativa' }, [
         el('div', { class: 'justificativa-linha' }, [
           icone('duvida', 20),
-          el('p', { text: 'Alagamento não é chuva. Pela definição oficial (COBRADE 1.2.3.0.0) ele é extrapolação da capacidade do sistema de drenagem — não há uma palavra sobre atmosfera. Nenhum modelo meteorológico prevê alagamento, e é por isso que a pergunta precisa ser feita a uma pessoa.' })
+          el('p', { text: 'Alagamento não é chuva. Pela definição oficial (COBRADE 1.2.3.0.0), ele é extrapolação da capacidade do sistema de drenagem: não há uma palavra sobre atmosfera. Nenhum modelo meteorológico prevê alagamento, e é por isso que a pergunta precisa ser feita a uma pessoa.' })
         ])
       ]);
       tela.appendChild(justificativa);

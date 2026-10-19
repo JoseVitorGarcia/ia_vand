@@ -45,6 +45,42 @@ function clicarNavegando(seletor) {
   window.dispatchEvent(new HashChangeEvent('hashchange'));
 }
 
+// --- regras de forma dos textos de estudo (spec 2026-10-18) ---
+var TRAVESSAO = /[—–]/;
+
+// Texto que o usuário lê, sem o aviso do INMET (texto original, sem edição).
+function textoVisivel() {
+  var tela = document.getElementById('tela').cloneNode(true);
+  [].forEach.call(tela.querySelectorAll('.aviso-card'), function (n) { n.parentNode.removeChild(n); });
+  return document.getElementById('topbar').textContent + ' ' + tela.textContent;
+}
+
+function checarTemaMigrado(id) {
+  var tema = window.VAND_CONTENT.trilha.filter(function (t) { return t.id === id; })[0];
+  var nome = '[forma ' + id + '] ';
+  ok(!TRAVESSAO.test(JSON.stringify(tema)), nome + 'conteúdo sem travessão');
+  var base = '#/estudar/' + id;
+  var rotas = [base];
+  tema.secoes.forEach(function (s, i) {
+    ok(s.tipo === 'blocos', nome + 'Seção ' + (i + 1) + ' é do tipo blocos');
+    var tipos = {};
+    (s.blocos || []).forEach(function (b) {
+      tipos[b.tipo] = true;
+      if (b.tipo === 'p') {
+        var n = b.texto.trim().split(/\s+/).length;
+        ok(n <= 45, nome + 'Seção ' + (i + 1) + ': parágrafo de ' + n + ' palavras (máx. 45)');
+      }
+    });
+    ok(Object.keys(tipos).length >= 2, nome + 'Seção ' + (i + 1) + ' mistura ao menos 2 tipos de bloco');
+    rotas.push(base + '/s/' + (i + 1));
+  });
+  rotas.push(base + '/pensar', base + '/fontes', base + '/quiz');
+  rotas.forEach(function (rota) {
+    irPara(rota);
+    ok(!TRAVESSAO.test(textoVisivel()), nome + 'texto visível sem travessão em ' + rota);
+  });
+}
+
 function percorre(tema) {
   var nome = '[' + tema.id + '] ';
   var base = '#/estudar/' + tema.id;
@@ -235,6 +271,17 @@ try {
   irPara('#/estudar');
   ok(document.querySelectorAll('.selo-feito').length === escritos.length,
      'trilha mostra o resultado guardado dos ' + escritos.length + ' temas percorridos');
+
+  // Texto de interface sem travessão. As telas que só mostram certas frases com dado
+  // presente (card de lacuna, Registro com aviso) são exercitadas com o exemplo.
+  var avisoOriginal = window.VAND_DADOS.aviso;
+  window.VAND_DADOS.aviso = window.VAND_DADOS.aviso_exemplo;
+  ['#/alerta', '#/alerta/calmo', '#/alerta/exemplo', '#/registro', '#/registro/enviado',
+   '#/estudar', '#/estudar/sobre'].forEach(function (rota) {
+    irPara(rota);
+    ok(!TRAVESSAO.test(textoVisivel()), 'interface sem travessão em ' + rota);
+  });
+  window.VAND_DADOS.aviso = avisoOriginal;
 
   // A logo (sem o ponto vermelho, ADR 0003) mora no cabeçalho fixo de TODA tela.
   ['#/alerta', '#/alerta/exemplo', '#/registro', '#/estudar', '#/estudar/sobre',
