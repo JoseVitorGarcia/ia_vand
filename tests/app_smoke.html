@@ -291,6 +291,8 @@ try {
         { tipo: 'destaque', texto: 'Destaque sem título.' },
         { tipo: 'destaque', titulo: 'Com título', texto: 'Destaque com título.' },
         { tipo: 'glossario', termos: [{ palavra: 'Termo', definicao: 'Definição.' }], nota: 'Nota do glossário.' },
+        { tipo: 'figura', id: 'ciclo-da-agua', legenda: 'Legenda de teste.' },
+        { tipo: 'figura', id: 'figura-que-nao-existe', legenda: 'não deve aparecer' },
         { tipo: 'inexistente', texto: 'bloco que o app não conhece' },
         { tipo: 'p', texto: 'Último parágrafo, depois do bloco desconhecido.' }
       ]
@@ -324,11 +326,21 @@ try {
   ok(secFx.querySelectorAll('.bloco-glossario .termo').length === 1 && !!secFx.querySelector('.bloco-glossario .nota'),
      'blocos: glossario renderiza termo e nota');
   ok(secFx.textContent.indexOf('bloco que o app não conhece') === -1, 'blocos: bloco desconhecido é ignorado, sem derrubar a Seção');
+  ok(!!secFx.querySelector('figure.bloco-figura svg[role="img"]') && !!secFx.querySelector('figure.bloco-figura figcaption') &&
+     secFx.querySelector('figure.bloco-figura figcaption').textContent === 'Legenda de teste.',
+     'blocos: figura do ciclo da água renderiza o SVG e a legenda');
+  ok(secFx.querySelectorAll('figure.bloco-figura').length === 1 && secFx.textContent.indexOf('não deve aparecer') === -1,
+     'blocos: figura de id desconhecido é ignorada');
+  ok(secFx.querySelectorAll('.bloco-figura svg .f-num').length === 4,
+     'figura: os 4 marcadores numerados batem com os 4 passos do ciclo');
   window.VAND_CONTENT.trilha.pop();
 
   checarTemaMigrado('clima-em-mudanca-e-risco-na-cidade');
   checarTemaMigrado('quando-a-chuva-vira-enchente');
   checarTemaMigrado('de-onde-vem-a-chuva');
+  ok(window.VAND_CONTENT.trilha.filter(function (t) { return t.id === 'de-onde-vem-a-chuva'; })[0]
+       .secoes[0].blocos.some(function (b) { return b.tipo === 'figura' && b.id === 'ciclo-da-agua'; }),
+     'Tema 1, Seção 1: tem o diagrama do ciclo da água');
 
   // Fidelidade ao texto original (revisão final de 18/10/2026): três pontos em que a
   // reescrita podia ter mudado o sentido sem ninguém ver.

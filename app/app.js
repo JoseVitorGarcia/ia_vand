@@ -382,6 +382,48 @@
         el('p', { text: b.texto })
       ]);
     },
+    // Diagrama do ciclo da água, desenhado aqui (sem imagem, sem rede). Os quatro
+    // marcadores numerados são os quatro passos do texto: 1 evapora, 2 condensa,
+    // 3 cai, 4 segue o caminho. Cores só por classe (ver .figura-ciclo em
+    // styles.css), então vale nos dois temas. ADR 0003: nada de amarelo, nem o Sol.
+    // O conteúdo do SVG é literal deste arquivo: nenhum dado entra por innerHTML.
+    figura: function (b) {
+      if (b.id !== 'ciclo-da-agua') return null;
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 320 200');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('class', 'figura-ciclo');
+      svg.setAttribute('aria-label', 'Ciclo da água em quatro passos: 1, o calor do Sol evapora a água do mar; ' +
+        '2, o vapor se condensa e forma nuvens; 3, a água cai como chuva; 4, parte escorre para os rios e parte infiltra no solo.');
+      svg.innerHTML =
+        '<defs><marker id="ciclo-seta" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto">' +
+          '<path class="f-ponta" d="M0 0 L10 5 L0 10z"/></marker></defs>' +
+        '<rect class="f-ceu" width="320" height="200"/>' +
+        '<circle class="f-sol" cx="32" cy="30" r="11"/>' +
+        '<path class="f-sol" d="M32 8v5M32 47v5M10 30h5M49 30h5M16.4 14.4l3.5 3.5M47.6 14.4l-3.5 3.5M16.4 45.6l3.5-3.5M47.6 45.6l-3.5-3.5"/>' +
+        '<path class="f-terra" d="M0 138 L50 138 L92 100 L134 138 L190 138 L190 200 L0 200Z"/>' +
+        '<rect class="f-lencol" x="0" y="176" width="190" height="24"/>' +
+        '<path class="f-mar" d="M190 138 Q205 132 220 138 T250 138 T280 138 T310 138 L320 138 L320 200 L190 200Z"/>' +
+        '<path class="f-onda" d="M200 150 q8 -5 16 0 t16 0 t16 0 t16 0 t16 0 M214 166 q8 -5 16 0 t16 0 t16 0 t16 0"/>' +
+        '<path class="f-rio" d="M120 128 Q152 134 190 140"/>' +
+        '<path class="f-nuvem" d="M122 52 C108 52 108 36 124 35 C124 22 142 18 150 26 C156 14 178 16 180 30 C194 28 200 46 186 52Z"/>' +
+        '<path class="f-seta" marker-end="url(#ciclo-seta)" d="M238 128 C238 98 222 74 194 58"/>' +
+        '<path class="f-chuva" d="M104 60 L100 88 M118 62 L114 96 M132 60 L128 92"/>' +
+        '<path class="f-seta" marker-end="url(#ciclo-seta)" d="M140 130 Q162 136 184 140"/>' +
+        '<path class="f-seta" marker-end="url(#ciclo-seta)" d="M60 144 L60 168"/>' +
+        '<g class="f-num"><circle cx="248" cy="100" r="9"/><text x="248" y="104" text-anchor="middle">1</text></g>' +
+        '<g class="f-num"><circle cx="152" cy="38" r="9"/><text x="152" y="42" text-anchor="middle">2</text></g>' +
+        '<g class="f-num"><circle cx="84" cy="72" r="9"/><text x="84" y="76" text-anchor="middle">3</text></g>' +
+        '<g class="f-num"><circle cx="158" cy="118" r="9"/><text x="158" y="122" text-anchor="middle">4</text></g>' +
+        '<text class="f-rotulo" x="262" y="104">evapora</text>' +
+        '<text class="f-rotulo" x="152" y="13" text-anchor="middle">condensa</text>' +
+        '<text class="f-rotulo" x="72" y="76" text-anchor="end">cai</text>' +
+        '<text class="f-rotulo" x="176" y="112">escorre</text>' +
+        '<text class="f-rotulo" x="72" y="160">infiltra</text>' +
+        '<text class="f-rotulo" x="8" y="192">reservatório subterrâneo</text>' +
+        '<text class="f-rotulo" x="256" y="186">mar</text>';
+      return el('figure', { class: 'bloco-figura' }, [svg, el('figcaption', { text: b.legenda })]);
+    },
     glossario: function (b) {
       var lista = el('div', { class: 'glossario' });
       (b.termos || []).forEach(function (t) {

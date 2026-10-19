@@ -38,6 +38,7 @@ const blocoMd = (b) => {
     case 'numeros': return b.itens.map((d) => `- ${d.valor ? d.valor + ': ' : ''}${d.rotulo}`).join('\n') + (b.nota ? '\n\n' + b.nota : '');
     case 'destaque': return `> ${b.titulo ? '**' + b.titulo + '.** ' : ''}${b.texto}`;
     case 'glossario': return b.termos.map((t) => `- **${t.palavra}**: ${t.definicao}`).join('\n') + (b.nota ? '\n\n' + b.nota : '');
+    case 'figura': return `*(diagrama "${b.id}", legenda: ${b.legenda})*`;
     default: return `(bloco ${b.tipo})`;
   }
 };

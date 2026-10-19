@@ -31,6 +31,7 @@ window.VAND_CONTENT = {
               { rotulo: '3', titulo: 'Cai', texto: 'Quando essas gotas crescem o bastante para o ar não as sustentar mais, elas caem.' },
               { rotulo: '4', titulo: 'Segue o caminho', texto: 'Parte escorre para rios, parte infiltra no solo e alimenta reservatórios subterrâneos, parte evapora de novo.' }
             ] },
+            { tipo: 'figura', id: 'ciclo-da-agua', legenda: 'As quatro etapas do ciclo da água. O que muda é o estado e o lugar.' },
             { tipo: 'p', texto: 'Nada se perde no caminho, só troca de endereço.' },
             { tipo: 'destaque', titulo: 'Por isso', texto: 'O problema da água quase nunca é de quantidade total. É de estar na hora certa, no lugar certo e limpa o suficiente para usar.' }
           ]
