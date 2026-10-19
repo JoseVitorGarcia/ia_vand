@@ -413,6 +413,17 @@ try {
      'Sobre não promete notificação que o protótipo não faz');
   ok(!!document.querySelector('#tela a[href="tel:199"]') && !!document.querySelector('#tela a[href="tel:193"]'),
      'Sobre traz os telefones da Defesa Civil e dos Bombeiros como link');
+
+  // A página inicial é o Alerta, não o Estudar (pedido do usuário, 18/10/2026).
+  irPara('');
+  ok(document.querySelector('.tela-titulo h1') && document.querySelector('.tela-titulo h1').textContent === 'Alerta',
+     'sem rota na URL, o app abre no Alerta');
+  ok(document.querySelector('.tabbar [data-aba="alerta"]').getAttribute('aria-current') === 'page',
+     'sem rota na URL, a aba Alerta é a ativa');
+  irPara('#/rota-que-nao-existe');
+  ok(location.hash === '#/alerta', 'rota desconhecida leva ao Alerta (hash: ' + location.hash + ')');
+  irPara('#/estudar');
+  ok(!!document.querySelector('.tema-card'), 'a Trilha continua acessível pela aba Estudar');
 } catch (e) {
   log.push('FALHA excecao: ' + (e && e.message) + ' | ' + (e && e.stack || '').split('\n')[1]);
 }

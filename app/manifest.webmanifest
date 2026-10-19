@@ -3,7 +3,7 @@
   "short_name": "IA_VAND",
   "description": "Retransmite o aviso oficial do INMET, registra alagamento e ensina sobre clima com material oficial do governo.",
   "lang": "pt-BR",
-  "start_url": "./index.html#/estudar",
+  "start_url": "./index.html#/alerta",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

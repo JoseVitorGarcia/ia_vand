@@ -141,12 +141,12 @@
   function escrito(tema) { return tema.secoes.length > 0 && tema.quiz.length > 0; }
 
   // ---------- roteamento ----------
-  // Hash: #/estudar | #/estudar/<temaId> | #/alerta | #/registro
+  // Hash: #/alerta (página inicial) | #/registro | #/estudar | #/estudar/<temaId>
 
   function rotaDe(hash) {
-    var h = (hash || '#/estudar').replace(/^#\/?/, '');
+    var h = (hash || '#/alerta').replace(/^#\/?/, '');
     var partes = h.split('/').filter(Boolean);
-    return { aba: partes[0] || 'estudar', temaId: partes[1] || null, resto: partes.slice(2) };
+    return { aba: partes[0] || 'alerta', temaId: partes[1] || null, resto: partes.slice(2) };
   }
 
   function rota() { return rotaDe(location.hash); }
@@ -263,7 +263,7 @@
     } else if (r.aba === 'registro') {
       renderRegistro(r.temaId === 'enviado');
     } else {
-      ir('#/estudar');
+      ir('#/alerta');
       return;
     }
 
