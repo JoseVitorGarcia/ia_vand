@@ -169,3 +169,14 @@ Riscos:
 - **Cache do celular.** Mitigação: bump do `sw.js` a cada publicação.
 - **Um `p` de 45 palavras pode ainda parecer denso.** O teto é um piso de
   qualidade, não a meta: a reescrita mira parágrafos de 20 a 35 palavras.
+
+## Correções feitas no plano (18/10/2026)
+
+- Nos campos `obra`, `orgao` e `detalhe` de `fontes`, o separador " — " virou ":" ou
+  parênteses. Prevalece a regra dos travessões, só na pontuação; nenhuma palavra
+  da citação mudou. "Citações idênticas" vale para o conteúdo da citação.
+- O verificador de texto visível exercita as telas que só mostram certas frases com
+  dado presente (card de lacuna, Registro com aviso) simulando `aviso` no teste.
+- `tests/app_largura.html` não precisou de mudança: já percorre as 37 rotas.
+- O diagrama do ciclo da água (Task 7 do plano) não foi feito: era opcional e o prazo
+  da apresentação não deixou folga.
