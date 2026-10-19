@@ -430,156 +430,134 @@ window.VAND_CONTENT = {
         'causa estragos diferentes em cidades diferentes.',
       secoes: [
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'O mesmo volume, estragos diferentes',
-          paragrafos: [
-            'O Tema anterior terminou numa constatação: a chuva é igual, o que o chão faz com ' +
-              'ela não é. Este Tema pega esse fio e puxa até o fim, porque a diferença entre duas ' +
-              'ruas se repete entre dois bairros, entre duas cidades e entre dois países.',
-            'O livro oficial do Ensino Médio do ENCCEJA diz, já em 2006, que responsabilizar só ' +
-              'a chuva pelas enchentes é simplificar demais o problema. É uma frase escrita pelo ' +
-              'MEC quase vinte anos antes desta tela, e ela vale como resumo de tudo o que vem a ' +
-              'seguir: desastre não é sinônimo de fenômeno natural. O fenômeno é a ameaça; o ' +
-              'desastre é o que acontece quando a ameaça encontra uma população exposta e sem ' +
-              'meios de se proteger.',
-            'Daí a conta que a defesa civil usa: o risco nasce do encontro entre a ameaça e a ' +
-              'vulnerabilidade. Sobre a ameaça, ninguém decide — não se cancela uma frente fria. ' +
-              'Sobre a vulnerabilidade, decide-se o tempo todo: onde se deixa construir, quanto se ' +
-              'gasta em drenagem, quem é avisado e com quanta antecedência. Por isso um desastre ' +
-              'pode ser previsto e, em boa medida, evitado, mesmo que a chuva não possa.'
+          blocos: [
+            { tipo: 'p', texto: 'O Tema anterior terminou numa constatação: a chuva é igual, o que o chão faz com ela não é.' },
+            { tipo: 'p', texto: 'Este Tema pega esse fio e puxa até o fim, porque a diferença entre duas ruas se repete entre dois bairros, entre duas cidades e entre dois países.' },
+            { tipo: 'destaque', titulo: 'Já em 2006', texto: 'O livro oficial do Ensino Médio do ENCCEJA diz, já em 2006, que responsabilizar só a chuva pelas enchentes é simplificar demais o problema. É uma frase escrita pelo MEC quase vinte anos antes desta tela.' },
+            { tipo: 'p', texto: 'Ela vale como resumo de tudo o que vem a seguir: desastre não é sinônimo de fenômeno natural.' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'Fenômeno', itens: ['É a ameaça.'] },
+              { titulo: 'Desastre', itens: ['É o que acontece quando a ameaça encontra uma população exposta e sem meios de se proteger.'] }
+            ] },
+            { tipo: 'p', texto: 'Daí a conta que a defesa civil usa: o risco nasce do encontro entre a ameaça e a vulnerabilidade.' },
+            { tipo: 'lista', itens: [
+              'Sobre a ameaça, ninguém decide: não se cancela uma frente fria.',
+              'Sobre a vulnerabilidade, decide-se o tempo todo: onde se deixa construir, quanto se gasta em drenagem, quem é avisado e com quanta antecedência.'
+            ] },
+            { tipo: 'p', texto: 'Por isso um desastre pode ser previsto e, em boa medida, evitado, mesmo que a chuva não possa.' }
           ]
         },
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'O que está mudando, e o que isso faz com a chuva',
-          paragrafos: [
-            'O efeito estufa não é um defeito: sem os gases que seguram parte do calor na ' +
-              'atmosfera, a Terra seria fria demais para a vida como a conhecemos. O problema é a ' +
-              'intensidade. Ao acrescentar gás carbônico, metano e óxido nitroso em quantidade, a ' +
-              'humanidade tornou esse cobertor mais espesso, e o planeta reteve mais calor do que ' +
-              'devolveu.',
-            'Cientistas chamam o resultado de novo regime climático — uma expressão que diz mais ' +
-              'do que "está mais quente". Ela diz que a régua mudou: os eventos extremos passam a ' +
-              'acontecer em maior quantidade, em mais lugares e com mais frequência do que a ' +
-              'experiência acumulada de quem vive ali levaria a esperar.',
-            'Entre as consequências listadas pelo material oficial, três interessam diretamente a ' +
-              'quem mora em cidade: ondas de calor e de frio mais intensas, secas mais severas, e ' +
-              'tempestades e enchentes mais drásticas. Repare que seca e enchente aparecem juntas. ' +
-              'Não é contradição — é o mesmo ciclo da água ficando mais irregular nas duas pontas.',
-            'Para a nossa história, o ponto é este: a chuva que a cidade foi construída para ' +
-              'aguentar é a chuva de um clima que está deixando de existir. A drenagem projetada ' +
-              'com a estatística de trinta anos atrás encontra hoje uma estatística diferente.'
+          blocos: [
+            { tipo: 'p', texto: 'O efeito estufa não é um defeito: sem os gases que seguram parte do calor na atmosfera, a Terra seria fria demais para a vida como a conhecemos.' },
+            { tipo: 'p', texto: 'O problema é a intensidade. Ao acrescentar gás carbônico, metano e óxido nitroso em quantidade, a humanidade tornou esse cobertor mais espesso, e o planeta reteve mais calor do que devolveu.' },
+            { tipo: 'p', texto: 'Cientistas chamam o resultado de novo regime climático, uma expressão que diz mais do que "está mais quente".' },
+            { tipo: 'p', texto: 'Ela diz que a régua mudou: os eventos extremos passam a acontecer em maior quantidade, em mais lugares e com mais frequência do que a experiência acumulada de quem vive ali levaria a esperar.' },
+            { tipo: 'p', texto: 'Entre as consequências listadas pelo material oficial, três interessam diretamente a quem mora em cidade:' },
+            { tipo: 'lista', itens: [
+              'Ondas de calor e de frio mais intensas.',
+              'Secas mais severas.',
+              'Tempestades e enchentes mais drásticas.'
+            ] },
+            { tipo: 'p', texto: 'Repare que seca e enchente aparecem juntas. Não é contradição: é o mesmo ciclo da água ficando mais irregular nas duas pontas.' },
+            { tipo: 'destaque', titulo: 'Para a nossa história', texto: 'O ponto é este: a chuva que a cidade foi construída para aguentar é a chuva de um clima que está deixando de existir. A drenagem projetada com a estatística de trinta anos atrás encontra hoje uma estatística diferente.' }
           ]
         },
         {
-          tipo: 'dados',
+          tipo: 'blocos',
           titulo: 'A lei que não tira a água, tira a pressa',
-          itens: [
-            { rotulo: 'a Lei nº 13.276 de São Paulo, apelidada de "Lei das Piscininhas"', valor: '2002' },
-            { rotulo: 'é quanto o reservatório precisa segurar a água depois que a chuva termina', valor: '1 hora' },
-            {
-              rotulo: 'Campina Grande, Campinas, Limeira, Ribeirão Preto, Rio de Janeiro e Curitiba estudaram leis parecidas — e em Campina Grande o alvo era o oposto: guardar água para a seca',
-              valor: '',
-              largo: true
-            }
-          ],
-          nota:
-            'Repare no que a lei faz e no que ela não faz. Ela não diminui um litro do que caiu: ' +
-            'obriga cada prédio a guardar a sua parte e a soltá-la só depois que a chuva passou. ' +
-            'O que ela devolve à cidade é o atraso que o solo dava de graça antes do asfalto — e ' +
-            'é esse atraso, não o volume, que impede a rede pluvial de receber tudo no mesmo ' +
-            'instante e transbordar.'
+          blocos: [
+            { tipo: 'numeros', itens: [
+              { valor: '2002', rotulo: 'a Lei nº 13.276 de São Paulo, apelidada de "Lei das Piscininhas"' },
+              { valor: '1 hora', rotulo: 'é quanto o reservatório precisa segurar a água depois que a chuva termina' },
+              { valor: '', rotulo: 'Campina Grande, Campinas, Limeira, Ribeirão Preto, Rio de Janeiro e Curitiba estudaram leis parecidas, e em Campina Grande o alvo era o oposto: guardar água para a seca', largo: true }
+            ] },
+            { tipo: 'p', texto: 'Repare no que a lei faz e no que ela não faz.' },
+            { tipo: 'comparacao', lados: [
+              { titulo: 'O que ela não faz', itens: ['Não diminui um litro do que caiu.'] },
+              { titulo: 'O que ela faz', itens: ['Obriga cada prédio a guardar a sua parte.', 'Manda soltá-la só depois que a chuva passou.'] }
+            ] },
+            { tipo: 'pergunta', pergunta: 'Então o que a lei devolve à cidade?', resposta: 'O atraso que o solo dava de graça antes do asfalto. É esse atraso, não o volume, que impede a rede pluvial de receber tudo no mesmo instante e transbordar.' }
+          ]
         },
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'Cinza, verde, e o que a cidade escolhe',
-          paragrafos: [
-            'Durante muito tempo a resposta a esse problema foi o que se chama de infraestrutura ' +
-              'cinza: obras grandes, de concreto, aço e pedra — diques, muros de arrimo, barragens, ' +
-              'quebra-mares, canais pavimentados. Elas funcionam, e há situações em que não há ' +
-              'substituto para elas.',
-            'Mas o material oficial aponta três limites que se acumularam com o tempo. Custam caro ' +
-              'para manter, e manutenção é a primeira coisa que some do orçamento. Degradam o ' +
-              'ambiente, sobretudo na obra. E são rígidas: foram dimensionadas para um número, e ' +
-              'quando o evento extremo passa desse número, elas não se adaptam — falham.',
-            'A alternativa que ganhou espaço são as soluções baseadas na natureza: recuperar a ' +
-              'várzea em vez de canalizar o córrego, ampliar área permeável, replantar a margem. ' +
-              'São mais baratas de manter, e falham devagar em vez de falhar de uma vez.',
-            'A piscininha do quadro acima é interessante justamente por ficar no meio do caminho: ' +
-              'é concreto, é obra, mas é pequena, distribuída por milhares de lotes e imita o que a ' +
-              'terra fazia. Nenhuma das três abordagens dispensa a outra. O que existe é escolha ' +
-              'sobre a mistura — e essa escolha é orçamento público, não meteorologia.'
+          blocos: [
+            { tipo: 'p', texto: 'Durante muito tempo a resposta a esse problema foi o que se chama de infraestrutura cinza: obras grandes, de concreto, aço e pedra, como diques, muros de arrimo, barragens, quebra-mares e canais pavimentados.' },
+            { tipo: 'p', texto: 'Elas funcionam, e há situações em que não há substituto para elas.' },
+            { tipo: 'p', texto: 'Mas o material oficial aponta três limites que se acumularam com o tempo:' },
+            { tipo: 'lista', ordenada: true, itens: [
+              'Custam caro para manter, e manutenção é a primeira coisa que some do orçamento.',
+              'Degradam o ambiente, sobretudo na obra.',
+              'São rígidas: foram dimensionadas para um número, e quando o evento extremo passa desse número, elas não se adaptam e falham.'
+            ] },
+            { tipo: 'p', texto: 'A alternativa que ganhou espaço são as soluções baseadas na natureza:' },
+            { tipo: 'lista', itens: [
+              'Recuperar a várzea em vez de canalizar o córrego.',
+              'Ampliar área permeável.',
+              'Replantar a margem.'
+            ] },
+            { tipo: 'p', texto: 'São mais baratas de manter, e falham devagar em vez de falhar de uma vez.' },
+            { tipo: 'destaque', titulo: 'A piscininha, no meio do caminho', texto: 'A piscininha do quadro acima é interessante justamente por ficar no meio do caminho: é concreto, é obra, mas é pequena, distribuída por milhares de lotes e imita o que a terra fazia. Nenhuma das três abordagens dispensa a outra. O que existe é escolha sobre a mistura, e essa escolha é orçamento público, não meteorologia.' }
           ]
         },
         {
-          tipo: 'texto',
+          tipo: 'blocos',
           titulo: 'Vulnerabilizadas, não vulneráveis',
-          paragrafos: [
-            'O material do Cemaden Educação faz uma correção de vocabulário que muda o sentido da ' +
-              'frase inteira: as populações mais atingidas não são vulneráveis por si sós — elas ' +
-              'foram vulnerabilizadas. A diferença entre as duas palavras é que a segunda tem ' +
-              'agente. Alguém decidiu onde passaria o asfalto, onde iria a escola, qual bairro ' +
-              'receberia rede pluvial primeiro.',
-            'Os efeitos do clima em mudança não se distribuem por igual. Comunidades negras, ' +
-              'indígenas e de minorias étnicas vivem os impactos de forma desproporcional, porque ' +
-              'estão com mais frequência em periferias, favelas, margens de rio e encostas — as ' +
-              'áreas de risco. Nesses lugares o Estado costuma estar menos presente, e a mesma ' +
-              'chuva encontra menos infraestrutura para atravessar. É a isso que se dá o nome de ' +
-              'racismo ambiental.',
-            'Dentro dessas comunidades, a exposição também não é uniforme: mulheres pobres, ' +
-              'crianças, adolescentes, pessoas idosas e pessoas com deficiência são as que menos ' +
-              'conseguem sair a tempo e as que mais demoram a se recompor depois.',
-            'E há a assimetria que fecha o argumento: são justamente as pessoas que menos ' +
-              'contribuíram para as emissões que mais sofrem as consequências delas. É por isso ' +
-              'que se fala em justiça climática, e não apenas em adaptação — adaptação é uma ' +
-              'questão de engenharia, justiça é uma questão de a quem se dirige a engenharia.'
+          blocos: [
+            { tipo: 'p', texto: 'O material do Cemaden Educação faz uma correção de vocabulário que muda o sentido da frase inteira: as populações mais atingidas não são vulneráveis por si sós. Elas foram vulnerabilizadas.' },
+            { tipo: 'destaque', titulo: 'A diferença entre as duas palavras', texto: 'A segunda tem agente. Alguém decidiu onde passaria o asfalto, onde iria a escola, qual bairro receberia rede pluvial primeiro.' },
+            { tipo: 'p', texto: 'Os efeitos do clima em mudança não se distribuem por igual. Comunidades negras, indígenas e de minorias étnicas vivem os impactos de forma desproporcional, porque estão com mais frequência em periferias, favelas, margens de rio e encostas, as áreas de risco.' },
+            { tipo: 'p', texto: 'Nesses lugares o Estado costuma estar menos presente, e a mesma chuva encontra menos infraestrutura para atravessar. É a isso que se dá o nome de racismo ambiental.' },
+            { tipo: 'p', texto: 'Dentro dessas comunidades, a exposição também não é uniforme. Estas pessoas são as que menos conseguem sair a tempo e as que mais demoram a se recompor depois:' },
+            { tipo: 'lista', itens: [
+              'Mulheres pobres.',
+              'Crianças.',
+              'Adolescentes.',
+              'Pessoas idosas.',
+              'Pessoas com deficiência.'
+            ] },
+            { tipo: 'p', texto: 'E há a assimetria que fecha o argumento: são justamente as pessoas que menos contribuíram para as emissões que mais sofrem as consequências delas.' },
+            { tipo: 'destaque', titulo: 'Justiça climática', texto: 'É por isso que se fala em justiça climática, e não apenas em adaptação: adaptação é uma questão de engenharia, justiça é uma questão de a quem se dirige a engenharia.' }
           ]
         },
         {
-          tipo: 'glossario',
+          tipo: 'blocos',
           titulo: 'Resiliência: voltar, mudar ou transformar',
-          termos: [
-            {
-              palavra: 'Voltar ao que era',
-              definicao:
-                'Recuperar a vida de antes o mais rápido possível. É o sentido mais comum da ' +
-                'palavra — e o que traz a pergunta incômoda: se o desastre aconteceu, aquela ' +
-                'normalidade era mesmo segura, ou já era o problema?'
-            },
-            {
-              palavra: 'Reconstruir com mudanças',
-              definicao:
-                'Aproveitar a reconstrução para corrigir o que estava errado: melhorar obras, ' +
-                'garantir direitos, reforçar leis. Ajuda de verdade, mas chega depois das perdas ' +
-                'e trabalha sobre o que restou.'
-            },
-            {
-              palavra: 'Transformar',
-              definicao:
-                'Mudar a base: repensar como a cidade funciona, questionar as regras que ' +
-                'produziram a exposição, discutir quem decide. É a forma mais difícil, e a única ' +
-                'que ataca o que fez a sociedade ser vulnerável, e não apenas o desastre.'
-            }
-          ],
-          nota:
-            'A distinção é do pesquisador Mark Pelling, apresentada pelo caderno do Cemaden ' +
-            'Educação. Ela é útil porque quase todo debate público depois de uma enchente é, no ' +
-            'fundo, uma disputa entre estas três ideias — e quase sempre sem que ninguém diga em ' +
-            'qual delas está.'
+          blocos: [
+            { tipo: 'glossario', termos: [
+              { palavra: 'Voltar ao que era', definicao: 'Recuperar a vida de antes o mais rápido possível. É o sentido mais comum da palavra, e o que traz a pergunta incômoda: se o desastre aconteceu, aquela normalidade era mesmo segura, ou já era o problema?' },
+              { palavra: 'Reconstruir com mudanças', definicao: 'Aproveitar a reconstrução para corrigir o que estava errado: melhorar obras, garantir direitos, reforçar leis. Ajuda de verdade, mas chega depois das perdas e trabalha sobre o que restou.' },
+              { palavra: 'Transformar', definicao: 'Mudar a base: repensar como a cidade funciona, questionar as regras que produziram a exposição, discutir quem decide. É a forma mais difícil, e a única que ataca o que fez a sociedade ser vulnerável, e não apenas o desastre.' }
+            ] },
+            { tipo: 'p', texto: 'A distinção é do pesquisador Mark Pelling, apresentada pelo caderno do Cemaden Educação.' },
+            { tipo: 'p', texto: 'Ela é útil porque quase todo debate público depois de uma enchente é, no fundo, uma disputa entre estas três ideias, e quase sempre sem que ninguém diga em qual delas está.' }
+          ]
         },
         {
-          tipo: 'destaque',
+          tipo: 'blocos',
           titulo: 'Onde este aplicativo entra',
-          texto:
-            'O material oficial descreve um sistema de alerta como quatro eixos ligados: ' +
-            'conhecimento do risco, monitoramento, educação e comunicação, e preparação. Vale ' +
-            'reparar onde este aplicativo cai. A aba Alerta é comunicação: ela não monitora nada ' +
-            '— retransmite o aviso de quem monitora, o INMET. Este Tema que você está lendo é o ' +
-            'eixo da educação. A aba Registro é conhecimento do risco vindo de baixo, e há ' +
-            'estudos mostrando que a resposta funciona melhor quando a defesa civil leva em ' +
-            'conta o que quem mora ali já sabe. Nenhum dos quatro eixos é dispensável, e nenhum ' +
-            'deles é o aplicativo sozinho: um aviso que chega não substitui uma cidade que ' +
-            'drena, e nenhum dos dois substitui a decisão sobre quem pode morar onde.'
+          blocos: [
+            { tipo: 'p', texto: 'O material oficial descreve um sistema de alerta como quatro eixos ligados:' },
+            { tipo: 'lista', ordenada: true, itens: [
+              'Conhecimento do risco.',
+              'Monitoramento.',
+              'Educação e comunicação.',
+              'Preparação.'
+            ] },
+            { tipo: 'p', texto: 'Vale reparar onde este aplicativo cai.' },
+            { tipo: 'passos', itens: [
+              { rotulo: 'Alerta', texto: 'É comunicação: ela não monitora nada, retransmite o aviso de quem monitora, o INMET.' },
+              { rotulo: 'Estudar', texto: 'Este Tema que você está lendo é o eixo da educação.' },
+              { rotulo: 'Registro', texto: 'É conhecimento do risco vindo de baixo, e há estudos mostrando que a resposta funciona melhor quando a defesa civil leva em conta o que quem mora ali já sabe.' }
+            ] },
+            { tipo: 'destaque', titulo: 'Nenhum eixo basta sozinho', texto: 'Nenhum dos quatro eixos é dispensável, e nenhum deles é o aplicativo sozinho: um aviso que chega não substitui uma cidade que drena, e nenhum dos dois substitui a decisão sobre quem pode morar onde.' }
+          ]
         }
       ],
       reflexoes: [
@@ -598,7 +576,7 @@ window.VAND_CONTENT = {
           ],
           correta: 1,
           explicacao:
-            'A ameaça — a chuva, a frente fria — não está sob controle de ninguém. A ' +
+            'A ameaça (a chuva, a frente fria) não está sob controle de ninguém. A ' +
             'vulnerabilidade está: onde se deixa construir, quanto se investe em drenagem, quem é ' +
             'avisado e com quanta antecedência. Reduzir a vulnerabilidade reduz o desastre sem ' +
             'tocar na chuva.'
@@ -630,7 +608,7 @@ window.VAND_CONTENT = {
           explicacao:
             'Além do custo de manutenção e do impacto ambiental da obra, o limite decisivo é a ' +
             'rigidez. Uma estrutura calculada para certa vazão não se adapta quando o evento a ' +
-            'supera — e o novo regime climático torna esses eventos mais frequentes.'
+            'supera, e o novo regime climático torna esses eventos mais frequentes.'
         },
         {
           enunciado: 'Por que o material oficial prefere dizer que as populações mais atingidas foram "vulnerabilizadas"?',
@@ -660,22 +638,22 @@ window.VAND_CONTENT = {
           explicacao:
             'Voltar ao que era pode significar restaurar justamente o arranjo que produziu o ' +
             'desastre. Reconstruir com mudanças ajuda, mas age depois da perda. Transformar é ' +
-            'mexer na base — como a cidade funciona e quem decide — e por isso é a mais exigente.'
+            'mexer na base (como a cidade funciona e quem decide) e por isso é a mais exigente.'
         }
       ],
       fontes: [
         {
-          obra: 'Ciências da Natureza e suas Tecnologias — Livro do Estudante, Ensino Médio',
-          orgao: 'MEC/INEP — ENCCEJA',
+          obra: 'Ciências da Natureza e suas Tecnologias: Livro do Estudante, Ensino Médio',
+          orgao: 'MEC/INEP (ENCCEJA)',
           ano: 2006,
           detalhe:
-            'Cap. II, seções sobre prevenção, vazão e drenagem urbana — de onde vêm a Lei nº ' +
+            'Cap. II, seções sobre prevenção, vazão e drenagem urbana, de onde vêm a Lei nº ' +
             '13.276 de São Paulo ("Lei das Piscininhas"), a impermeabilização do solo urbano e a ' +
             'afirmação de que responsabilizar apenas as chuvas pelas enchentes simplifica demais ' +
             'o problema'
         },
         {
-          obra: 'Nós no Clima da Mudança: caminhos de Educação e Justiça Climática — Ensino Médio',
+          obra: 'Nós no Clima da Mudança: caminhos de Educação e Justiça Climática (Ensino Médio)',
           orgao: 'Programa Cemaden Educação (Cemaden/MCTI), com o Ministério do Meio Ambiente e Mudança do Clima e o Ministério da Educação',
           ano: 2025,
           detalhe:

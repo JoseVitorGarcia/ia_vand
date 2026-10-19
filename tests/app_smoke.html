@@ -326,6 +326,8 @@ try {
   ok(secFx.textContent.indexOf('bloco que o app não conhece') === -1, 'blocos: bloco desconhecido é ignorado, sem derrubar a Seção');
   window.VAND_CONTENT.trilha.pop();
 
+  checarTemaMigrado('clima-em-mudanca-e-risco-na-cidade');
+
   // Texto de interface sem travessão. As telas que só mostram certas frases com dado
   // presente (card de lacuna, Registro com aviso) são exercitadas com o exemplo.
   var avisoOriginal = window.VAND_DADOS.aviso;
