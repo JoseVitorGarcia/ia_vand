@@ -1,7 +1,7 @@
 /*
  * Dado que alimenta as abas Alerta e Registro.
  *
- * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-10-20T16:46:59Z.
+ * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-10-21T17:03:02Z.
  * NÃO edite à mão: a próxima colheita (.github/workflows/avisos.yml) sobrescreve.
  *
  * PROCEDÊNCIA — nada aqui é inventado. `aviso` é o aviso de chuva mais severo
@@ -23,7 +23,7 @@ window.VAND_DADOS = {
     "origem": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
     "nota": "Aviso real colhido da API de avisos do INMET. Campos originais, sem edicao, exceto vigencia (inicio/fim) e municipios_total, derivados. Recortado para Porto Alegre porque o prototipo nao tem geolocalizacao."
   },
-  "colhido_em": "2026-10-20T16:46:59Z",
+  "colhido_em": "2026-10-21T17:03:02Z",
   "aviso": null,
   "aviso_exemplo": {
     "id": 55157,
