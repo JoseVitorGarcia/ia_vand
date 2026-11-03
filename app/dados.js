@@ -1,7 +1,7 @@
 /*
  * Dado que alimenta as abas Alerta e Registro.
  *
- * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-11-02T21:39:19Z.
+ * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-11-03T19:24:40Z.
  * NÃO edite à mão: a próxima colheita (.github/workflows/avisos.yml) sobrescreve.
  *
  * PROCEDÊNCIA — nada aqui é inventado. `aviso` é o aviso de chuva mais severo
@@ -23,14 +23,14 @@ window.VAND_DADOS = {
     "origem": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
     "nota": "Aviso real colhido da API de avisos do INMET. Campos originais, sem edicao, exceto vigencia (inicio/fim) e municipios_total, derivados. Recortado para Porto Alegre porque o prototipo nao tem geolocalizacao."
   },
-  "colhido_em": "2026-11-02T21:39:19Z",
+  "colhido_em": "2026-11-03T19:24:40Z",
   "aviso": {
-    "id": 56251,
+    "id": 56260,
     "descricao": "Tempestade",
     "severidade": "Perigo Potencial",
     "aviso_cor": "#FFFE00",
-    "inicio": "2026-11-02T08:55:00Z",
-    "fim": "2026-11-02T23:59:00Z",
+    "inicio": "2026-11-03T09:25:00Z",
+    "fim": "2026-11-03T23:59:00Z",
     "riscos": [
       "Chuva entre 20 e 30 mm/h ou até 50 mm/dia, ventos intensos (40-60 km/h), e queda de granizo. Baixo risco de corte de energia elétrica, estragos em plantações, queda de galhos de árvores e de alagamentos."
     ],
@@ -39,7 +39,7 @@ window.VAND_DADOS = {
       "Evite usar aparelhos eletrônicos ligados à tomada. ",
       "Obtenha mais informações junto à Defesa Civil (telefone 199) e ao Corpo de Bombeiros (telefone 193)."
     ],
-    "municipios_total": 2330,
+    "municipios_total": 2680,
     "municipio_exemplo": "Porto Alegre - RS",
     "geocode_exemplo": "4314902"
   },
