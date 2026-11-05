@@ -1,7 +1,7 @@
 /*
  * Dado que alimenta as abas Alerta e Registro.
  *
- * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-11-04T19:40:03Z.
+ * ARQUIVO AUTOGERADO por scripts/colher_aviso_poa.py em 2026-11-05T19:50:02Z.
  * NÃO edite à mão: a próxima colheita (.github/workflows/avisos.yml) sobrescreve.
  *
  * PROCEDÊNCIA — nada aqui é inventado. `aviso` é o aviso de chuva mais severo
@@ -23,26 +23,8 @@ window.VAND_DADOS = {
     "origem": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
     "nota": "Aviso real colhido da API de avisos do INMET. Campos originais, sem edicao, exceto vigencia (inicio/fim) e municipios_total, derivados. Recortado para Porto Alegre porque o prototipo nao tem geolocalizacao."
   },
-  "colhido_em": "2026-11-04T19:40:03Z",
-  "aviso": {
-    "id": 56265,
-    "descricao": "Tempestade",
-    "severidade": "Perigo",
-    "aviso_cor": "#F96602",
-    "inicio": "2026-11-04T00:00:00Z",
-    "fim": "2026-11-04T23:59:00Z",
-    "riscos": [
-      "Chuva entre 30 e 60 mm/h ou 50 e 100 mm/dia, ventos intensos (60-100 km/h), e queda de granizo. Risco de corte de energia elétrica, estragos em plantações,  queda de árvores e de alagamentos."
-    ],
-    "instrucoes": [
-      "Em caso de rajadas de vento: (não se abrigue debaixo de árvores, pois há risco de queda e descargas elétricas e não estacione veículos próximos a torres de transmissão e placas de propaganda). ",
-      "Se possível, desligue aparelhos elétricos e quadro geral de energia. ",
-      "Obtenha mais informações junto à Defesa Civil (telefone 199) e ao Corpo de Bombeiros (telefone 193)."
-    ],
-    "municipios_total": 1388,
-    "municipio_exemplo": "Porto Alegre - RS",
-    "geocode_exemplo": "4314902"
-  },
+  "colhido_em": "2026-11-05T19:50:02Z",
+  "aviso": null,
   "aviso_exemplo": {
     "id": 55157,
     "descricao": "Acumulado de Chuva",
@@ -73,14 +55,7 @@ window.VAND_DADOS = {
     "fonte": "reports/lacuna_granularidade_avisos_2026_08_21_00_29.md",
     "nota_editorial": "Taxa de confirmacao NAO e taxa de acerto. Refere-se a NOSSA Previsao, nunca ao aviso do INMET."
   },
-  "lacuna": {
-    "severidade": "Perigo",
-    "taxa_area": 0.564,
-    "taxa_ponto": 0.075,
-    "razao": 7.5,
-    "fonte": "reports/lacuna_granularidade_avisos_2026_08_21_00_29.md",
-    "nota_editorial": "Enquadramento e lacuna de granularidade: o aviso e produto de area recebido num ponto. Nao e avaliacao de quem preve melhor."
-  },
+  "lacuna": null,
   "lacuna_exemplo": {
     "severidade": "Grande Perigo",
     "taxa_area": 0.591,
